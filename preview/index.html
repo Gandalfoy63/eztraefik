@@ -116,7 +116,7 @@
             <h1 id="h-overview">Overview</h1>
             <p>What Traefik is serving on <span class="mono">homelab-01</span> right now.</p>
           </div>
-          <button class="btn btn-primary" type="button" data-open-drawer><i data-lucide="plus"></i>New route</button>
+          <button class="btn btn-primary" type="button" data-new-route><i data-lucide="plus"></i>New route</button>
         </div>
 
         <div class="grid stats">
@@ -202,7 +202,7 @@
             <h1 id="h-routes">Routes</h1>
             <p>Rules that send incoming traffic to a service.</p>
           </div>
-          <button class="btn btn-primary" type="button" data-open-drawer><i data-lucide="plus"></i>New route</button>
+          <button class="btn btn-primary" type="button" data-new-route><i data-lucide="plus"></i>New route</button>
         </div>
 
         <div class="card">
@@ -224,7 +224,7 @@
               <thead>
                 <tr>
                   <th scope="col">Name</th>
-                  <th scope="col">Rule</th>
+                  <th scope="col" class="col-rule">Rule</th>
                   <th scope="col" class="col-optional">Entrypoints</th>
                   <th scope="col" class="col-optional">Service</th>
                   <th scope="col">Status</th>
@@ -369,83 +369,103 @@
   </div>
 </div>
 
-<!-- ===== New route drawer ===== -->
-<div class="scrim" id="drawer-scrim" hidden></div>
-<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
-  <div class="drawer-head">
-    <h2 id="drawer-title">New route</h2>
-    <button class="icon-btn" type="button" data-close-drawer aria-label="Close" data-tooltip="Close (Esc)" data-tooltip-side="bottom"><i data-lucide="x"></i></button>
-  </div>
-  <form class="drawer-body" id="route-form" novalidate>
-    <div class="form-section">
-      <h3>Basics</h3>
-      <div class="field">
-        <label class="label" for="f-name">Name</label>
-        <input class="input mono" id="f-name" name="name" placeholder="grafana" autocomplete="off" aria-describedby="f-name-hint">
-        <span class="hint" id="f-name-hint">Lowercase letters, numbers and dashes.</span>
+<!-- ===== New route window ===== -->
+<div class="scrim" id="scrim" hidden></div>
+<div class="modal-layer" id="route-modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
+    <div class="modal-head">
+      <div>
+        <h2 id="modal-title">New route</h2>
+        <p class="hint" id="modal-desc">Send a domain to a container or an address on your network.</p>
       </div>
-      <div class="field">
-        <span class="label" id="f-proto-l">Protocol</span>
-        <div class="segmented" role="radiogroup" aria-labelledby="f-proto-l" id="f-proto">
-          <button type="button" role="radio" aria-checked="true" data-value="http">HTTP</button>
-          <button type="button" role="radio" aria-checked="false" data-value="tcp">TCP</button>
-          <button type="button" role="radio" aria-checked="false" data-value="udp">UDP</button>
-        </div>
-      </div>
+      <button class="icon-btn" type="button" data-close-modal aria-label="Close" data-tooltip="Close (Esc)" data-tooltip-side="bottom"><i data-lucide="x"></i></button>
     </div>
 
-    <div class="form-section">
-      <h3>Match</h3>
-      <div class="field-row">
+    <div class="tabs" role="tablist" aria-label="Route settings" id="route-tabs">
+      <button class="tab" type="button" role="tab" id="tab-common" aria-controls="panel-common" aria-selected="true">Common<span class="tab-dot" hidden aria-label="has errors"></span></button>
+      <button class="tab" type="button" role="tab" id="tab-certs" aria-controls="panel-certs" aria-selected="false" tabindex="-1">Certificates<span class="tab-dot" hidden aria-label="has errors"></span></button>
+      <span class="tab-indicator" aria-hidden="true"></span>
+    </div>
+
+    <form class="modal-body" id="route-form" novalidate>
+      <div class="tabpanel" role="tabpanel" id="panel-common" aria-labelledby="tab-common">
+        <div class="field">
+          <label class="label" for="f-name">Name</label>
+          <input class="input mono" id="f-name" name="name" placeholder="e.g. grafana" autocomplete="off" aria-describedby="f-name-msg">
+          <span class="hint" id="f-name-msg" data-hint="Lowercase letters, numbers and dashes.">Lowercase letters, numbers and dashes.</span>
+        </div>
         <div class="field">
           <label class="label" for="f-host">Domain</label>
-          <input class="input mono" id="f-host" name="host" placeholder="grafana.example.com" autocomplete="off">
+          <input class="input mono" id="f-host" name="host" placeholder="e.g. grafana.example.com" autocomplete="off" aria-describedby="f-host-msg">
+          <span class="hint" id="f-host-msg" data-hint="Its DNS record must point to this server.">Its DNS record must point to this server.</span>
         </div>
-        <div class="field" style="margin-top:0">
-          <label class="label" for="f-path">Path prefix <span class="optional">(optional)</span></label>
-          <input class="input mono" id="f-path" name="path" placeholder="/" autocomplete="off">
-        </div>
-      </div>
-      <div class="field">
-        <span class="label" id="f-ep-l">Entrypoints</span>
-        <div class="check-list" role="group" aria-labelledby="f-ep-l">
-          <label class="check"><input type="checkbox" name="ep" value="websecure" checked>websecure <span class="mono">:443</span></label>
-          <label class="check"><input type="checkbox" name="ep" value="web">web <span class="mono">:80</span></label>
-          <label class="check"><input type="checkbox" name="ep" value="admin">admin <span class="mono">:8443</span></label>
-        </div>
-      </div>
-    </div>
 
-    <div class="form-section">
-      <h3>Destination and security</h3>
-      <div class="field">
-        <label class="label" for="f-service">Service</label>
-        <select class="select" id="f-service" name="service">
-          <option value="grafana">grafana (container grafana:3000)</option>
-          <option value="nextcloud">nextcloud (2 servers)</option>
-          <option value="external-api">external-api (https://api.example.net)</option>
-        </select>
+        <fieldset class="field">
+          <legend class="label">Forwarding to</legend>
+          <div class="segmented" role="radiogroup" aria-label="Destination type" id="f-target-type">
+            <button type="button" role="radio" aria-checked="true" data-value="docker"><i data-lucide="container" class="icon-sm"></i>Docker container</button>
+            <button type="button" role="radio" aria-checked="false" data-value="ip"><i data-lucide="network" class="icon-sm"></i>IP address</button>
+          </div>
+          <div class="target-row">
+            <div class="field target-host" data-target="docker">
+              <label class="sr-only" for="f-container">Container</label>
+              <select class="select" id="f-container" name="container">
+                <option value="">Choose a container</option>
+                <option value="grafana" data-port="3000">grafana</option>
+                <option value="jellyfin" data-port="8096">jellyfin</option>
+                <option value="nextcloud-app" data-port="80">nextcloud-app</option>
+                <option value="portainer" data-port="9000">portainer</option>
+                <option value="vaultwarden" data-port="80">vaultwarden</option>
+              </select>
+            </div>
+            <div class="field target-host" data-target="ip" hidden>
+              <label class="sr-only" for="f-ip">IP address or hostname</label>
+              <input class="input mono" id="f-ip" name="ip" placeholder="e.g. 192.168.1.20" autocomplete="off">
+            </div>
+            <span class="target-sep mono" aria-hidden="true">:</span>
+            <div class="field target-port">
+              <label class="sr-only" for="f-port">Port</label>
+              <input class="input mono" id="f-port" name="port" placeholder="Port" inputmode="numeric" autocomplete="off">
+            </div>
+          </div>
+          <span class="hint" id="f-target-msg" data-hint-docker="Traefik reaches the container on the shared Docker network." data-hint-ip="Any address Traefik can reach, on your network or outside it.">Traefik reaches the container on the shared Docker network.</span>
+        </fieldset>
       </div>
-      <div class="field">
-        <span class="label" id="f-tls-l">HTTPS</span>
-        <span class="switch"><button type="button" role="switch" aria-checked="true" aria-labelledby="f-tls-l" id="f-tls" data-switch></button><span class="hint">Certificate from <span class="mono">letsencrypt</span></span></span>
-      </div>
-      <div class="field">
-        <details class="advanced">
-          <summary><i data-lucide="chevron-right"></i>Advanced: priority, middlewares, TLS options</summary>
-          <p class="hint" style="margin-top: var(--space-3)">Not in the preview.</p>
-        </details>
-      </div>
-    </div>
 
-    <div class="form-section">
-      <h3>Generated config</h3>
-      <pre class="code-block" id="yaml-preview" aria-live="polite"></pre>
+      <div class="tabpanel" role="tabpanel" id="panel-certs" aria-labelledby="tab-certs" hidden>
+        <div class="setting-row">
+          <div>
+            <div class="label" id="f-tls-l">Serve over HTTPS</div>
+            <div class="hint">Recommended for anything reachable from the internet.</div>
+          </div>
+          <span class="switch"><button type="button" role="switch" aria-checked="true" aria-labelledby="f-tls-l" id="f-tls" data-switch></button></span>
+        </div>
+
+        <fieldset class="cert-fieldset" id="cert-fieldset">
+          <legend class="label">Certificate</legend>
+          <div class="cert-list" id="cert-list"></div>
+          <p class="hint" id="cert-other"></p>
+        </fieldset>
+
+        <div class="setting-row">
+          <div>
+            <div class="label" id="f-redirect-l">Redirect HTTP to HTTPS</div>
+            <div class="hint">Visitors on <span class="mono">http://</span> are sent to <span class="mono">https://</span>.</div>
+          </div>
+          <span class="switch"><button type="button" role="switch" aria-checked="true" aria-labelledby="f-redirect-l" id="f-redirect" data-switch></button></span>
+        </div>
+      </div>
+
+      <details class="advanced config-details">
+        <summary><i data-lucide="chevron-right"></i>Generated config</summary>
+        <pre class="code-block" id="yaml-preview" aria-live="polite"></pre>
+      </details>
+    </form>
+
+    <div class="modal-foot">
+      <button class="btn btn-secondary" type="button" data-close-modal>Cancel</button>
+      <button class="btn btn-primary" type="submit" form="route-form" id="f-submit"><span class="btn-label">Create route</span></button>
     </div>
-  </form>
-  <div class="drawer-foot">
-    <button class="btn btn-secondary" type="button" data-close-drawer>Cancel</button>
-    <button class="btn btn-primary" type="submit" form="route-form" id="f-submit"><span class="btn-label">Create route</span></button>
   </div>
 </div>
 

@@ -1,5 +1,5 @@
 // Docs: docs/05 - UI-UX/Preview.md
-// Style preview behaviour only: navigation, sidebar, theme, drawer, toasts, onboarding. No real data.
+// Style preview behaviour only: navigation, sidebar, theme, route window, toasts, onboarding. No real data.
 (() => {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -91,8 +91,8 @@
   }
   mobile.addEventListener("change", syncLayout);
 
-  // ---------- Scrim (shared by drawer and mobile nav) ----------
-  const scrim = $("#drawer-scrim");
+  // ---------- Scrim (shared by the route window and mobile nav) ----------
+  const scrim = $("#scrim");
   let scrimClose = null;
   function showScrim(show, onClose) {
     if (show) {
@@ -163,8 +163,8 @@
     const rows = ROUTES.filter(r => (proto === "all" || r.proto === proto) && (!q || [r.name, r.rule, r.svc].some(v => v.toLowerCase().includes(q))));
     $("#routes-body").innerHTML = rows.map(r => `
       <tr>
-        <td><a class="row-link" href="#routes" data-open-drawer>${r.name}</a> <span class="badge is-accent no-dot proto">${r.proto.toUpperCase()}</span></td>
-        <td><span class="rule">${r.rule.replace(/&/g, "&amp;")}</span></td>
+        <td><a class="row-link" href="#routes" data-new-route>${r.name}</a> <span class="badge is-accent no-dot proto">${r.proto.toUpperCase()}</span><span class="rule rule-inline">${r.rule.replace(/&/g, "&amp;")}</span></td>
+        <td class="col-rule"><span class="rule">${r.rule.replace(/&/g, "&amp;")}</span></td>
         <td class="col-optional muted">${r.ep}</td>
         <td class="col-optional muted">${r.svc}</td>
         <td><span class="badge ${r.status ? "is-" + r.status : ""}">${r.statusText}</span></td>
@@ -194,7 +194,7 @@
       b.addEventListener("click", () => {
         const v = b.dataset.proto || b.dataset.value; setRadio(group, v);
         if (group.id === "proto-filter") { proto = v; renderRoutes(); }
-        if (group.id === "f-proto") renderYaml();
+        if (group.id === "f-target-type") onFormChange();
       });
       b.addEventListener("keydown", e => {
         const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
@@ -207,91 +207,219 @@
   // Switches
   document.addEventListener("click", e => {
     const sw = e.target.closest("[data-switch]");
-    if (sw) { sw.setAttribute("aria-checked", String(sw.getAttribute("aria-checked") !== "true")); renderYaml(); }
+    if (sw) { sw.setAttribute("aria-checked", String(sw.getAttribute("aria-checked") !== "true")); onFormChange(); }
   });
 
-  // ---------- Drawer ----------
-  const drawer = $("#drawer");
+  // ---------- New route window ----------
+  const modal = $("#route-modal");
   let lastFocus = null;
-  function openDrawer() {
+  function openModal() {
     lastFocus = document.activeElement;
-    drawer.hidden = false; drawer.classList.remove("is-closing");
-    showScrim(true, closeDrawer);
-    requestAnimationFrame(() => requestAnimationFrame(() => drawer.classList.add("is-open")));
-    renderYaml();
+    modal.hidden = false; modal.classList.remove("is-closing");
+    showScrim(true, closeModal);
+    requestAnimationFrame(() => requestAnimationFrame(() => modal.classList.add("is-open")));
+    selectTab("tab-common", { focus: false, animate: false });
+    onFormChange();
     setTimeout(() => $("#f-name").focus(), 60);
   }
-  function closeDrawer() {
-    drawer.classList.add("is-closing"); drawer.classList.remove("is-open");
+  function closeModal() {
+    modal.classList.add("is-closing"); modal.classList.remove("is-open");
     showScrim(false);
-    setTimeout(() => { drawer.hidden = true; }, 200);
+    setTimeout(() => { modal.hidden = true; }, 160);
     lastFocus && lastFocus.focus();
   }
   document.addEventListener("click", e => {
-    if (e.target.closest("[data-open-drawer]")) { e.preventDefault(); openDrawer(); }
-    if (e.target.closest("[data-close-drawer]")) closeDrawer();
+    if (e.target.closest("[data-new-route]")) { e.preventDefault(); openModal(); }
+    if (e.target.closest("[data-close-modal]")) closeModal();
   });
+  // Clicking the empty area around the window closes it, like the scrim
+  modal.addEventListener("mousedown", e => { if (e.target === modal) closeModal(); });
   document.addEventListener("keydown", e => {
     if (e.key !== "Escape") return;
-    if (!drawer.hidden) closeDrawer();
+    if (!modal.hidden) closeModal();
     else if (app.dataset.mobileNav === "open") { setMobileNav(false); toggle.focus(); }
   });
-  // Keep focus inside the open drawer
-  drawer.addEventListener("keydown", e => {
+  // Keep focus inside the open window
+  modal.addEventListener("keydown", e => {
     if (e.key !== "Tab") return;
-    const f = $$('button:not([disabled]), input:not([disabled]), select, summary, [tabindex="0"]', drawer).filter(el => el.offsetParent);
+    const f = $$('button:not([disabled]), input:not([disabled]), select:not([disabled]), summary, [tabindex="0"]', modal)
+      .filter(el => el.offsetParent && el.tabIndex !== -1);
     const first = f[0], last = f[f.length - 1];
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
 
+  // Tabs: click, arrow keys, Home / End. The indicator slides with transform only.
+  const tabs = $$('#route-tabs [role="tab"]');
+  const indicator = $("#route-tabs .tab-indicator");
+  function moveIndicator(tab) {
+    indicator.style.transform = `translateX(${tab.offsetLeft}px) scaleX(${tab.offsetWidth})`;
+  }
+  function selectTab(id, { focus = true, animate = true } = {}) {
+    tabs.forEach(t => {
+      const on = t.id === id;
+      t.setAttribute("aria-selected", String(on)); t.tabIndex = on ? 0 : -1;
+      const panel = $("#" + t.getAttribute("aria-controls"));
+      panel.hidden = !on;
+      if (on && animate && !reducedMotion.matches) { panel.classList.remove("is-entering"); void panel.offsetWidth; panel.classList.add("is-entering"); }
+      if (on) { moveIndicator(t); if (focus) t.focus(); }
+    });
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", () => selectTab(t.id));
+    t.addEventListener("keydown", e => {
+      const n = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+      if (n === undefined) return; e.preventDefault();
+      selectTab(tabs[(n + tabs.length) % tabs.length].id);
+    });
+  });
+  window.addEventListener("resize", () => { if (!modal.hidden) moveIndicator($('#route-tabs [aria-selected="true"]')); });
+
+  // Certificates known to this host. A certificate is offered only when it covers the domain.
+  const CERTS = [
+    { id: "wild", names: ["*.example.com"], source: "Let's Encrypt, DNS challenge", expires: "in 64 days", status: "" },
+    { id: "apex", names: ["example.com", "www.example.com"], source: "Let's Encrypt", expires: "in 6 days", status: "warning" },
+    { id: "lan", names: ["*.home.lan"], source: "Uploaded, internal CA", expires: "on 1 Mar 2027", status: "" },
+  ];
+  const covers = (name, host) => name === host || (name.startsWith("*.") && host.endsWith(name.slice(1)) && host.split(".").length === name.split(".").length);
+  let certChoice = "new";
+
+  function renderCerts() {
+    const host = $("#f-host").value.trim().toLowerCase();
+    const matching = host ? CERTS.filter(c => c.names.some(n => covers(n, host))) : [];
+    if (!matching.some(c => c.id === certChoice)) certChoice = matching[0] ? matching[0].id : "new";
+    const item = (id, title, sub, extra = "") => `
+      <label class="choice">
+        <input type="radio" name="cert" value="${id}" ${certChoice === id ? "checked" : ""}>
+        <span class="grow"><span class="title">${title}</span>${extra}<br><span class="sub">${sub}</span></span>
+      </label>`;
+    $("#cert-list").innerHTML =
+      matching.map(c => item(c.id, `<span class="mono">${c.names.join(", ")}</span>`,
+        `${c.source}, expires ${c.expires}`,
+        c.status === "warning" ? ` <span class="badge is-warning">Expires soon</span>` : ` <span class="badge is-success">Covers this domain</span>`)).join("") +
+      item("new", "Generate a new certificate",
+        host ? `Let's Encrypt issues one for <span class="mono">${host}</span> on the first visit, usually in under a minute.` : "Let's Encrypt issues one for this domain on the first visit.");
+    const others = CERTS.length - matching.length;
+    $("#cert-other").textContent = !host ? "Enter a domain in Common to see the certificates that cover it."
+      : others ? `${others} other certificate${others > 1 ? "s" : ""} on this host ${others > 1 ? "don't" : "doesn't"} cover this domain.` : "";
+  }
+  $("#cert-list").addEventListener("change", e => { certChoice = e.target.value; renderYaml(); });
+
+  function syncTarget() {
+    const type = $('#f-target-type [aria-checked="true"]').dataset.value;
+    $$(".target-host").forEach(el => { el.hidden = el.dataset.target !== type; });
+    const msg = $("#f-target-msg");
+    if (!msg.classList.contains("error")) msg.textContent = msg.dataset["hint" + (type === "ip" ? "Ip" : "Docker")];
+  }
+  $("#f-container").addEventListener("change", e => {
+    // Prefill the port the container exposes, the user can still change it
+    const port = e.target.selectedOptions[0].dataset.port;
+    if (port) $("#f-port").value = port;
+  });
+
+  function syncTls() {
+    const on = $("#f-tls").getAttribute("aria-checked") === "true";
+    $("#cert-fieldset").disabled = !on;
+    $("#f-redirect").disabled = !on;
+  }
+
+  function onFormChange() { syncTarget(); syncTls(); renderCerts(); renderYaml(); }
+
   function renderYaml() {
     const name = $("#f-name").value.trim() || "my-route";
     const host = $("#f-host").value.trim() || "example.com";
-    const path = $("#f-path").value.trim();
-    const eps = $$('input[name="ep"]:checked').map(i => i.value);
-    const p = $('#f-proto [aria-checked="true"]').dataset.value;
+    const type = $('#f-target-type [aria-checked="true"]').dataset.value;
+    const target = (type === "docker" ? $("#f-container").value : $("#f-ip").value.trim()) || (type === "docker" ? "container" : "192.168.1.20");
+    const port = $("#f-port").value.trim() || "80";
     const tls = $("#f-tls").getAttribute("aria-checked") === "true";
-    const svc = $("#f-service").value;
+    const redirect = tls && $("#f-redirect").getAttribute("aria-checked") === "true";
     const k = s => `<span class="k">${s}</span>`, s = v => `<span class="s">${v}</span>`;
-    const rule = p === "http" ? `Host(\`${host}\`)${path && path !== "/" ? ` &amp;&amp; PathPrefix(\`${path}\`)` : ""}` : `HostSNI(\`${host}\`)`;
-    let out = `${k(p)}:\n  ${k("routers")}:\n    ${k(name)}:\n`;
-    if (p !== "udp") out += `      ${k("rule")}: ${s('"' + rule + '"')}\n`;
-    out += `      ${k("entryPoints")}: [${eps.join(", ") || "websecure"}]\n      ${k("service")}: ${svc}\n`;
-    if (tls && p !== "udp") out += `      ${k("tls")}:\n        ${k("certResolver")}: letsencrypt\n`;
+    const cert = CERTS.find(c => c.id === certChoice);
+    let out = `${k("http")}:\n  ${k("routers")}:\n    ${k(name)}:\n`;
+    out += `      ${k("rule")}: ${s(`"Host(\`${host}\`)"`)}\n`;
+    out += `      ${k("entryPoints")}: [${tls ? "websecure" : "web"}]\n      ${k("service")}: ${name}\n`;
+    if (tls) out += cert
+      ? `      ${k("tls")}:\n        ${k("domains")}:\n          - ${k("main")}: ${s('"' + cert.names[0] + '"')}\n`
+      : `      ${k("tls")}:\n        ${k("certResolver")}: letsencrypt\n`;
+    if (redirect) out += `    ${k(name + "-http")}:\n      ${k("rule")}: ${s(`"Host(\`${host}\`)"`)}\n      ${k("entryPoints")}: [web]\n      ${k("middlewares")}: [redirect-to-https]\n      ${k("service")}: ${name}\n`;
+    out += `  ${k("services")}:\n    ${k(name)}:\n      ${k("loadBalancer")}:\n        ${k("servers")}:\n          - ${k("url")}: ${s(`"http://${target}:${port}"`)}\n`;
     $("#yaml-preview").innerHTML = out;
   }
   $("#route-form").addEventListener("input", e => {
-    if (e.target.id === "f-name") validateName(false);
-    renderYaml();
+    const f = FIELDS.find(x => x.el === e.target.id);
+    if (f && $("#" + f.el).getAttribute("aria-invalid") === "true") validateField(f);
+    if (e.target.getAttribute("aria-invalid") === "true" && ["f-ip", "f-port"].includes(e.target.id)) validateAll();
+    updateTabDots();
+    onFormChange();
+  });
+  $("#route-form").addEventListener("change", e => {
+    if (e.target.id === "f-container" && e.target.getAttribute("aria-invalid") === "true") validateAll();
+    onFormChange(); updateTabDots();
   });
 
-  function validateName(show = true) {
-    const input = $("#f-name"), v = input.value.trim();
-    const msg = !v ? "Give the route a name." : !/^[a-z0-9-]+$/.test(v) ? "Use only lowercase letters, numbers and dashes." : "";
-    const hint = $("#f-name-hint");
-    if (msg && show) {
-      input.setAttribute("aria-invalid", "true");
-      hint.className = "error"; hint.innerHTML = `<i data-lucide="circle-alert"></i>${msg}`; icons();
-    } else if (!msg) {
+  // Validation: message under the field, a dot on the tab that has errors
+  const FIELDS = [
+    { el: "f-name", msg: "f-name-msg", tab: "tab-common",
+      check: v => !v ? "Give the route a name." : !/^[a-z0-9-]+$/.test(v) ? "Use only lowercase letters, numbers and dashes." : "" },
+    { el: "f-host", msg: "f-host-msg", tab: "tab-common",
+      check: v => !v ? "Enter the domain visitors will use." : !/^([a-z0-9-]+\.)+[a-z]{2,}$/i.test(v) ? "This doesn't look like a domain, for example app.example.com." : "" },
+    { el: () => $('#f-target-type [aria-checked="true"]').dataset.value === "docker" ? "f-container" : "f-ip", msg: "f-target-msg", tab: "tab-common",
+      check: (v, id) => !v ? (id === "f-container" ? "Choose the container to forward to." : "Enter an IP address or hostname.") : "" },
+    { el: "f-port", msg: "f-target-msg", tab: "tab-common",
+      check: v => !v ? "Enter the port the app listens on." : !(+v >= 1 && +v <= 65535 && /^\d+$/.test(v)) ? "Port must be between 1 and 65535." : "" },
+  ];
+  function setMessage(msgId, inputId, text) {
+    const msg = $("#" + msgId), input = $("#" + inputId);
+    if (text) {
+      input.setAttribute("aria-invalid", "true"); input.setAttribute("aria-describedby", msgId);
+      msg.className = "error"; msg.innerHTML = `<i data-lucide="circle-alert"></i>${text}`; icons();
+    } else {
       input.removeAttribute("aria-invalid");
-      hint.className = "hint"; hint.textContent = "Lowercase letters, numbers and dashes.";
+      msg.className = "hint"; msg.textContent = msg.dataset.hint || "";
+      if (msgId === "f-target-msg") syncTarget();
     }
-    return !msg;
+  }
+  function validateField(f) {
+    const id = typeof f.el === "function" ? f.el() : f.el;
+    const text = f.check($("#" + id).value.trim(), id);
+    setMessage(f.msg, id, text);
+    return text ? id : null;
+  }
+  function updateTabDots() {
+    tabs.forEach(t => { $(".tab-dot", t).hidden = !$("#" + t.getAttribute("aria-controls")).querySelector('[aria-invalid="true"]'); });
+  }
+  function validateAll() {
+    // Target and port share one message line: show the first problem only
+    ["f-container", "f-ip", "f-port"].forEach(id => $("#" + id).removeAttribute("aria-invalid"));
+    $("#f-target-msg").className = "hint"; syncTarget();
+    const bad = [];
+    for (const f of FIELDS) {
+      if (f.msg === "f-target-msg" && bad.some(b => b.msg === "f-target-msg")) continue;
+      const id = validateField(f); if (id) bad.push({ id, tab: f.tab, msg: f.msg });
+    }
+    updateTabDots();
+    return bad;
   }
 
   $("#route-form").addEventListener("submit", e => {
     e.preventDefault();
-    if (!validateName()) { $("#f-name").focus(); return; }
+    const bad = validateAll();
+    if (bad.length) {
+      selectTab(bad[0].tab, { focus: false });
+      $("#" + bad[0].id).focus();
+      return;
+    }
     const btn = $("#f-submit");
     btn.disabled = true; btn.classList.add("is-loading"); btn.setAttribute("aria-busy", "true");
     btn.innerHTML = `<i data-lucide="loader-circle" class="spin"></i><span class="btn-label">Creating</span>`; icons();
     setTimeout(() => {
       btn.disabled = false; btn.classList.remove("is-loading"); btn.removeAttribute("aria-busy");
       btn.innerHTML = `<span class="btn-label">Create route</span>`;
-      const name = $("#f-name").value.trim();
-      closeDrawer(); toast(`Route ${name} created. Traefik picked it up.`);
-      $("#route-form").reset(); $("#f-tls").setAttribute("aria-checked", "true"); setRadio($("#f-proto"), "http");
+      const name = $("#f-name").value.trim(), host = $("#f-host").value.trim();
+      closeModal(); toast(`Route ${name} created. ${host} is live.`);
+      $("#route-form").reset(); certChoice = "new";
+      ["f-tls", "f-redirect"].forEach(id => $("#" + id).setAttribute("aria-checked", "true"));
+      setRadio($("#f-target-type"), "docker"); tabs.forEach(t => { $(".tab-dot", t).hidden = true; });
     }, 900);
   });
 

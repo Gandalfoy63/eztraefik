@@ -428,7 +428,8 @@ a.flow-node:hover { border-color: var(--accent); }
 .switch button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ---------- Table ---------- */
-.table-wrap { overflow-x: auto; }
+.table-wrap { overflow-x: auto; position: relative; }
+.rule-inline { display: none; }
 table { width: 100%; border-collapse: collapse; font-size: var(--text-base); }
 th { text-align: left; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; color: var(--text-subtle); padding: var(--space-3) var(--space-4); white-space: nowrap; border-bottom: 1px solid var(--border); }
 td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border); vertical-align: middle; }
@@ -455,22 +456,68 @@ td.actions { width: 48px; text-align: right; }
 .alert.is-warning { background: var(--warning-soft); border-color: transparent; }
 .alert.is-warning > svg.lucide { color: var(--warning); margin-top: 2px; }
 
-/* ---------- Drawer and dialog ---------- */
+/* ---------- Scrim and window (new route) ---------- */
 .scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 40; opacity: 0; transition: opacity var(--dur-base) linear; }
 .scrim.is-open { opacity: 1; }
-.drawer {
-  position: fixed; top: 0; right: 0; bottom: 0; z-index: 50; width: min(560px, 100vw);
-  background: var(--surface); box-shadow: var(--shadow-overlay);
+.modal-layer { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: var(--space-4); }
+.modal {
+  width: min(620px, 100%); max-height: min(760px, calc(100vh - 32px));
   display: flex; flex-direction: column;
-  transform: translateX(100%); transition: transform 260ms var(--ease-out);
+  background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-overlay);
+  opacity: 0; transform: translateY(8px) scale(0.98);
+  transition: opacity var(--dur-base) linear, transform 240ms var(--ease-out);
 }
-.drawer.is-open { transform: none; }
-.drawer.is-closing { transition-duration: 180ms; transition-timing-function: var(--ease-in-out); }
-.drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-4) 0 var(--space-6); height: 60px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-.drawer-body { flex: 1; overflow-y: auto; padding: var(--space-6); }
-.drawer-foot { display: flex; justify-content: flex-end; gap: var(--space-3); padding: var(--space-4) var(--space-6); border-top: 1px solid var(--border); }
-.form-section + .form-section { margin-top: var(--space-6); padding-top: var(--space-6); border-top: 1px solid var(--border); }
-.form-section > h3 { margin-bottom: var(--space-4); }
+.modal-layer.is-open .modal { opacity: 1; transform: none; }
+.modal-layer.is-closing .modal { transition-duration: 140ms; transition-timing-function: var(--ease-in-out); }
+.modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); padding: var(--space-5) var(--space-4) 0 var(--space-6); }
+.modal-head .hint { margin-top: 2px; }
+.modal-body { flex: 1; overflow-y: auto; padding: var(--space-6); }
+.modal-foot { display: flex; justify-content: flex-end; gap: var(--space-3); padding: var(--space-4) var(--space-6); border-top: 1px solid var(--border); }
+
+/* Tabs with a sliding indicator (transform only) */
+.tabs { position: relative; display: flex; gap: var(--space-1); padding: 0 var(--space-5); margin-top: var(--space-4); border-bottom: 1px solid var(--border); }
+.tab {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  height: 42px; padding: 0 var(--space-3); border: 0; background: transparent; cursor: pointer;
+  color: var(--text-muted); font-weight: 500; font-size: var(--text-base); border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: color var(--dur-fast) linear, background-color var(--dur-fast) linear;
+}
+.tab:hover { color: var(--text); background: var(--surface-hover); }
+.tab[aria-selected="true"] { color: var(--text); }
+.tab:focus-visible { outline-offset: -2px; }
+.tab-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--danger); }
+.tab-indicator {
+  position: absolute; left: 0; bottom: -1px; width: 1px; height: 2px; background: var(--accent);
+  transform-origin: left center; transition: transform 260ms var(--ease-out);
+}
+.tabpanel.is-entering { animation: enter 260ms var(--ease-out) both; }
+
+/* Forwarding to: host + port on one line */
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+fieldset.field > legend { padding: 0; margin-bottom: 6px; }
+fieldset.field > .segmented { margin-bottom: var(--space-2); }
+.segmented button { display: inline-flex; align-items: center; gap: 6px; }
+.target-row { display: flex; align-items: center; gap: var(--space-2); }
+.target-row .field { margin: 0; }
+.target-host { flex: 1; min-width: 0; }
+.target-port { width: 104px; flex-shrink: 0; }
+.target-sep { color: var(--text-subtle); }
+
+/* Certificates tab */
+.setting-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+.setting-row:has(button:disabled) { opacity: 0.55; }
+.cert-fieldset { margin: var(--space-5) 0; padding: var(--space-5) 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.cert-fieldset > legend { float: left; width: 100%; margin-bottom: var(--space-3); }
+.cert-fieldset:disabled { opacity: 0.55; }
+.cert-fieldset:disabled .choice { cursor: not-allowed; }
+.cert-list { clear: both; display: grid; gap: var(--space-2); }
+.cert-list .choice { align-items: flex-start; }
+.cert-list .badge { margin-left: var(--space-2); vertical-align: 1px; }
+#cert-other { margin-top: var(--space-3); }
+#cert-other:empty { display: none; }
+.config-details { margin-top: var(--space-6); }
+.config-details .code-block { margin-top: var(--space-3); }
+
 .code-block {
   font-family: var(--font-mono); font-size: var(--text-sm); line-height: 1.6;
   background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md);
@@ -580,6 +627,10 @@ details.advanced summary:hover { color: var(--text); }
   .toasts { left: var(--space-4); right: var(--space-4); bottom: var(--space-4); }
   .toast { min-width: 0; max-width: none; }
   .breadcrumb li:not(:last-child) { display: none; }
+  .breadcrumb li:last-child::before { display: none; }
+  .col-rule { display: none; }
+  .rule-inline { display: block; margin-top: 2px; }
+  .target-port { width: 88px; }
 }
 
 /* ---------- Reduced motion ---------- */
