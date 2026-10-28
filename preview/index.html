@@ -1,0 +1,483 @@
+<!doctype html>
+<!-- Docs: docs/05 - UI-UX/Preview.md -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>eztraefik style preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Fira+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Apply the saved theme before first paint to avoid a flash.
+    try { const t = localStorage.getItem("ezt-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="app" id="app" data-sidebar="expanded">
+  <aside class="sidebar" id="sidebar" aria-label="Main">
+    <div class="sidebar-head">
+      <svg class="brand-mark" viewBox="0 0 28 28" aria-hidden="true">
+        <rect x="1" y="1" width="26" height="26" rx="7" fill="currentColor"/>
+        <path d="M8 9h4.5c2 0 3 1 3.5 2.5L17 14l1 2.5c.5 1.5 1.5 2.5 3.5 2.5M8 19h4.5c2 0 3-1 3.5-2.5M17 14h4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div class="brand-text">
+        <div class="brand-name">eztraefik</div>
+        <div class="brand-version">0.1.0+1 preview</div>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Main navigation">
+      <div class="nav-group">
+        <ul>
+          <li><a class="nav-item" href="#overview" data-nav="overview" data-tooltip="Overview"><i data-lucide="layout-dashboard"></i><span class="nav-label">Overview</span></a></li>
+        </ul>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label" id="g-routing">Routing</div>
+        <ul aria-labelledby="g-routing">
+          <li><a class="nav-item" href="#routes" data-nav="routes" data-tooltip="Routes"><i data-lucide="route"></i><span class="nav-label">Routes</span></a></li>
+          <li><a class="nav-item" href="#services" data-nav="services" data-tooltip="Services"><i data-lucide="server"></i><span class="nav-label">Services</span><span class="nav-count" aria-label="1 needs attention">1</span></a></li>
+          <li><a class="nav-item" href="#middlewares" data-nav="middlewares" data-tooltip="Middlewares"><i data-lucide="layers"></i><span class="nav-label">Middlewares</span></a></li>
+        </ul>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label" id="g-network">Network</div>
+        <ul aria-labelledby="g-network">
+          <li><a class="nav-item" href="#domains" data-nav="domains" data-tooltip="Domains"><i data-lucide="globe"></i><span class="nav-label">Domains</span></a></li>
+          <li><a class="nav-item" href="#certificates" data-nav="certificates" data-tooltip="Certificates"><i data-lucide="shield-check"></i><span class="nav-label">Certificates</span><span class="nav-count" aria-label="1 needs attention">1</span></a></li>
+          <li><a class="nav-item" href="#entrypoints" data-nav="entrypoints" data-tooltip="Entrypoints"><i data-lucide="door-open"></i><span class="nav-label">Entrypoints</span></a></li>
+        </ul>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label" id="g-sources">Sources</div>
+        <ul aria-labelledby="g-sources">
+          <li><a class="nav-item" href="#docker" data-nav="docker" data-tooltip="Docker"><i data-lucide="container"></i><span class="nav-label">Docker</span></a></li>
+        </ul>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label" id="g-observe">Observe</div>
+        <ul aria-labelledby="g-observe">
+          <li><a class="nav-item" href="#stats" data-nav="stats" data-tooltip="Stats"><i data-lucide="chart-line"></i><span class="nav-label">Stats</span></a></li>
+          <li><a class="nav-item" href="#logs" data-nav="logs" data-tooltip="Logs"><i data-lucide="scroll-text"></i><span class="nav-label">Logs</span></a></li>
+        </ul>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label" id="g-system">System</div>
+        <ul aria-labelledby="g-system">
+          <li><a class="nav-item" href="#traefik" data-nav="traefik" data-tooltip="Traefik"><i data-lucide="box"></i><span class="nav-label">Traefik</span></a></li>
+          <li><a class="nav-item" href="#settings" data-nav="settings" data-tooltip="Settings"><i data-lucide="settings"></i><span class="nav-label">Settings</span></a></li>
+        </ul>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label" id="g-preview">Preview only</div>
+        <ul aria-labelledby="g-preview">
+          <li><a class="nav-item" href="#components" data-nav="components" data-tooltip="Components"><i data-lucide="swatch-book"></i><span class="nav-label">Components</span></a></li>
+          <li><a class="nav-item" href="#onboarding" data-nav="onboarding" data-tooltip="Onboarding"><i data-lucide="flag"></i><span class="nav-label">Onboarding</span></a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sidebar-foot" data-tooltip="Traefik v3.7.16, running">
+      <span class="status-dot" aria-hidden="true"></span>
+      <div class="foot-text"><strong>Traefik v3.7.16</strong>Running for 12 days</div>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <header class="topbar">
+      <button class="icon-btn sidebar-toggle" id="sidebar-toggle" type="button"
+              aria-controls="sidebar" aria-expanded="true" aria-label="Collapse sidebar" data-tooltip="Collapse sidebar" data-tooltip-side="bottom">
+        <svg class="toggle-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect class="ti-panel" x="3" y="4" width="6" height="16" rx="2"/>
+          <rect x="3" y="4" width="18" height="16" rx="2.5"/>
+          <line class="ti-divider" x1="9" y1="4" x2="9" y2="20"/>
+          <path class="ti-chevron" d="M15.5 9.5 13 12l2.5 2.5"/>
+        </svg>
+      </button>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ol id="breadcrumb"><li><span aria-current="page">Overview</span></li></ol>
+      </nav>
+      <div class="topbar-spacer"></div>
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" type="button" aria-label="Switch to light theme">
+        <i data-lucide="sun" class="icon-sm"></i><span class="theme-label">Light</span>
+      </button>
+    </header>
+
+    <main id="main" class="content" tabindex="-1">
+
+      <!-- ===== Overview ===== -->
+      <section class="page" data-page="overview" aria-labelledby="h-overview">
+        <div class="page-header">
+          <div>
+            <h1 id="h-overview">Overview</h1>
+            <p>What Traefik is serving on <span class="mono">homelab-01</span> right now.</p>
+          </div>
+          <button class="btn btn-primary" type="button" data-open-drawer><i data-lucide="plus"></i>New route</button>
+        </div>
+
+        <div class="grid stats">
+          <a class="card stat" href="#routes">
+            <span class="stat-label"><i data-lucide="route" class="icon-sm"></i>Routes</span>
+            <span class="stat-value">24</span>
+            <span class="stat-meta">19 HTTP, 4 TCP, 1 UDP</span>
+          </a>
+          <a class="card stat" href="#services">
+            <span class="stat-label"><i data-lucide="server" class="icon-sm"></i>Services</span>
+            <span class="stat-value">17</span>
+            <span class="stat-meta is-warning">1 has a server down</span>
+          </a>
+          <a class="card stat" href="#certificates">
+            <span class="stat-label"><i data-lucide="shield-check" class="icon-sm"></i>Certificates</span>
+            <span class="stat-value">9</span>
+            <span class="stat-meta is-warning">1 expires in 6 days</span>
+          </a>
+          <a class="card stat" href="#stats">
+            <span class="stat-label"><i data-lucide="activity" class="icon-sm"></i>Requests</span>
+            <span class="stat-value">42.1<small>/s</small></span>
+            <svg class="sparkline" viewBox="0 0 200 32" preserveAspectRatio="none" role="img" aria-label="Requests per second over the last hour, steady with a peak 20 minutes ago">
+              <path d="M0 24 L14 22 L28 23 L42 19 L56 20 L70 16 L84 18 L98 11 L112 6 L126 12 L140 15 L154 14 L168 17 L182 13 L200 15"/>
+            </svg>
+          </a>
+        </div>
+
+        <div class="grid two-col">
+          <div class="card">
+            <div class="card-head"><h2>Needs attention</h2><span class="badge is-warning">3 issues</span></div>
+            <ul class="list">
+              <li class="list-row">
+                <span class="sev is-warning"><i data-lucide="shield-alert" class="icon-sm"></i></span>
+                <div class="grow"><div class="title">Certificate expires in 6 days</div><div class="sub mono">media.example.com</div></div>
+                <button class="btn btn-secondary btn-sm" type="button" data-toast="Renewal started for media.example.com">Renew</button>
+              </li>
+              <li class="list-row">
+                <span class="sev is-danger"><i data-lucide="server-off" class="icon-sm"></i></span>
+                <div class="grow"><div class="title">1 of 2 servers down</div><div class="sub">Service <span class="mono">nextcloud</span>, since 14:02</div></div>
+                <a class="btn btn-secondary btn-sm" href="#services">View</a>
+              </li>
+              <li class="list-row">
+                <span class="sev is-danger"><i data-lucide="circle-alert" class="icon-sm"></i></span>
+                <div class="grow"><div class="title">Middleware not found</div><div class="sub">Route <span class="mono">legacy-api</span> uses <span class="mono">auth-old</span></div></div>
+                <a class="btn btn-secondary btn-sm" href="#routes">Fix</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>Recent changes</h2><a class="btn btn-ghost btn-sm" href="#settings">History</a></div>
+            <ul class="list">
+              <li class="list-row"><span class="change-time">14:20</span><div class="grow"><div class="title">Route <span class="mono">grafana</span> created</div><div class="sub">by admin</div></div></li>
+              <li class="list-row"><span class="change-time">11:05</span><div class="grow"><div class="title">Port 5432/tcp added</div><div class="sub">Traefik restarted</div></div></li>
+              <li class="list-row"><span class="change-time">Yesterday</span><div class="grow"><div class="title">Basic auth on <span class="mono">admin-panel</span></div><div class="sub">by admin</div></div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Traffic path for <span class="mono">cloud.example.com</span></h2>
+            <a class="btn btn-ghost btn-sm" href="#routes">All routes<i data-lucide="arrow-right" class="icon-sm"></i></a>
+          </div>
+          <div class="flow" role="list" aria-label="Traffic path">
+            <a class="flow-node" role="listitem" href="#entrypoints"><span class="flow-kind">Entrypoint</span><span class="flow-name">websecure</span><span class="flow-detail">:443 TCP</span></a>
+            <span class="flow-arrow" aria-hidden="true"><i data-lucide="chevron-right" class="icon-sm"></i></span>
+            <a class="flow-node" role="listitem" href="#routes"><span class="flow-kind">Route</span><span class="flow-name">cloud</span><span class="flow-detail">Host(`cloud.example.com`)</span></a>
+            <span class="flow-arrow" aria-hidden="true"><i data-lucide="chevron-right" class="icon-sm"></i></span>
+            <a class="flow-node" role="listitem" href="#middlewares"><span class="flow-kind">Middlewares</span><span class="flow-name">2 applied</span><span class="flow-detail">secure-headers, rate-limit</span></a>
+            <span class="flow-arrow" aria-hidden="true"><i data-lucide="chevron-right" class="icon-sm"></i></span>
+            <a class="flow-node" role="listitem" href="#services"><span class="flow-kind">Service</span><span class="flow-name">nextcloud <span class="badge is-warning">1 down</span></span><span class="flow-detail">2 servers, round robin</span></a>
+            <span class="flow-arrow" aria-hidden="true"><i data-lucide="chevron-right" class="icon-sm"></i></span>
+            <a class="flow-node" role="listitem" href="#docker"><span class="flow-kind">Container</span><span class="flow-name">nextcloud-app</span><span class="flow-detail">172.20.0.5:80</span></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Routes ===== -->
+      <section class="page" data-page="routes" aria-labelledby="h-routes" hidden>
+        <div class="page-header">
+          <div>
+            <h1 id="h-routes">Routes</h1>
+            <p>Rules that send incoming traffic to a service.</p>
+          </div>
+          <button class="btn btn-primary" type="button" data-open-drawer><i data-lucide="plus"></i>New route</button>
+        </div>
+
+        <div class="card">
+          <div class="toolbar">
+            <div class="search">
+              <label class="sr-only" for="route-search">Search routes</label>
+              <i data-lucide="search"></i>
+              <input class="input" id="route-search" type="search" placeholder="Search by name, host or service">
+            </div>
+            <div class="segmented" role="radiogroup" aria-label="Protocol" id="proto-filter">
+              <button type="button" role="radio" aria-checked="true" data-proto="all">All</button>
+              <button type="button" role="radio" aria-checked="false" data-proto="http">HTTP</button>
+              <button type="button" role="radio" aria-checked="false" data-proto="tcp">TCP</button>
+              <button type="button" role="radio" aria-checked="false" data-proto="udp">UDP</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Rule</th>
+                  <th scope="col" class="col-optional">Entrypoints</th>
+                  <th scope="col" class="col-optional">Service</th>
+                  <th scope="col">Status</th>
+                  <th scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="routes-body"></tbody>
+            </table>
+          </div>
+          <div class="empty" id="routes-empty" hidden>
+            <div class="empty-icon"><i data-lucide="search-x"></i></div>
+            <h2>No routes match</h2>
+            <p>Try another name or host, or clear the protocol filter.</p>
+            <button class="btn btn-secondary" type="button" id="clear-filters">Clear filters</button>
+          </div>
+          <div class="table-foot"><span id="routes-count">8 routes</span><span>Updated 4 s ago</span></div>
+        </div>
+      </section>
+
+      <!-- ===== Components (preview only) ===== -->
+      <section class="page" data-page="components" aria-labelledby="h-components" hidden>
+        <div class="page-header">
+          <div>
+            <h1 id="h-components">Components</h1>
+            <p>The building blocks and their states. Only part of the preview.</p>
+          </div>
+        </div>
+
+        <div class="grid" style="gap: var(--space-4)">
+          <div class="card"><div class="card-head"><h2>Color</h2><span class="hint">Switch theme in the top bar to compare</span></div>
+            <div class="card-body swatches" id="swatches"></div>
+          </div>
+
+          <div class="card"><div class="card-head"><h2>Type</h2></div>
+            <div class="card-body">
+              <div class="type-sample"><span>28 / 600</span><span style="width:auto;font-family:var(--font-sans);font-size:28px;color:var(--text);font-weight:600">42.1 req/s</span></div>
+              <div class="type-sample"><span>22 / 600</span><span style="width:auto;font-family:var(--font-sans);font-size:22px;color:var(--text);font-weight:600">Page title</span></div>
+              <div class="type-sample"><span>16 / 600</span><span style="width:auto;font-family:var(--font-sans);font-size:16px;color:var(--text);font-weight:600">Section heading</span></div>
+              <div class="type-sample"><span>15 / 400</span><span style="width:auto;font-family:var(--font-sans);font-size:15px;color:var(--text)">Body text for forms, tables and descriptions.</span></div>
+              <div class="type-sample"><span>13 / 400</span><span style="width:auto;font-family:var(--font-sans);font-size:13px;color:var(--text-muted)">Hints, metadata and captions</span></div>
+              <div class="type-sample"><span>13 mono</span><span style="width:auto;font-family:var(--font-mono);font-size:13px;color:var(--text-muted)">Host(`cloud.example.com`) &amp;&amp; PathPrefix(`/api`)</span></div>
+            </div>
+          </div>
+
+          <div class="card"><div class="card-head"><h2>Buttons</h2></div>
+            <div class="card-body">
+              <div class="spec-row"><span class="spec-label">Primary</span>
+                <button class="btn btn-primary" type="button">Default</button>
+                <button class="btn btn-primary is-hover" type="button">Hover</button>
+                <button class="btn btn-primary is-focus" type="button">Focus</button>
+                <button class="btn btn-primary" type="button" disabled>Disabled</button>
+                <button class="btn btn-primary is-loading" type="button" aria-busy="true"><i data-lucide="loader-circle" class="spin"></i><span class="btn-label">Saving</span></button>
+              </div>
+              <div class="spec-row"><span class="spec-label">Secondary, ghost, danger</span>
+                <button class="btn btn-secondary" type="button">Secondary</button>
+                <button class="btn btn-secondary" type="button" disabled>Disabled</button>
+                <button class="btn btn-ghost" type="button">Ghost</button>
+                <button class="btn btn-danger" type="button"><i data-lucide="trash-2"></i>Delete route</button>
+                <button class="icon-btn" type="button" aria-label="Copy rule" data-tooltip="Copy rule" data-tooltip-side="bottom"><i data-lucide="copy"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card"><div class="card-head"><h2>Inputs</h2></div>
+            <div class="card-body" style="max-width: 520px">
+              <div class="field">
+                <label class="label" for="c-host">Domain</label>
+                <input class="input mono" id="c-host" value="cloud.example.com">
+                <span class="hint">The host this route answers on.</span>
+              </div>
+              <div class="field">
+                <label class="label" for="c-port">Port</label>
+                <input class="input mono" id="c-port" value="99999" aria-invalid="true" aria-describedby="c-port-err">
+                <span class="error" id="c-port-err"><i data-lucide="circle-alert"></i>Port must be between 1 and 65535.</span>
+              </div>
+              <div class="field">
+                <label class="label" for="c-disabled">Entrypoint <span class="optional">(set by Traefik)</span></label>
+                <input class="input" id="c-disabled" value="websecure" disabled>
+              </div>
+              <div class="field">
+                <span class="label" id="c-switch-l">Redirect HTTP to HTTPS</span>
+                <span class="switch"><button type="button" role="switch" aria-checked="true" aria-labelledby="c-switch-l" data-switch></button></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card"><div class="card-head"><h2>Status and feedback</h2></div>
+            <div class="card-body">
+              <div class="spec-row"><span class="spec-label">Badges</span>
+                <span class="badge is-success">Healthy</span>
+                <span class="badge is-warning">Expires soon</span>
+                <span class="badge is-danger">Error</span>
+                <span class="badge">Disabled</span>
+                <span class="badge is-accent no-dot proto">HTTP</span>
+              </div>
+              <div class="spec-row"><span class="spec-label">Alert</span>
+                <div class="alert is-danger" role="alert" style="width:100%">
+                  <i data-lucide="circle-alert"></i>
+                  <div><strong>Traefik rejected the config.</strong> <span class="muted">Router <span class="mono">legacy-api</span> references a middleware that does not exist. Nothing was applied.</span></div>
+                </div>
+              </div>
+              <div class="spec-row"><span class="spec-label">Loading</span>
+                <div style="width:100%;display:grid;gap:10px;max-width:420px">
+                  <div class="skeleton" style="width:60%"></div><div class="skeleton"></div><div class="skeleton" style="width:80%"></div>
+                </div>
+              </div>
+              <div class="spec-row"><span class="spec-label">Toast</span>
+                <button class="btn btn-secondary" type="button" data-toast="Route grafana saved">Show a toast</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card"><div class="card-head"><h2>Empty state</h2></div>
+            <div class="empty">
+              <div class="empty-icon"><i data-lucide="layers"></i></div>
+              <h2>No middlewares yet</h2>
+              <p>Middlewares change requests before they reach a service, for example to add auth or redirect to HTTPS.</p>
+              <button class="btn btn-primary" type="button"><i data-lucide="plus"></i>New middleware</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Placeholder for pages not in the preview ===== -->
+      <section class="page" data-page="placeholder" aria-labelledby="h-placeholder" hidden>
+        <div class="page-header">
+          <div>
+            <h1 id="h-placeholder">Page</h1>
+            <p id="placeholder-desc"></p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="empty">
+            <div class="empty-icon"><i data-lucide="hammer"></i></div>
+            <h2>Not in the style preview</h2>
+            <p>This page is planned. The preview only shows Overview, Routes, Components and Onboarding.</p>
+            <a class="btn btn-secondary" href="#routes">Go to Routes</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- ===== New route drawer ===== -->
+<div class="scrim" id="drawer-scrim" hidden></div>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
+  <div class="drawer-head">
+    <h2 id="drawer-title">New route</h2>
+    <button class="icon-btn" type="button" data-close-drawer aria-label="Close" data-tooltip="Close (Esc)" data-tooltip-side="bottom"><i data-lucide="x"></i></button>
+  </div>
+  <form class="drawer-body" id="route-form" novalidate>
+    <div class="form-section">
+      <h3>Basics</h3>
+      <div class="field">
+        <label class="label" for="f-name">Name</label>
+        <input class="input mono" id="f-name" name="name" placeholder="grafana" autocomplete="off" aria-describedby="f-name-hint">
+        <span class="hint" id="f-name-hint">Lowercase letters, numbers and dashes.</span>
+      </div>
+      <div class="field">
+        <span class="label" id="f-proto-l">Protocol</span>
+        <div class="segmented" role="radiogroup" aria-labelledby="f-proto-l" id="f-proto">
+          <button type="button" role="radio" aria-checked="true" data-value="http">HTTP</button>
+          <button type="button" role="radio" aria-checked="false" data-value="tcp">TCP</button>
+          <button type="button" role="radio" aria-checked="false" data-value="udp">UDP</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Match</h3>
+      <div class="field-row">
+        <div class="field">
+          <label class="label" for="f-host">Domain</label>
+          <input class="input mono" id="f-host" name="host" placeholder="grafana.example.com" autocomplete="off">
+        </div>
+        <div class="field" style="margin-top:0">
+          <label class="label" for="f-path">Path prefix <span class="optional">(optional)</span></label>
+          <input class="input mono" id="f-path" name="path" placeholder="/" autocomplete="off">
+        </div>
+      </div>
+      <div class="field">
+        <span class="label" id="f-ep-l">Entrypoints</span>
+        <div class="check-list" role="group" aria-labelledby="f-ep-l">
+          <label class="check"><input type="checkbox" name="ep" value="websecure" checked>websecure <span class="mono">:443</span></label>
+          <label class="check"><input type="checkbox" name="ep" value="web">web <span class="mono">:80</span></label>
+          <label class="check"><input type="checkbox" name="ep" value="admin">admin <span class="mono">:8443</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Destination and security</h3>
+      <div class="field">
+        <label class="label" for="f-service">Service</label>
+        <select class="select" id="f-service" name="service">
+          <option value="grafana">grafana (container grafana:3000)</option>
+          <option value="nextcloud">nextcloud (2 servers)</option>
+          <option value="external-api">external-api (https://api.example.net)</option>
+        </select>
+      </div>
+      <div class="field">
+        <span class="label" id="f-tls-l">HTTPS</span>
+        <span class="switch"><button type="button" role="switch" aria-checked="true" aria-labelledby="f-tls-l" id="f-tls" data-switch></button><span class="hint">Certificate from <span class="mono">letsencrypt</span></span></span>
+      </div>
+      <div class="field">
+        <details class="advanced">
+          <summary><i data-lucide="chevron-right"></i>Advanced: priority, middlewares, TLS options</summary>
+          <p class="hint" style="margin-top: var(--space-3)">Not in the preview.</p>
+        </details>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Generated config</h3>
+      <pre class="code-block" id="yaml-preview" aria-live="polite"></pre>
+    </div>
+  </form>
+  <div class="drawer-foot">
+    <button class="btn btn-secondary" type="button" data-close-drawer>Cancel</button>
+    <button class="btn btn-primary" type="submit" form="route-form" id="f-submit"><span class="btn-label">Create route</span></button>
+  </div>
+</div>
+
+<!-- ===== Onboarding ===== -->
+<div class="onboarding" id="onboarding" role="dialog" aria-modal="true" aria-labelledby="ob-title" hidden>
+  <div class="ob-shell">
+    <div class="ob-top">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 28 28" aria-hidden="true"><rect x="1" y="1" width="26" height="26" rx="7" fill="currentColor"/><path d="M8 9h4.5c2 0 3 1 3.5 2.5L17 14l1 2.5c.5 1.5 1.5 2.5 3.5 2.5M8 19h4.5c2 0 3-1 3.5-2.5M17 14h4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="brand-name">eztraefik setup</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" type="button" id="ob-exit">Skip setup</button>
+    </div>
+    <ol class="steps" id="ob-steps" aria-label="Setup steps">
+      <li>Welcome</li><li>Docker</li><li>Traefik</li><li>Ports</li><li>Domain</li><li>Certificates</li><li>Account</li><li>Review</li>
+    </ol>
+    <div class="ob-panel">
+      <div class="ob-step" id="ob-step"></div>
+      <div class="ob-actions">
+        <button class="btn btn-secondary" type="button" id="ob-back"><i data-lucide="arrow-left"></i>Back</button>
+        <div class="spacer"></div>
+        <button class="btn btn-ghost" type="button" id="ob-skip">Skip this step</button>
+        <button class="btn btn-primary" type="button" id="ob-next"><span class="btn-label">Continue</span><i data-lucide="arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+<div class="tooltip" id="tooltip" role="tooltip" aria-hidden="true"></div>
+
+<script src="vendor/lucide.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
