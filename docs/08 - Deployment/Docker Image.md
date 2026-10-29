@@ -1,8 +1,8 @@
 ---
 title: Docker Image
 tags: [deployment, docker]
-version: 1.1.2+7
-related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[05 - UI-UX/Logo|Logo]]"]
+version: 1.2.2+10
+related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[05 - UI-UX/Logo|Logo]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]"]
 ---
 
 # Docker Image
@@ -17,15 +17,18 @@ Built from [Dockerfile](../../Dockerfile) in three stages ([[00 - Downloaded Doc
 
 | Tag | Image version | Pushed |
 |---|---|---|
-| `1.1.1`, `1.1`, `latest` | 1.1.1+6 | 2026-10-29, digest `sha256:9c1e90fcf799e2ed291649829215286dbf50e674e4c805bad4261f2e1cc72363` |
+| `1.2.1`, `1.2`, `latest` | 1.2.1+9 (new logo) | 2026-10-29 |
+| `1.1.1`, `1.1` | 1.1.1+6 | 2026-10-29, digest `sha256:9c1e90fcf799e2ed291649829215286dbf50e674e4c805bad4261f2e1cc72363` |
 
 ```bash
-docker pull gandasdevstudio/eztraefik:1.1.1
+docker pull gandasdevstudio/eztraefik:1.2.1
 ```
 
 Checked after the push: both platforms in the manifest list, repository public, a fresh pull starts and reports 1.1.1+6.
 
 To publish a new version: bump `VERSION`, commit, then `tools/publish.sh docker.io/gandasdevstudio/eztraefik` (needs `docker login`).
+
+The page text and logo: [[08 - Deployment/Docker Hub Page|Docker Hub Page]].
 
 ## Release 1.0.0
 - Local image: `eztraefik:1.0.0` (19.4 MB, amd64), label `org.opencontainers.image.version=1.0.0+4`.
@@ -53,3 +56,4 @@ tools/publish.sh ghcr.io/<you>/eztraefik        # multi-arch (amd64, arm64) buil
 - [[99 - Changelog/1.0.0+4|1.0.0+4]]
 - [[99 - Changelog/1.1.2+7|1.1.2+7]]
 - [[05 - UI-UX/Logo|Logo]]
+- [[99 - Changelog/1.2.2+10|1.2.2+10]]

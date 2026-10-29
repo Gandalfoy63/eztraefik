@@ -2,7 +2,7 @@
 title: Logo
 tags: [ui-ux, brand]
 version: 1.2.1+9
-related: ["[[05 - UI-UX/Style|Style]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[04 - Architecture/Code Map|Code Map]]", "[[00 - Downloaded Docs/fontTools/README|fontTools docs]]", "[[00 - Downloaded Docs/Google Fonts/README|Google Fonts docs]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]", "[[Home]]", "[[99 - Changelog/1.2.1+9|1.2.1+9]]"]
+related: ["[[05 - UI-UX/Style|Style]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[04 - Architecture/Code Map|Code Map]]", "[[00 - Downloaded Docs/fontTools/README|fontTools docs]]", "[[00 - Downloaded Docs/Google Fonts/README|Google Fonts docs]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]", "[[Home]]", "[[99 - Changelog/1.2.1+9|1.2.1+9]]", "[[08 - Deployment/Docker Hub Page|Docker Hub Page]]"]
 ---
 
 # Logo
@@ -43,3 +43,4 @@ Route Blue `#2D68CF` (the app accent), Deep Blue `#163A7A` (start), Signal Orang
 `marketing/logo/build/build.sh` regenerates everything in about a minute (Chromium and fontTools in containers, ffmpeg on the host): [keyframes](../../marketing/logo/build/make_svgs.py#L57-L75) builds the shared animation clock, [mark](../../marketing/logo/build/make_svgs.py#L90-L101) the mark, [write_ico](../../marketing/logo/build/make_web.py#L15-L27) the favicon.
 - [[Home]]
 - [[99 - Changelog/1.2.1+9|1.2.1+9]]
+- [[08 - Deployment/Docker Hub Page|Docker Hub Page]]
