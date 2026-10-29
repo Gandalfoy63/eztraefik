@@ -10,7 +10,7 @@ related: ["[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/
 On a host with Docker:
 
 ```bash
-docker compose -f deploy/compose.yml up -d     # or EZT_IMAGE=ghcr.io/<you>/eztraefik:1.0.0
+docker compose -f deploy/compose.yml up -d     # or EZT_IMAGE=ghcr.io/<you>/eztraefik:1.1.0
 ```
 
 Open `http://<server-ip>:8080` and follow the setup ([[03 - Features/Onboarding|Onboarding]]). Compose file: [deploy/compose.yml](../../deploy/compose.yml).

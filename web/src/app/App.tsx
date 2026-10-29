@@ -21,10 +21,11 @@ import { Logs } from "../pages/Logs";
 import { TraefikPage } from "../pages/Traefik";
 import { SettingsPage } from "../pages/Settings";
 import { NotFound } from "../pages/NotFound";
+import { ImportNPM } from "../pages/ImportNPM";
 
 const PAGES: Record<string, (p: { params: URLSearchParams }) => JSX.Element> = {
   overview: Overview, routes: Routes, services: Services, middlewares: Middlewares, domains: Domains, certificates: Certificates,
-  entrypoints: Entrypoints, docker: Docker, stats: Stats, logs: Logs, traefik: TraefikPage, settings: SettingsPage,
+  entrypoints: Entrypoints, docker: Docker, stats: Stats, logs: Logs, traefik: TraefikPage, settings: SettingsPage, import: ImportNPM,
 };
 
 export function App() {

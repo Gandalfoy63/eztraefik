@@ -18,7 +18,7 @@ Status: implemented in 0.2.0+3.
 - To serve eztraefik itself over HTTPS: create a route to the container `eztraefik` port 8080, then stop publishing 8080 ([[08 - Deployment/Install|Install]]).
 
 ## Code
-- [Sessions](../../server/internal/auth/auth.go#L55-L63), guard [guard](../../server/internal/api/api.go#L118-L134), [login](../../server/internal/api/api.go#L261-L280)
+- [Sessions](../../server/internal/auth/auth.go#L55-L63), guard [guard](../../server/internal/api/api.go#L126-L142), [login](../../server/internal/api/api.go#L269-L288)
 - [Login](../../web/src/pages/Login.tsx#L8-L53)
 
 ## Related

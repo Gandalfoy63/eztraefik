@@ -1,15 +1,15 @@
 ---
 title: Navigation
 tags: [ui-ux, navigation]
-version: 0.2.0+3
+version: 1.1.0+5
 related: ["[[05 - UI-UX/Style|Style]]", "[[05 - UI-UX/Components|Components]]", "[[04 - Architecture/Frontend|Frontend]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]"]
 ---
 
 # Navigation
 
-Implemented in [Shell](../../web/src/app/Shell.tsx#L98-L236), menu in [NAV](../../web/src/app/Shell.tsx#L17-L50).
+Implemented in [Shell](../../web/src/app/Shell.tsx#L99-L237), menu in [NAV](../../web/src/app/Shell.tsx#L17-L51).
 
-- Fixed sidebar, grouped and labeled: Overview; Routing (Routes, Services, Middlewares); Network (Domains, Certificates, Entrypoints); Sources (Docker); Observe (Stats, Logs); System (Traefik, Settings).
+- Fixed sidebar, grouped and labeled: Overview; Routing (Routes, Services, Middlewares); Network (Domains, Certificates, Entrypoints); Sources (Docker); Observe (Stats, Logs); System (Traefik, Import from NPM, Settings).
 - Current page: tinted item with a 3px accent bar, `aria-current="page"`, breadcrumb (group / page) in the top bar, page title in the tab.
 - Counts on Routes, Services, Middlewares, Certificates and Traefik when something needs attention (red when an error).
 - Footer: Traefik version and state, links to the Traefik page.

@@ -8,6 +8,7 @@ A self-hosted web app to run and manage [Traefik](https://traefik.io/traefik/): 
 - Domains, Let's Encrypt resolvers (HTTP, TLS, DNS challenge), uploaded certificates
 - Traefik settings and environment variables, applied with automatic fallback
 - Relations, stats, access and Traefik logs, history with restore
+- Import from Nginx Proxy Manager, then switch its ports to Traefik (and back) in one click
 
 ## Run
 

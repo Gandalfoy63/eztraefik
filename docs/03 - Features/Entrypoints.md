@@ -2,7 +2,7 @@
 title: Entrypoints
 tags: [feature, network]
 version: 0.2.0+3
-related: ["[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[04 - Architecture/Code Map|Code Map]]"]
+related: ["[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[03 - Features/Import from NPM|Import from NPM]]"]
 ---
 
 # Entrypoints
@@ -30,3 +30,4 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/entryp
 - [[99 - Changelog/0.2.0+3|0.2.0+3]]
 - [[06 - API/API Overview|API Overview]]
 - [[04 - Architecture/Code Map|Code Map]]
+- [[03 - Features/Import from NPM|Import from NPM]]

@@ -16,6 +16,20 @@ type State struct {
 	Certificates []UploadedCert `json:"certificates"`
 	// Applied is the Traefik config the running container was created with. A difference means a restart is pending.
 	Applied *TraefikConfig `json:"applied,omitempty"`
+	// Migration records an import from Nginx Proxy Manager and the switch-over of its ports.
+	Migration *Migration `json:"migration,omitempty"`
+}
+
+type Migration struct {
+	Source       string    `json:"source"`       // NPM URL
+	NPMContainer string    `json:"npmContainer"` // set when NPM runs on this Docker host
+	ImportedAt   time.Time `json:"importedAt"`
+	Imported     int       `json:"imported"`
+	// StreamPorts are entrypoints created for NPM streams: published only at switch-over (NPM holds the ports before).
+	StreamPorts map[string]int `json:"streamPorts"`
+	SwitchedAt  *time.Time     `json:"switchedAt,omitempty"`
+	// PreviousPorts are the host ports of Traefik entrypoints before the switch, to switch back.
+	PreviousPorts map[string]int `json:"previousPorts,omitempty"`
 }
 
 type Admin struct {

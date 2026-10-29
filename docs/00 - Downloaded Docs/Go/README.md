@@ -1,7 +1,7 @@
 ---
 title: Go standard library documentation (downloaded)
 tags: [downloaded-docs, backend]
-version: 0.2.0+3
+version: 1.1.0+5
 related: ["[[02 - Tech/Stack|Stack]]", "[[Home]]"]
 ---
 
@@ -17,6 +17,8 @@ related: ["[[02 - Tech/Stack|Stack]]", "[[Home]]"]
 Used for: The backend only uses the standard library, no third-party modules.
 
 ## Pages
+- [[archive-tar]]
+- [[archive-zip]]
 - [[context]]
 - [[crypto-pbkdf2]]
 - [[crypto-rand]]

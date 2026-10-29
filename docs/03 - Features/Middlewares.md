@@ -2,7 +2,7 @@
 title: Middlewares
 tags: [feature, routing]
 version: 0.2.0+3
-related: ["[[03 - Features/Routes|Routes]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]"]
+related: ["[[03 - Features/Routes|Routes]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[03 - Features/Import from NPM|Import from NPM]]"]
 ---
 
 # Middlewares
@@ -31,3 +31,4 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/m
 - [[06 - API/API Overview|API Overview]]
 - [[04 - Architecture/Code Map|Code Map]]
 - [[04 - Architecture/Dynamic Config|Dynamic Config]]
+- [[03 - Features/Import from NPM|Import from NPM]]

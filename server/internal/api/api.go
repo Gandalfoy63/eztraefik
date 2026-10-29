@@ -110,6 +110,14 @@ func (a *App) Handler() http.Handler {
 	priv("GET /api/v1/export", a.export)
 	priv("POST /api/v1/import", a.importState)
 	priv("PUT /api/v1/account/password", a.changePassword)
+
+	priv("GET /api/v1/migrate/npm", a.npmStatus)
+	priv("POST /api/v1/migrate/npm/connect", a.npmConnect)
+	priv("POST /api/v1/migrate/npm/plan", a.npmReplan)
+	priv("DELETE /api/v1/migrate/npm/session", a.npmForget)
+	priv("POST /api/v1/migrate/npm/import", a.npmImport)
+	priv("POST /api/v1/migrate/npm/switch", a.npmSwitch)
+	priv("POST /api/v1/migrate/npm/switch-back", a.npmSwitchBack)
 	return mux
 }
 
@@ -312,6 +320,11 @@ func (a *App) changePassword(w http.ResponseWriter, r *http.Request) {
 	a.Sessions.DestroyAll()
 	a.Sessions.Create(w, userOf(r))
 	ok(w, map[string]any{})
+}
+
+func hostname() string {
+	h, _ := os.Hostname()
+	return h
 }
 
 // EnsureSelfOnNetwork connects eztraefik's own container to the Traefik network so it can reach the API.

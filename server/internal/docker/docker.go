@@ -196,11 +196,26 @@ type ContainerJSON struct {
 		Source      string `json:"Source"`
 		Destination string `json:"Destination"`
 	} `json:"Mounts"`
+	HostConfig struct {
+		PortBindings map[string][]PortBinding `json:"PortBindings"`
+	} `json:"HostConfig"`
 	NetworkSettings struct {
 		Networks map[string]struct {
 			IPAddress string `json:"IPAddress"`
+			Gateway   string `json:"Gateway"`
 		} `json:"Networks"`
 	} `json:"NetworkSettings"`
+}
+
+// HostPort returns the host port published for a container port like "80/tcp", or 0.
+func (c ContainerJSON) HostPort(containerPort string) int {
+	for _, b := range c.HostConfig.PortBindings[containerPort] {
+		var n int
+		if _, err := fmt.Sscan(b.HostPort, &n); err == nil && n > 0 {
+			return n
+		}
+	}
+	return 0
 }
 
 func (c *Client) Inspect(ctx context.Context, id string) (ContainerJSON, error) {
@@ -336,6 +351,16 @@ type LogLine struct {
 	Stream string `json:"stream"`
 	Time   string `json:"time"`
 	Text   string `json:"text"`
+}
+
+// ArchiveRead returns a tar archive of a path inside a container (GET /containers/{id}/archive).
+func (c *Client) ArchiveRead(ctx context.Context, id, path string) ([]byte, error) {
+	resp, err := c.raw(ctx, "GET", "/containers/"+url.PathEscape(id)+"/archive", url.Values{"path": {path}}, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	return io.ReadAll(io.LimitReader(resp.Body, 32<<20))
 }
 
 // ---- Images ----

@@ -168,6 +168,26 @@ td.actions .switch { vertical-align: middle; }
 /* Tabs used inside cards (Settings) */
 .card > .tabs { margin-top: 0; padding-top: var(--space-1); }
 
+/* ---------- Import from NPM ---------- */
+.step-num { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: var(--space-2); border-radius: 50%; background: var(--accent-soft); color: var(--accent-text); font-size: var(--text-xs); font-weight: 600; vertical-align: 1px; }
+.narrow-form.wide { max-width: 640px; }
+.spaced-bottom { margin-bottom: var(--space-4); }
+.import-table td { vertical-align: top; }
+.import-table .mono, .import-table .mono-sm { overflow-wrap: anywhere; }
+.import-table td:nth-child(3) { min-width: 220px; }
+.check-col { width: 44px; }
+.check-col input { width: 16px; height: 16px; accent-color: var(--accent); margin-top: 3px; }
+tr.is-skipped td { color: var(--text-muted); }
+.note-list { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: grid; gap: 4px; }
+.note-list li { display: flex; gap: 6px; align-items: flex-start; font-size: var(--text-sm); color: var(--text-muted); }
+.note-list svg.lucide { color: var(--warning); margin-top: 2px; }
+.pw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-3); margin-top: var(--space-3); }
+.pw-grid .field + .field { margin-top: 0; }
+.import-foot { gap: var(--space-4); flex-wrap: wrap; }
+.switch-state { display: grid; gap: var(--space-4); justify-items: start; margin-top: var(--space-4); }
+.alert.is-success-soft { background: var(--success-soft); border-color: transparent; }
+.alert.is-success-soft > svg.lucide { color: var(--success); margin-top: 2px; }
+
 @media (max-width: 1100px) {
   .chart-grid { grid-template-columns: minmax(0, 1fr); }
 }

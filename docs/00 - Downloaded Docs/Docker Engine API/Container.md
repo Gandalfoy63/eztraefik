@@ -166,3 +166,65 @@ Responses:
 - `404` no such container (schema `ErrorResponse`)
 - `500` server error (schema `ErrorResponse`)
 
+## HEAD /containers/{id}/archive
+
+Get information about files in a container
+
+A response header `X-Docker-Container-Path-Stat` is returned, containing
+a base64 - encoded JSON object with some filesystem header information
+about the path.
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| id | path | string | yes | ID or name of the container |
+| path | query | string | yes | Resource in the container’s filesystem to archive. |
+
+Responses:
+
+- `200` no error
+- `400` Bad parameter (schema `ErrorResponse`)
+- `404` Container or path does not exist (schema `ErrorResponse`)
+- `500` Server error (schema `ErrorResponse`)
+
+## GET /containers/{id}/archive
+
+Get an archive of a filesystem resource in a container
+
+Get a tar archive of a resource in the filesystem of container id.
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| id | path | string | yes | ID or name of the container |
+| path | query | string | yes | Resource in the container’s filesystem to archive. |
+
+Responses:
+
+- `200` no error
+- `400` Bad parameter (schema `ErrorResponse`)
+- `404` Container or path does not exist (schema `ErrorResponse`)
+- `500` server error (schema `ErrorResponse`)
+
+## PUT /containers/{id}/archive
+
+Extract an archive of files or folders to a directory in a container
+
+Upload a tar archive to be extracted to a path in the filesystem of container id.
+`path` parameter is asserted to be a directory. If it exists as a file, 400 error
+will be returned with message "not a directory".
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| id | path | string | yes | ID or name of the container |
+| path | query | string | yes | Path to a directory in the container to extract the archive’s contents into. |
+| noOverwriteDirNonDir | query | string |  | If `1`, `true`, or `True` then it will be an error if unpacking the given content would cause an existing directory to be replaced with a non-directory and vice versa. |
+| copyUIDGID | query | string |  | If `1`, `true`, then it will copy UID/GID maps to the dest file or dir |
+| inputStream | body | string | yes | The input stream must be a tar archive compressed with one of the following algorithms: `identity` (no compression), `gzip`, `bzip2`, or `xz`. |
+
+Responses:
+
+- `200` The content was extracted successfully
+- `400` Bad parameter (schema `ErrorResponse`)
+- `403` Permission denied, the volume or container rootfs is marked as read-only. (schema `ErrorResponse`)
+- `404` No such container or path does not exist inside the container (schema `ErrorResponse`)
+- `500` Server error (schema `ErrorResponse`)
+

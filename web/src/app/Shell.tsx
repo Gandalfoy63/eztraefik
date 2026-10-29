@@ -2,7 +2,7 @@
 // App frame: grouped sidebar (collapsible, drawer on mobile), top bar with breadcrumb and theme, animated page entrance.
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import {
-  Box, ChartLine, Container, DoorOpen, Globe, Layers, LayoutDashboard, LogOut, Moon, Route as RouteIcon, ScrollText, Server, Settings, ShieldCheck, Sun,
+  Box, ChartLine, Container, DoorOpen, Globe, Import, Layers, LayoutDashboard, LogOut, Moon, Route as RouteIcon, ScrollText, Server, Settings, ShieldCheck, Sun,
   type LucideIcon,
 } from "lucide-react";
 import { api } from "../api";
@@ -44,6 +44,7 @@ export const NAV: { group?: string; items: NavItem[] }[] = [
     group: "System",
     items: [
       { page: "traefik", label: "Traefik", icon: Box, attentionKind: "traefik" },
+      { page: "import", label: "Import from NPM", icon: Import },
       { page: "settings", label: "Settings", icon: Settings },
     ],
   },

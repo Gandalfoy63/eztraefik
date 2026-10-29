@@ -16,7 +16,7 @@ Status: implemented in 0.2.0+3.
 Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/observability/logs-and-accesslogs|Logs and access logs]].
 
 ## Code
-- [accessLogs](../../server/internal/api/observe.go#L91-L151), [traefikLogs](../../server/internal/api/observe.go#L57-L88), [Logs](../../server/internal/docker/docker.go#L292-L333)
+- [accessLogs](../../server/internal/api/observe.go#L91-L151), [traefikLogs](../../server/internal/api/observe.go#L57-L88), [Logs](../../server/internal/docker/docker.go#L307-L348)
 - [Logs](../../web/src/pages/Logs.tsx#L13-L77)
 
 ## Related

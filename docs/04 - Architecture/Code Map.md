@@ -1,8 +1,8 @@
 ---
 title: Code Map
 tags: [architecture, code-map]
-version: 0.2.0+3
-related: ["[[04 - Architecture/Overview|Overview]]", "[[Home]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Docker Client|Docker Client]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Preview|Preview]]", "[[05 - UI-UX/Style|Style]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Install|Install]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/Changelog|Changelog]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[05 - UI-UX/Design Principles|Design Principles]]"]
+version: 1.1.0+5
+related: ["[[04 - Architecture/Overview|Overview]]", "[[Home]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Docker Client|Docker Client]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Preview|Preview]]", "[[05 - UI-UX/Style|Style]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Install|Install]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/Changelog|Changelog]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]"]
 ---
 
 # Code Map
@@ -26,6 +26,12 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [server/internal/api/system.go](../../server/internal/api/system.go) | Traefik settings, apply, restart; Docker containers and networks | [[03 - Features/Traefik Container|Traefik Container]] |
 | [server/internal/api/observe.go](../../server/internal/api/observe.go) | Stats, logs, runtime data, overview | [[03 - Features/Overview|Overview]] |
 | [server/internal/api/setup.go](../../server/internal/api/setup.go) | Defaults, onboarding, history, export / import | [[03 - Features/Onboarding|Onboarding]] |
+| [server/internal/api/migrate.go](../../server/internal/api/migrate.go) | NPM import: detect, connect, review, import, switch traffic and back | [[03 - Features/Import from NPM|Import from NPM]] |
+| [server/internal/npm/client.go](../../server/internal/npm/client.go) | NPM API client (sign-in with 2FA, read config) | [[03 - Features/Import from NPM|Import from NPM]] |
+| [server/internal/npm/convert.go](../../server/internal/npm/convert.go) | NPM objects to eztraefik routes, middlewares, ports, certificates | [[03 - Features/Import from NPM|Import from NPM]] |
+| [server/internal/npm/convert_test.go](../../server/internal/npm/convert_test.go) | Converter tests on real NPM output shapes | [[03 - Features/Import from NPM|Import from NPM]] |
+| [web/src/pages/ImportNPM.tsx](../../web/src/pages/ImportNPM.tsx) | Import from NPM page | [[03 - Features/Import from NPM|Import from NPM]] |
+| [dev/test_npm.py](../../dev/test_npm.py) | End-to-end NPM import and switch test (26 checks) | [[08 - Deployment/Dev Environment|Dev Environment]] |
 | [server/internal/auth/auth.go](../../server/internal/auth/auth.go) | Password hashing, sessions, login limit, apr1 | [[03 - Features/Auth|Auth]] |
 | [server/internal/auth/auth_test.go](../../server/internal/auth/auth_test.go) | apr1 against OpenSSL, password round trip | [[03 - Features/Auth|Auth]] |
 | [server/internal/docker/docker.go](../../server/internal/docker/docker.go) | Docker Engine API client | [[04 - Architecture/Docker Client|Docker Client]] |
@@ -123,3 +129,4 @@ Keep line links right with `python3 tools/relink.py`; check the vault with `pyth
 - [[99 - Changelog/Changelog|Changelog]]
 - [[00 - Downloaded Docs/Lucide/README|Lucide docs]]
 - [[05 - UI-UX/Design Principles|Design Principles]]
+- [[99 - Changelog/1.1.0+5|1.1.0+5]]

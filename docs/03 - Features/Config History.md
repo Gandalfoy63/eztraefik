@@ -13,7 +13,7 @@ Status: implemented in 0.2.0+3.
 - Settings > History: list, view the dynamic config a version produced, restore. A restore is itself a new entry, so it can be undone. It keeps the account; restored Traefik settings show as pending until applied.
 - Settings > Backup: export everything except the account as JSON (includes secret env values), import with confirmation.
 - Settings also shows the current generated `ezt.yml`.
-- After every save, eztraefik waits for Traefik to reload and returns Traefik's errors on its own objects, shown as a warning toast ([traefikErrors](../../server/internal/api/api.go#L211-L243)).
+- After every save, eztraefik waits for Traefik to reload and returns Traefik's errors on its own objects, shown as a warning toast ([traefikErrors](../../server/internal/api/api.go#L219-L251)).
 
 ## Code
 - [rollback](../../server/internal/api/setup.go#L200-L218), [importState](../../server/internal/api/setup.go#L234-L267)

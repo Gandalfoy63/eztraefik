@@ -76,6 +76,18 @@ services:
     command: -name udp-echo -port :8080
     networks: [ezt]
 
+  # A Nginx Proxy Manager to import from (profile "npm"): docker compose -f dev/compose.yml --profile npm up -d
+  # It publishes its own fake ports; switching traffic moves them to Traefik.
+  npm:
+    image: jc21/nginx-proxy-manager:2.15.1
+    container_name: ezt-dev-npm
+    profiles: [npm]
+    ports: ["28080:80", "28443:443", "28081:81", "26432:6432"]
+    volumes:
+      - ezt-dev-npm-data:/data
+      - ezt-dev-npm-le:/etc/letsencrypt
+    networks: [ezt]
+
 networks:
   ezt:
     name: ezt-dev
@@ -83,3 +95,5 @@ networks:
 volumes:
   ezt-dev-data: { name: ezt-dev-data }
   ezt-dev-shared: { name: ezt-dev-shared }
+  ezt-dev-npm-data: { name: ezt-dev-npm-data }
+  ezt-dev-npm-le: { name: ezt-dev-npm-le }

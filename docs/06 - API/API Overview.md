@@ -1,17 +1,17 @@
 ---
 title: API Overview
 tags: [api]
-version: 0.2.0+3
-related: ["[[04 - Architecture/Overview|Overview]]", "[[01 - Vision/Plan|Plan]]", "[[03 - Features/Auth|Auth]]", "[[04 - Architecture/Frontend|Frontend]]", "[[03 - Features/Features Index|Features Index]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[Home]]"]
+version: 1.1.0+5
+related: ["[[04 - Architecture/Overview|Overview]]", "[[01 - Vision/Plan|Plan]]", "[[03 - Features/Auth|Auth]]", "[[04 - Architecture/Frontend|Frontend]]", "[[03 - Features/Features Index|Features Index]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[Home]]", "[[03 - Features/Import from NPM|Import from NPM]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]"]
 ---
 
 # API Overview
 
-Status: implemented in 0.2.0+3. JSON over `/api/v1`, used by the web UI. Routes are registered in [Handler](../../server/internal/api/api.go#L53-L114).
+Status: implemented in 0.2.0+3. JSON over `/api/v1`, used by the web UI. Routes are registered in [Handler](../../server/internal/api/api.go#L53-L122).
 
 ## Conventions
-- Sign-in with the `ezt_session` cookie. Every non-GET request needs the header `X-EZT: 1` ([guard](../../server/internal/api/api.go#L118-L134)).
-- Errors: `{"error": "message"}` with a fitting status. Validation errors are `422` with `{"error", "field"}` so the UI puts the message under the field ([FieldError](../../server/internal/api/api.go#L153-L156)).
+- Sign-in with the `ezt_session` cookie. Every non-GET request needs the header `X-EZT: 1` ([guard](../../server/internal/api/api.go#L126-L142)).
+- Errors: `{"error": "message"}` with a fitting status. Validation errors are `422` with `{"error", "field"}` so the UI puts the message under the field ([FieldError](../../server/internal/api/api.go#L161-L164)).
 - Saves that change the dynamic config return `warnings`: errors Traefik reported on eztraefik's objects after reloading.
 - This is not Traefik's own API ([[00 - Downloaded Docs/Traefik/reference/install-configuration/api-dashboard|Traefik API]]); eztraefik only reads that one, internally.
 
@@ -43,6 +43,12 @@ Status: implemented in 0.2.0+3. JSON over `/api/v1`, used by the web UI. Routes 
 | GET | `/config/dynamic` | current ezt.yml | yes |
 | GET POST | `/export, /import` | backup | yes |
 | PUT | `/account/password` | change password | yes |
+| GET | `/migrate/npm` | detected NPM containers, import record, open review | yes |
+| POST | `/migrate/npm/connect` | sign in to NPM (2FA), read its config, return the review | yes |
+| POST | `/migrate/npm/plan` | review again with typed passwords / email | yes |
+| DELETE | `/migrate/npm/session` | forget what was read | yes |
+| POST | `/migrate/npm/import` | import the selected items | yes |
+| POST | `/migrate/npm/switch`, `/migrate/npm/switch-back` | move NPM's ports to Traefik, and back | yes |
 
 ## Related
 - [[04 - Architecture/Overview|Overview]]
@@ -68,3 +74,5 @@ Status: implemented in 0.2.0+3. JSON over `/api/v1`, used by the web UI. Routes 
 - [[04 - Architecture/Code Map|Code Map]]
 - [[99 - Changelog/0.1.0+1|0.1.0+1]]
 - [[Home]]
+- [[03 - Features/Import from NPM|Import from NPM]]
+- [[99 - Changelog/1.1.0+5|1.1.0+5]]

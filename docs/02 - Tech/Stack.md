@@ -1,7 +1,7 @@
 ---
 title: Stack
 tags: [tech]
-version: 0.2.0+3
+version: 1.1.0+5
 related: ["[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Overview|Overview]]", "[[04 - Architecture/Frontend|Frontend]]", "[[09 - Data/Data Model|Data Model]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[00 - Downloaded Docs/Traefik/README|README]]", "[[00 - Downloaded Docs/Go/README|README]]", "[[00 - Downloaded Docs/Docker Engine API/README|README]]", "[[00 - Downloaded Docs/React/README|README]]", "[[00 - Downloaded Docs/Vite/README|README]]", "[[00 - Downloaded Docs/TypeScript/README|README]]", "[[00 - Downloaded Docs/Lucide/README|README]]", "[[00 - Downloaded Docs/Google Fonts/README|README]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[00 - Downloaded Docs/Pebble/README|README]]", "[[00 - Downloaded Docs/whoami/README|README]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[Home]]"]
 ---
 
@@ -21,6 +21,7 @@ Confirmed in 0.2.0+3. The brief asked for "the fastest language": Go is the fast
 | Fonts | Fira Sans, Fira Code, self-hosted woff2 | Google Fonts CSS2 | [[00 - Downloaded Docs/Google Fonts/README|Google Fonts]] |
 | Storage | one JSON file + history snapshots | | [[09 - Data/Data Model|Data Model]] |
 | Image | multi-stage Dockerfile, distroless static | | [[00 - Downloaded Docs/Docker/README|Docker]] |
+| Import source | Nginx Proxy Manager API (read only) | 2.15.1 | [[00 - Downloaded Docs/Nginx Proxy Manager/README|NPM]] |
 | Dev environment | Pebble (test ACME CA), whoami / whoamitcp / whoamiudp | 2.8.0, 1.11.0, 0.3.0, 0.2.0 | [[00 - Downloaded Docs/Pebble/README|Pebble]], [[00 - Downloaded Docs/whoami/README|whoami]] |
 
 ## Changes from the proposal

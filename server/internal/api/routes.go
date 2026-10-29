@@ -147,7 +147,8 @@ func (a *App) validateRoute(st *store.State, rt *store.Route) error {
 		}
 		rt.Target.Address = addr
 	case "service":
-		found := false
+		// Provider-qualified names (noop@internal, api@docker) are Traefik's own; anything else must be a shared service.
+		found := strings.Contains(rt.Target.Service, "@")
 		for _, s := range st.Services {
 			if s.Name == rt.Target.Service && s.Protocol == rt.Protocol {
 				found = true
