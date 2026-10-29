@@ -2,6 +2,8 @@
 
 **eztraefik** is a self-hosted web app that runs and manages [Traefik](https://traefik.io/traefik/) for you. It creates the Traefik container, and everything Traefik can do is a form: no YAML, no labels.
 
+Source code, docs and issues: **[github.com/Gandalfoy63/eztraefik](https://github.com/Gandalfoy63/eztraefik)** (MIT).
+
 ## What you can do
 - **Routes** for HTTP, HTTPS, TCP and UDP, on any port, to a Docker container or to any IP address
 - **HTTPS** with Let's Encrypt (HTTP, TLS or DNS challenge), wildcard domains, or your own certificates
