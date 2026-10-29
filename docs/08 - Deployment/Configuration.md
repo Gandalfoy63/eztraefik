@@ -2,7 +2,7 @@
 title: Configuration
 tags: [deployment, configuration]
 version: 0.2.0+3
-related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Overview|Overview]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]"]
+related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Overview|Overview]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[08 - Deployment/Compose Example|Compose Example]]"]
 ---
 
 # Configuration
@@ -35,3 +35,4 @@ Volumes: `/data` (keep it: account, config, history) and `/shared` (a **named** 
 - [[99 - Changelog/0.2.0+3|0.2.0+3]]
 - [[04 - Architecture/Code Map|Code Map]]
 - [[Home]]
+- [[08 - Deployment/Compose Example|Compose Example]]

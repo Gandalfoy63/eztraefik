@@ -2,7 +2,7 @@
 title: Routes
 tags: [feature, routing]
 version: 0.2.0+3
-related: ["[[03 - Features/Services|Services]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[05 - UI-UX/Preview|Preview]]", "[[03 - Features/Import from NPM|Import from NPM]]"]
+related: ["[[03 - Features/Services|Services]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[05 - UI-UX/Preview|Preview]]", "[[03 - Features/Import from NPM|Import from NPM]]", "[[08 - Deployment/Compose Example|Compose Example]]"]
 ---
 
 # Routes
@@ -52,3 +52,4 @@ See [[04 - Architecture/Dynamic Config|Dynamic Config]]. Rule syntax: [[00 - Dow
 - [[04 - Architecture/Code Map|Code Map]]
 - [[05 - UI-UX/Preview|Preview]]
 - [[03 - Features/Import from NPM|Import from NPM]]
+- [[08 - Deployment/Compose Example|Compose Example]]

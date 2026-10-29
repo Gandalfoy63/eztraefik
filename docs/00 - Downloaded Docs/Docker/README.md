@@ -2,7 +2,7 @@
 title: Docker build and Compose documentation (downloaded)
 tags: [downloaded-docs, deployment]
 version: 0.2.0+3
-related: ["[[02 - Tech/Stack|Stack]]", "[[Home]]", "[[08 - Deployment/Docker Image|Docker Image]]"]
+related: ["[[02 - Tech/Stack|Stack]]", "[[Home]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Compose Example|Compose Example]]"]
 ---
 
 # Docker build and Compose documentation
@@ -27,3 +27,4 @@ Used for: The eztraefik image and the dev environment.
 - [[02 - Tech/Stack|Stack]]
 - [[Home]]
 - [[08 - Deployment/Docker Image|Docker Image]]
+- [[08 - Deployment/Compose Example|Compose Example]]

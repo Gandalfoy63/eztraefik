@@ -10,7 +10,7 @@ name: eztraefik
 
 services:
   eztraefik:
-    image: ${EZT_IMAGE:-eztraefik:1.1.0}
+    image: ${EZT_IMAGE:-eztraefik:1.1.1}
     container_name: eztraefik
     restart: unless-stopped
     environment:

@@ -18,6 +18,8 @@ docker compose -f deploy/compose.yml up -d
 
 Open `http://<server-ip>:8080` and follow the setup. Details: `docs/08 - Deployment/Install.md`.
 
+A commented example with apps routed from the UI and with Traefik labels: `deploy/compose.example.yml`.
+
 ## Try it without touching ports 80 / 443
 
 ```bash

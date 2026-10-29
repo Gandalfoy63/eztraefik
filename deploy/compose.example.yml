@@ -1,0 +1,67 @@
+# Docs: docs/08 - Deployment/Compose Example.md
+# A complete example: eztraefik, plus apps to route, shown both ways eztraefik supports.
+#
+#   docker compose -f deploy/compose.example.yml up -d
+#   open http://<server-ip>:8080 (or the port in EZT_PORT) and follow the setup
+#
+# eztraefik creates the Traefik container itself during setup: it is not in this file.
+# Traefik joins the network "ezt" below, so every app on that network is reachable by name.
+name: eztraefik-example
+
+services:
+  eztraefik:
+    image: ${EZT_IMAGE:-eztraefik:1.1.1}
+    container_name: eztraefik
+    restart: unless-stopped
+    environment:
+      # Must match the volume name below: the same volume is mounted into Traefik for its config.
+      EZT_SHARED_VOLUME: eztraefik-shared
+      # The Traefik network setup proposes; apps below join it.
+      EZT_DEFAULT_NETWORK: ezt
+      # Ports setup proposes for Traefik. Change them if something else already uses 80 / 443.
+      EZT_DEFAULT_HTTP_PORT: ${EZT_HTTP_PORT:-80}
+      EZT_DEFAULT_HTTPS_PORT: ${EZT_HTTPS_PORT:-443}
+      # Set to "1" once the UI itself is served over HTTPS (see the end of this file).
+      EZT_SECURE_COOKIES: ${EZT_SECURE_COOKIES:-0}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock   # to create Traefik and list containers
+      - eztraefik-data:/data                         # account, config, history: back this up
+      - eztraefik-shared:/shared                     # Traefik's config, certificates, access log
+    ports:
+      - "${EZT_PORT:-8080}:8080"                     # the eztraefik UI
+    networks: [ezt]
+
+  # 1. An app you route from the UI: Routes > New route > Forwarding to "Docker container", pick "whoami", port 80.
+  #    No labels needed. eztraefik also connects containers that are not on the network when you save the route.
+  whoami:
+    image: traefik/whoami:v1.11.0
+    container_name: whoami
+    restart: unless-stopped
+    networks: [ezt]
+
+  # 2. An app routed with Traefik labels. It shows up read-only on the Routes page ("From Docker labels").
+  #    Replace the domain, and use the resolver name you chose in setup ("letsencrypt" by default).
+  labeled-app:
+    image: traefik/whoami:v1.11.0
+    container_name: labeled-app
+    restart: unless-stopped
+    networks: [ezt]
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.labeled-app.rule: Host(`labels.example.com`)
+      traefik.http.routers.labeled-app.entrypoints: websecure
+      traefik.http.routers.labeled-app.tls.certresolver: letsencrypt
+      traefik.http.services.labeled-app.loadbalancer.server.port: "80"
+
+networks:
+  ezt:
+    name: ezt
+
+volumes:
+  eztraefik-data: { name: eztraefik-data }
+  eztraefik-shared: { name: eztraefik-shared }
+
+# Serving the eztraefik UI itself over HTTPS, after setup:
+#   1. In eztraefik: New route "eztraefik", your admin domain, forwarding to container "eztraefik", port 8080, HTTPS on.
+#      Optionally add an IP allow list middleware to it.
+#   2. Set EZT_SECURE_COOKIES=1, remove the "ports:" of the eztraefik service, then: docker compose up -d

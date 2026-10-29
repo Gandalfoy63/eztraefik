@@ -1,8 +1,8 @@
 ---
 title: Code Map
 tags: [architecture, code-map]
-version: 1.1.0+5
-related: ["[[04 - Architecture/Overview|Overview]]", "[[Home]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Docker Client|Docker Client]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Preview|Preview]]", "[[05 - UI-UX/Style|Style]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Install|Install]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/Changelog|Changelog]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]"]
+version: 1.1.1+6
+related: ["[[04 - Architecture/Overview|Overview]]", "[[Home]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Docker Client|Docker Client]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Preview|Preview]]", "[[05 - UI-UX/Style|Style]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Install|Install]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/Changelog|Changelog]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]"]
 ---
 
 # Code Map
@@ -14,6 +14,7 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [VERSION](../../VERSION) | Single source of truth for the version, read by the Go build and publish script | [[99 - Changelog/Changelog|Changelog]] |
 | [CLAUDE.md](../../CLAUDE.md) | Project rules | [[Home|Home]] |
 | [Dockerfile](../../Dockerfile) | Three-stage image build: web, Go, distroless | [[08 - Deployment/Docker Image|Docker Image]] |
+| [deploy/compose.example.yml](../../deploy/compose.example.yml) | Commented example with apps routed from the UI and with labels | [[08 - Deployment/Compose Example|Compose Example]] |
 | [deploy/compose.yml](../../deploy/compose.yml) | Production install | [[08 - Deployment/Install|Install]] |
 | [dev/compose.yml](../../dev/compose.yml) | Dev environment with fake domains, ports and Pebble | [[08 - Deployment/Dev Environment|Dev Environment]] |
 | [dev/test.py](../../dev/test.py) | End-to-end test against the dev environment (30 checks) | [[08 - Deployment/Dev Environment|Dev Environment]] |
@@ -130,3 +131,4 @@ Keep line links right with `python3 tools/relink.py`; check the vault with `pyth
 - [[00 - Downloaded Docs/Lucide/README|Lucide docs]]
 - [[05 - UI-UX/Design Principles|Design Principles]]
 - [[99 - Changelog/1.1.0+5|1.1.0+5]]
+- [[99 - Changelog/1.1.1+6|1.1.1+6]]

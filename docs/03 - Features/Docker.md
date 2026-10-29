@@ -2,7 +2,7 @@
 title: Docker
 tags: [feature, docker, sources]
 version: 0.2.0+3
-related: ["[[03 - Features/Services|Services]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[04 - Architecture/Code Map|Code Map]]"]
+related: ["[[03 - Features/Services|Services]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[08 - Deployment/Compose Example|Compose Example]]"]
 ---
 
 # Docker
@@ -30,3 +30,4 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/provid
 - [[99 - Changelog/0.2.0+3|0.2.0+3]]
 - [[06 - API/API Overview|API Overview]]
 - [[04 - Architecture/Code Map|Code Map]]
+- [[08 - Deployment/Compose Example|Compose Example]]
