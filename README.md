@@ -36,3 +36,7 @@ Fake domains `*.ezt.test`, ports 18080 / 18443, and Pebble as a test ACME server
 ## Docs
 
 The `docs/` folder is an Obsidian vault. Start at `docs/Home.md`.
+
+## License
+
+[MIT](LICENSE). Third-party parts keep their own licenses: Fira Sans and Fira Code (SIL Open Font License, `web/public/fonts/OFL.txt`), Lucide icons (ISC), and the documentation copied into `docs/00 - Downloaded Docs/` (each folder's README names its source).

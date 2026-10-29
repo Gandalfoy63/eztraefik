@@ -2,7 +2,7 @@
 title: Docker Hub Page
 tags: [deployment, docker, brand]
 version: 1.2.2+10
-related: ["[[08 - Deployment/Docker Image|Docker Image]]", "[[05 - UI-UX/Logo|Logo]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[04 - Architecture/Code Map|Code Map]]"]
+related: ["[[08 - Deployment/Docker Image|Docker Image]]", "[[05 - UI-UX/Logo|Logo]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/1.2.3+11|1.2.3+11]]"]
 ---
 
 # Docker Hub Page
@@ -29,3 +29,4 @@ Without `IMAGE_BASE_URL` the overview starts with the name as a heading. The log
 ## State (1.2.2+10)
 Description and overview are live (text, no logo picture yet). Image tags `1.2.1`, `1.2`, `latest` carry the new logo in the app.
 - [[04 - Architecture/Code Map|Code Map]]
+- [[99 - Changelog/1.2.3+11|1.2.3+11]]

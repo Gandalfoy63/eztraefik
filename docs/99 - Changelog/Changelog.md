@@ -1,8 +1,8 @@
 ---
 title: Changelog
 tags: [changelog, index]
-version: 1.2.2+10
-related: ["[[Home]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[99 - Changelog/1.2.1+9|1.2.1+9]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[99 - Changelog/0.1.1+2|0.1.1+2]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[04 - Architecture/Code Map|Code Map]]"]
+version: 1.2.3+11
+related: ["[[Home]]", "[[99 - Changelog/1.2.3+11|1.2.3+11]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[99 - Changelog/1.2.1+9|1.2.1+9]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[99 - Changelog/0.1.1+2|0.1.1+2]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[04 - Architecture/Code Map|Code Map]]"]
 ---
 
 # Changelog
@@ -11,6 +11,7 @@ Newest first. Version format `MAJOR.MEDIUM.MINOR+BUILD`, source of truth in [VER
 
 | Version | Date | Summary |
 |---|---|---|
+| [[99 - Changelog/1.2.3+11|1.2.3+11]] | 2026-10-29 | MIT licence, noreply commit email |
 | [[99 - Changelog/1.2.2+10|1.2.2+10]] | 2026-10-29 | Image 1.2.1 published, Docker Hub description and overview |
 | [[99 - Changelog/1.2.1+9|1.2.1+9]] | 2026-10-29 | New logo in the app: sidebar, sign-in, setup, favicons |
 | [[99 - Changelog/1.2.0+8|1.2.0+8]] | 2026-10-29 | Final logo: every format, light and dark, animated |
@@ -35,3 +36,4 @@ Newest first. Version format `MAJOR.MEDIUM.MINOR+BUILD`, source of truth in [VER
 - [[99 - Changelog/1.2.0+8|1.2.0+8]]
 - [[99 - Changelog/1.2.1+9|1.2.1+9]]
 - [[99 - Changelog/1.2.2+10|1.2.2+10]]
+- [[99 - Changelog/1.2.3+11|1.2.3+11]]
