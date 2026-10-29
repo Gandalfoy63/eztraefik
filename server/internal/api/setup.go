@@ -53,7 +53,7 @@ func (a *App) onboardingCheck(w http.ResponseWriter, r *http.Request) {
 	nets, _ := a.Docker.Networks(ctx)
 	existing := []map[string]any{}
 	for _, c := range list {
-		if strings.Contains(c.Image, "traefik") && !strings.Contains(c.Image, "whoami") && c.Labels["ezt.role"] != "traefik" {
+		if isOtherTraefik(c.Image, c.Labels["ezt.role"], c.ID) {
 			existing = append(existing, map[string]any{"name": c.Name(), "image": c.Image, "state": c.State})
 		}
 	}
@@ -109,6 +109,11 @@ func (a *App) onboardingComplete(w http.ResponseWriter, r *http.Request) {
 	}
 	if len(in.Password) < 12 {
 		failErr(w, FieldError{"password", "Use at least 12 characters."})
+		return
+	}
+	if in.ReplaceName != "" && a.isSelf(r.Context(), in.ReplaceName) {
+		// Stopping eztraefik's own container would end this request and the whole setup. Checked before saving anything.
+		failErr(w, FieldError{"replaceName", "This is eztraefik itself, not a Traefik container. Keep it running."})
 		return
 	}
 	defaults := a.Cfg
@@ -264,4 +269,30 @@ func (a *App) importState(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ok(w, map[string]any{"warnings": warnings})
+}
+
+// isOtherTraefik reports whether a container runs Traefik and is not eztraefik or a Traefik it already manages.
+// Image names are matched on their last path part: "gandasdevstudio/eztraefik" contains "traefik" but is eztraefik.
+func isOtherTraefik(image, role, id string) bool {
+	name := image
+	if i := strings.LastIndex(name, "/"); i >= 0 {
+		name = name[i+1:]
+	}
+	if i := strings.IndexAny(name, ":@"); i >= 0 {
+		name = name[:i]
+	}
+	if role == "traefik" || strings.Contains(name, "eztraefik") || strings.Contains(name, "whoami") || (hostname() != "" && strings.HasPrefix(id, hostname())) {
+		return false
+	}
+	return strings.Contains(name, "traefik")
+}
+
+// isSelf reports whether a container name or id is the container eztraefik runs in.
+func (a *App) isSelf(ctx context.Context, nameOrID string) bool {
+	self, err := a.Docker.Inspect(ctx, hostname())
+	if err != nil {
+		return false
+	}
+	other, err := a.Docker.Inspect(ctx, nameOrID)
+	return err == nil && other.ID == self.ID
 }

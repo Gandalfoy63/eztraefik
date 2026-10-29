@@ -16,7 +16,7 @@ Status: implemented in 0.2.0+3.
 - After every save, eztraefik waits for Traefik to reload and returns Traefik's errors on its own objects, shown as a warning toast ([traefikErrors](../../server/internal/api/api.go#L219-L251)).
 
 ## Code
-- [rollback](../../server/internal/api/setup.go#L200-L218), [importState](../../server/internal/api/setup.go#L234-L267)
+- [rollback](../../server/internal/api/setup.go#L205-L223), [importState](../../server/internal/api/setup.go#L239-L272)
 - [SettingsPage](../../web/src/pages/Settings.tsx#L153-L171)
 
 ## Related
