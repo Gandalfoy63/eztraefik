@@ -2,7 +2,7 @@
 title: Docker Image
 tags: [deployment, docker]
 version: 1.1.2+7
-related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]"]
+related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[05 - UI-UX/Logo|Logo]]"]
 ---
 
 # Docker Image
@@ -52,3 +52,4 @@ tools/publish.sh ghcr.io/<you>/eztraefik        # multi-arch (amd64, arm64) buil
 - [[Home]]
 - [[99 - Changelog/1.0.0+4|1.0.0+4]]
 - [[99 - Changelog/1.1.2+7|1.1.2+7]]
+- [[05 - UI-UX/Logo|Logo]]

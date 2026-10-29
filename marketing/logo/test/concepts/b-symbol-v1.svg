@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- B "Junction": one incoming line branches into three lanes, transit-map style (stroke 28, bends r32) -->
+  <g transform="translate(4 0)" fill="none" stroke="#111" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 128 H214"/>
+    <path d="M96 128 a32 32 0 0 0 32 -32 a32 32 0 0 1 32 -32 H214"/>
+    <path d="M96 128 a32 32 0 0 1 32 32 a32 32 0 0 0 32 32 H214"/>
+  </g>
+  <circle cx="44" cy="128" r="24" fill="#111"/>
+</svg>

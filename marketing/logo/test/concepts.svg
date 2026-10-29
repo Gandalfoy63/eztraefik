@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="984" viewBox="0 0 1600 984"><defs><filter id="grey"><feColorMatrix type="saturate" values="0"/></filter></defs><rect width="1600" height="984" fill="#f7f7f4"/><text x="60" y="78" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="40" font-weight="700" fill="#161616">Logo concepts</text><text x="60" y="116" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="20" fill="#6b6b6b">Concepts for review — pick a direction (or tell me what you like in each).</text><rect x="60" y="150" width="474.667" height="774" rx="18" fill="#fff" stroke="#161616" stroke-width="2"/><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="90" y="190" width="414.667" height="300" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- A "Routed e": a lowercase e (circle r72, stroke 32) whose crossbar runs out of the bowl and ends in a dot -->
+  <g transform="translate(-21 0)" fill="none" stroke="#111" stroke-width="32" stroke-linecap="round">
+    <path d="M190 128 A72 72 0 1 0 168.9 178.9"/>
+    <path d="M46 128 H206"/>
+  </g>
+  <circle cx="205" cy="128" r="26" fill="#111"/>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 256" x="90" y="514" width="414.667" height="120" preserveAspectRatio="xMidYMid meet">
+  <title>eztraefik</title>
+  <!-- exploration lockup: live text in Fira Sans 600 (to be outlined for the master) -->
+  <style>@font-face{font-family:"Fira Sans";font-weight:600;src:url(fonts/FiraSans-600-latin.woff2)}</style>
+  
+  <!-- A "Routed e": a lowercase e (circle r72, stroke 32) whose crossbar runs out of the bowl and ends in a dot -->
+  <g transform="translate(-21 0)" fill="none" stroke="#111" stroke-width="32" stroke-linecap="round">
+    <path d="M190 128 A72 72 0 1 0 168.9 178.9"/>
+    <path d="M46 128 H206"/>
+  </g>
+  <circle cx="205" cy="128" r="26" fill="#111"/>
+  <text x="270" y="170" font-family="Fira Sans" font-weight="600" font-size="132" letter-spacing="-2" fill="#111">eztraefik</text>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="90" y="660" width="64" height="64" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- A "Routed e": a lowercase e (circle r72, stroke 32) whose crossbar runs out of the bowl and ends in a dot -->
+  <g transform="translate(-21 0)" fill="none" stroke="#111" stroke-width="32" stroke-linecap="round">
+    <path d="M190 128 A72 72 0 1 0 168.9 178.9"/>
+    <path d="M46 128 H206"/>
+  </g>
+  <circle cx="205" cy="128" r="26" fill="#111"/>
+</svg>
+</g><text x="122" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">64px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="180" y="692" width="32" height="32" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- A "Routed e": a lowercase e (circle r72, stroke 32) whose crossbar runs out of the bowl and ends in a dot -->
+  <g transform="translate(-21 0)" fill="none" stroke="#111" stroke-width="32" stroke-linecap="round">
+    <path d="M190 128 A72 72 0 1 0 168.9 178.9"/>
+    <path d="M46 128 H206"/>
+  </g>
+  <circle cx="205" cy="128" r="26" fill="#111"/>
+</svg>
+</g><text x="196" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">32px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="238" y="708" width="16" height="16" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- A "Routed e": a lowercase e (circle r72, stroke 32) whose crossbar runs out of the bowl and ends in a dot -->
+  <g transform="translate(-21 0)" fill="none" stroke="#111" stroke-width="32" stroke-linecap="round">
+    <path d="M190 128 A72 72 0 1 0 168.9 178.9"/>
+    <path d="M46 128 H206"/>
+  </g>
+  <circle cx="205" cy="128" r="26" fill="#111"/>
+</svg>
+</g><text x="246" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">16px</text><text x="90.0" y="780" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="26" font-weight="700" fill="#161616">A · A · Routed e</text><text x="90.0" y="808" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="#161616" letter-spacing="1.5">RECOMMENDED</text><text x="90.0" y="842" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">The e of eztraefik, its crossbar routed out</text><text x="90.0" y="868" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">to a destination</text><rect x="562.667" y="150" width="474.667" height="774" rx="18" fill="#fff" stroke="#e4e4e0" stroke-width="1"/><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="592.667" y="190" width="414.667" height="300" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- B "Junction": one incoming line branches into three lanes, transit-map style (stroke 28, bends r32) -->
+  <g transform="translate(13 0)" fill="none" stroke="#111" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 128 H214"/>
+    <path d="M96 128 a32 32 0 0 0 32 -32 a32 32 0 0 1 32 -32 H214"/>
+    <path d="M96 128 a32 32 0 0 1 32 32 a32 32 0 0 0 32 32 H214"/>
+  </g>
+  <circle cx="53" cy="128" r="24" fill="#111"/>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 256" x="592.667" y="514" width="414.667" height="120" preserveAspectRatio="xMidYMid meet">
+  <title>eztraefik</title>
+  <!-- exploration lockup: live text in Fira Sans 600 (to be outlined for the master) -->
+  <style>@font-face{font-family:"Fira Sans";font-weight:600;src:url(fonts/FiraSans-600-latin.woff2)}</style>
+  
+  <!-- B "Junction": one incoming line branches into three lanes, transit-map style (stroke 28, bends r32) -->
+  <g transform="translate(13 0)" fill="none" stroke="#111" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 128 H214"/>
+    <path d="M96 128 a32 32 0 0 0 32 -32 a32 32 0 0 1 32 -32 H214"/>
+    <path d="M96 128 a32 32 0 0 1 32 32 a32 32 0 0 0 32 32 H214"/>
+  </g>
+  <circle cx="53" cy="128" r="24" fill="#111"/>
+  <text x="270" y="170" font-family="Fira Sans" font-weight="600" font-size="132" letter-spacing="-2" fill="#111">eztraefik</text>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="592.667" y="660" width="64" height="64" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- B "Junction": one incoming line branches into three lanes, transit-map style (stroke 28, bends r32) -->
+  <g transform="translate(13 0)" fill="none" stroke="#111" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 128 H214"/>
+    <path d="M96 128 a32 32 0 0 0 32 -32 a32 32 0 0 1 32 -32 H214"/>
+    <path d="M96 128 a32 32 0 0 1 32 32 a32 32 0 0 0 32 32 H214"/>
+  </g>
+  <circle cx="53" cy="128" r="24" fill="#111"/>
+</svg>
+</g><text x="624.667" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">64px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="682.667" y="692" width="32" height="32" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- B "Junction": one incoming line branches into three lanes, transit-map style (stroke 28, bends r32) -->
+  <g transform="translate(13 0)" fill="none" stroke="#111" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 128 H214"/>
+    <path d="M96 128 a32 32 0 0 0 32 -32 a32 32 0 0 1 32 -32 H214"/>
+    <path d="M96 128 a32 32 0 0 1 32 32 a32 32 0 0 0 32 32 H214"/>
+  </g>
+  <circle cx="53" cy="128" r="24" fill="#111"/>
+</svg>
+</g><text x="698.667" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">32px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="740.667" y="708" width="16" height="16" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- B "Junction": one incoming line branches into three lanes, transit-map style (stroke 28, bends r32) -->
+  <g transform="translate(13 0)" fill="none" stroke="#111" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 128 H214"/>
+    <path d="M96 128 a32 32 0 0 0 32 -32 a32 32 0 0 1 32 -32 H214"/>
+    <path d="M96 128 a32 32 0 0 1 32 32 a32 32 0 0 0 32 32 H214"/>
+  </g>
+  <circle cx="53" cy="128" r="24" fill="#111"/>
+</svg>
+</g><text x="748.667" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">16px</text><text x="592.6666666666667" y="780" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="26" font-weight="700" fill="#161616">B · B · Junction</text><text x="592.6666666666667" y="814" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">One line in, three lanes out: routing drawn</text><text x="592.6666666666667" y="840" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">as a transit map</text><rect x="1065.33" y="150" width="474.667" height="774" rx="18" fill="#fff" stroke="#e4e4e0" stroke-width="1"/><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="1095.33" y="190" width="414.667" height="300" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- C "ez path": a z drawn as one route at exact 45 degrees, from a start dot to an end dot (stroke 30) -->
+  <path d="M64 64 H192 L64 192 H192" fill="none" stroke="#111" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="64" r="26" fill="#111"/>
+  <circle cx="192" cy="192" r="26" fill="#111"/>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 256" x="1095.33" y="514" width="414.667" height="120" preserveAspectRatio="xMidYMid meet">
+  <title>eztraefik</title>
+  <!-- exploration lockup: live text in Fira Sans 600 (to be outlined for the master) -->
+  <style>@font-face{font-family:"Fira Sans";font-weight:600;src:url(fonts/FiraSans-600-latin.woff2)}</style>
+  
+  <!-- C "ez path": a z drawn as one route at exact 45 degrees, from a start dot to an end dot (stroke 30) -->
+  <path d="M64 64 H192 L64 192 H192" fill="none" stroke="#111" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="64" r="26" fill="#111"/>
+  <circle cx="192" cy="192" r="26" fill="#111"/>
+  <text x="270" y="170" font-family="Fira Sans" font-weight="600" font-size="132" letter-spacing="-2" fill="#111">eztraefik</text>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="1095.33" y="660" width="64" height="64" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- C "ez path": a z drawn as one route at exact 45 degrees, from a start dot to an end dot (stroke 30) -->
+  <path d="M64 64 H192 L64 192 H192" fill="none" stroke="#111" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="64" r="26" fill="#111"/>
+  <circle cx="192" cy="192" r="26" fill="#111"/>
+</svg>
+</g><text x="1127.33" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">64px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="1185.33" y="692" width="32" height="32" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- C "ez path": a z drawn as one route at exact 45 degrees, from a start dot to an end dot (stroke 30) -->
+  <path d="M64 64 H192 L64 192 H192" fill="none" stroke="#111" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="64" r="26" fill="#111"/>
+  <circle cx="192" cy="192" r="26" fill="#111"/>
+</svg>
+</g><text x="1201.33" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">32px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="1243.33" y="708" width="16" height="16" preserveAspectRatio="xMidYMid meet"><title>eztraefik</title>
+  <!-- C "ez path": a z drawn as one route at exact 45 degrees, from a start dot to an end dot (stroke 30) -->
+  <path d="M64 64 H192 L64 192 H192" fill="none" stroke="#111" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="64" r="26" fill="#111"/>
+  <circle cx="192" cy="192" r="26" fill="#111"/>
+</svg>
+</g><text x="1251.33" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">16px</text><text x="1095.3333333333335" y="780" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="26" font-weight="700" fill="#161616">C · C · ez path</text><text x="1095.3333333333335" y="814" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">The z of ez as one route from start dot to</text><text x="1095.3333333333335" y="840" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">end dot</text></svg>

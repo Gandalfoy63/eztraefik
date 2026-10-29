@@ -2,7 +2,7 @@
 title: Design Principles
 tags: [ui-ux, design-system]
 version: 0.2.0+3
-related: ["[[05 - UI-UX/Preview|Preview]]", "[[01 - Vision/Plan|Plan]]", "[[01 - Vision/Vision|Vision]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[00 - Downloaded Docs/Google Fonts/README|Google Fonts docs]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]", "[[05 - UI-UX/Components|Components]]"]
+related: ["[[05 - UI-UX/Preview|Preview]]", "[[01 - Vision/Plan|Plan]]", "[[01 - Vision/Vision|Vision]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[00 - Downloaded Docs/Google Fonts/README|Google Fonts docs]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Logo|Logo]]"]
 ---
 
 # Design Principles
@@ -75,3 +75,4 @@ Easing: `cubic-bezier(0.22, 1, 0.36, 1)` for entering, `cubic-bezier(0.65, 0, 0.
 - [[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]
 - [[Home]]
 - [[05 - UI-UX/Components|Components]]
+- [[05 - UI-UX/Logo|Logo]]

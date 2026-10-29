@@ -2,7 +2,7 @@
 title: Google Fonts documentation (downloaded)
 tags: [downloaded-docs, typography]
 version: 0.1.0+1
-related: ["[[05 - UI-UX/Design Principles|Design Principles]]", "[[02 - Tech/Stack|Stack]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]", "[[05 - UI-UX/Style|Style]]"]
+related: ["[[05 - UI-UX/Design Principles|Design Principles]]", "[[02 - Tech/Stack|Stack]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]", "[[05 - UI-UX/Style|Style]]", "[[05 - UI-UX/Logo|Logo]]"]
 ---
 
 # Google Fonts CSS2 API
@@ -24,3 +24,4 @@ Page: [[CSS2 API]]
 - [[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]
 - [[Home]]
 - [[05 - UI-UX/Style|Style]]
+- [[05 - UI-UX/Logo|Logo]]

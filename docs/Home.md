@@ -18,7 +18,7 @@ Version: see [VERSION](../VERSION). Rules: [CLAUDE.md](../CLAUDE.md). Install: [
 | 02 Tech | [[02 - Tech/Stack|Stack]] |
 | 03 Features | [[03 - Features/Features Index|Features Index]] |
 | 04 Architecture | [[04 - Architecture/Overview|Architecture Overview]], [[04 - Architecture/Code Map|Code Map]], [[04 - Architecture/Dynamic Config|Dynamic Config]], [[04 - Architecture/Docker Client|Docker Client]], [[04 - Architecture/Frontend|Frontend]] |
-| 05 UI-UX | [[05 - UI-UX/Style|Style]], [[05 - UI-UX/Design Principles|Design Principles]], [[05 - UI-UX/Components|Components]], [[05 - UI-UX/Navigation|Navigation]], [[05 - UI-UX/Charts|Charts]], [[05 - UI-UX/Preview|Preview]] |
+| 05 UI-UX | [[05 - UI-UX/Logo|Logo]], [[05 - UI-UX/Style|Style]], [[05 - UI-UX/Design Principles|Design Principles]], [[05 - UI-UX/Components|Components]], [[05 - UI-UX/Navigation|Navigation]], [[05 - UI-UX/Charts|Charts]], [[05 - UI-UX/Preview|Preview]] |
 | 06 API | [[06 - API/API Overview|API Overview]] |
 | 08 Deployment | [[08 - Deployment/Install|Install]], [[08 - Deployment/Configuration|Configuration]], [[08 - Deployment/Docker Image|Docker Image]], [[08 - Deployment/Dev Environment|Dev Environment]] |
 | 09 Data | [[09 - Data/Data Model|Data Model]] |

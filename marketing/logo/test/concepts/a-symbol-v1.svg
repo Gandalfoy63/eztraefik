@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- A "Routed e": a lowercase e (circle r72, stroke 32) whose crossbar runs out of the bowl and ends in a dot -->
+  <g transform="translate(-12 0)" fill="none" stroke="#111" stroke-width="32" stroke-linecap="round">
+    <path d="M190 128 A72 72 0 1 0 168.9 178.9"/>
+    <path d="M46 128 H206"/>
+  </g>
+  <circle cx="214" cy="128" r="26" fill="#111"/>
+</svg>

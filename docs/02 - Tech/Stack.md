@@ -2,7 +2,7 @@
 title: Stack
 tags: [tech]
 version: 1.1.0+5
-related: ["[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Overview|Overview]]", "[[04 - Architecture/Frontend|Frontend]]", "[[09 - Data/Data Model|Data Model]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[00 - Downloaded Docs/Traefik/README|README]]", "[[00 - Downloaded Docs/Go/README|README]]", "[[00 - Downloaded Docs/Docker Engine API/README|README]]", "[[00 - Downloaded Docs/React/README|README]]", "[[00 - Downloaded Docs/Vite/README|README]]", "[[00 - Downloaded Docs/TypeScript/README|README]]", "[[00 - Downloaded Docs/Lucide/README|README]]", "[[00 - Downloaded Docs/Google Fonts/README|README]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[00 - Downloaded Docs/Pebble/README|README]]", "[[00 - Downloaded Docs/whoami/README|README]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[Home]]"]
+related: ["[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Overview|Overview]]", "[[04 - Architecture/Frontend|Frontend]]", "[[09 - Data/Data Model|Data Model]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[00 - Downloaded Docs/Traefik/README|README]]", "[[00 - Downloaded Docs/Go/README|README]]", "[[00 - Downloaded Docs/Docker Engine API/README|README]]", "[[00 - Downloaded Docs/React/README|README]]", "[[00 - Downloaded Docs/Vite/README|README]]", "[[00 - Downloaded Docs/TypeScript/README|README]]", "[[00 - Downloaded Docs/Lucide/README|README]]", "[[00 - Downloaded Docs/Google Fonts/README|README]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[00 - Downloaded Docs/Pebble/README|README]]", "[[00 - Downloaded Docs/whoami/README|README]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[Home]]", "[[00 - Downloaded Docs/fontTools/README|README]]"]
 ---
 
 # Stack
@@ -52,3 +52,4 @@ Confirmed in 0.2.0+3. The brief asked for "the fastest language": Go is the fast
 - [[04 - Architecture/Code Map|Code Map]]
 - [[99 - Changelog/0.1.0+1|0.1.0+1]]
 - [[Home]]
+- [[00 - Downloaded Docs/fontTools/README|README]]

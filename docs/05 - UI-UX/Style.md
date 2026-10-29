@@ -2,7 +2,7 @@
 title: Style
 tags: [ui-ux, design-system]
 version: 0.2.0+3
-related: ["[[05 - UI-UX/Design Principles|Design Principles]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Preview|Preview]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Lucide/README|README]]", "[[00 - Downloaded Docs/Google Fonts/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]"]
+related: ["[[05 - UI-UX/Design Principles|Design Principles]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Preview|Preview]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Lucide/README|README]]", "[[00 - Downloaded Docs/Google Fonts/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[05 - UI-UX/Logo|Logo]]"]
 ---
 
 # Style
@@ -55,3 +55,4 @@ Lucide ([[00 - Downloaded Docs/Lucide/react/getting-started|lucide-react]]): 18p
 - [[01 - Vision/Plan|Plan]]
 - [[04 - Architecture/Code Map|Code Map]]
 - [[Home]]
+- [[05 - UI-UX/Logo|Logo]]

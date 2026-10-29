@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><title>eztraefik</title>
+  <!-- C "ez path": a z drawn as one route at exact 45 degrees, from a start dot to an end dot (stroke 30) -->
+  <path d="M64 64 H192 L64 192 H192" fill="none" stroke="#111" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="64" r="26" fill="#111"/>
+  <circle cx="192" cy="192" r="26" fill="#111"/>
+</svg>

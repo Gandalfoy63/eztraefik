@@ -1,8 +1,8 @@
 ---
 title: Code Map
 tags: [architecture, code-map]
-version: 1.1.1+6
-related: ["[[04 - Architecture/Overview|Overview]]", "[[Home]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Docker Client|Docker Client]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Preview|Preview]]", "[[05 - UI-UX/Style|Style]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Install|Install]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/Changelog|Changelog]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]"]
+version: 1.2.0+8
+related: ["[[04 - Architecture/Overview|Overview]]", "[[Home]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Docker Client|Docker Client]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Preview|Preview]]", "[[05 - UI-UX/Style|Style]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Install|Install]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/Changelog|Changelog]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]"]
 ---
 
 # Code Map
@@ -83,6 +83,14 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [web/src/pages/traefikConfig.tsx](../../web/src/pages/traefikConfig.tsx) | Traefik config hook, pending banner | [[03 - Features/Traefik Container|Traefik Container]] |
 | [web/src/pages/Settings.tsx](../../web/src/pages/Settings.tsx) | History, account, backup | [[03 - Features/Config History|Config History]] |
 | [web/src/pages/NotFound.tsx](../../web/src/pages/NotFound.tsx) | Unknown page | [[05 - UI-UX/Navigation|Navigation]] |
+| [marketing/logo/build/build.sh](../../marketing/logo/build/build.sh) | Rebuilds every final logo file | [[05 - UI-UX/Logo|Logo]] |
+| [marketing/logo/build/make_svgs.py](../../marketing/logo/build/make_svgs.py) | Logo geometry, colours, animation; writes every SVG | [[05 - UI-UX/Logo|Logo]] |
+| [marketing/logo/build/measure.js](../../marketing/logo/build/measure.js) | Wordmark letter positions from Chromium | [[05 - UI-UX/Logo|Logo]] |
+| [marketing/logo/build/outline.py](../../marketing/logo/build/outline.py) | Wordmark as glyph outlines (fontTools) | [[05 - UI-UX/Logo|Logo]] |
+| [marketing/logo/build/render.js](../../marketing/logo/build/render.js) | PNGs at every size and GIF frames | [[05 - UI-UX/Logo|Logo]] |
+| [marketing/logo/build/make_gifs.sh](../../marketing/logo/build/make_gifs.sh) | GIF encoding with ffmpeg | [[05 - UI-UX/Logo|Logo]] |
+| [marketing/logo/build/make_web.py](../../marketing/logo/build/make_web.py) | favicon.ico, platform icons, manifest | [[05 - UI-UX/Logo|Logo]] |
+| [marketing/logo/build/make_preview.py](../../marketing/logo/build/make_preview.py) | final/preview.html | [[05 - UI-UX/Logo|Logo]] |
 | [preview/index.html](../../preview/index.html) | Approved style preview (static, not the app) | [[05 - UI-UX/Preview|Preview]] |
 | [preview/styles.css](../../preview/styles.css) | Preview styles, origin of the app tokens | [[05 - UI-UX/Preview|Preview]] |
 | [preview/app.js](../../preview/app.js) | Preview behaviour | [[05 - UI-UX/Preview|Preview]] |
@@ -132,3 +140,4 @@ Keep line links right with `python3 tools/relink.py`; check the vault with `pyth
 - [[05 - UI-UX/Design Principles|Design Principles]]
 - [[99 - Changelog/1.1.0+5|1.1.0+5]]
 - [[99 - Changelog/1.1.1+6|1.1.1+6]]
+- [[99 - Changelog/1.2.0+8|1.2.0+8]]

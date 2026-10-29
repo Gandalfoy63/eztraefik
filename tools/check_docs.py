@@ -38,7 +38,7 @@ inbound = {b for a in ours for b in out[a]}
 for a in ours:
     if a != "Home" and a not in inbound: bad.append(f"ORPHAN {a}")
 # Code -> note: every "Docs: docs/..." comment in our source must name existing notes.
-code_dirs = ["server", "web/src", "web/index.html", "web/vite.config.ts", "preview", "dev", "tools", "Dockerfile", "deploy"]
+code_dirs = ["server", "web/src", "web/index.html", "web/vite.config.ts", "preview", "dev", "tools", "Dockerfile", "deploy", "marketing/logo/build"]
 code_files = 0
 for cd in code_dirs:
     base = os.path.join(root, cd)
