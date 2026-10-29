@@ -1,8 +1,8 @@
 ---
 title: Docker Hub Page
 tags: [deployment, docker, brand]
-version: 1.2.4+13
-related: ["[[08 - Deployment/Docker Image|Docker Image]]", "[[05 - UI-UX/Logo|Logo]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/1.2.3+11|1.2.3+11]]"]
+version: 1.2.5+14
+related: ["[[08 - Deployment/Docker Image|Docker Image]]", "[[05 - UI-UX/Logo|Logo]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/1.2.3+11|1.2.3+11]]", "[[99 - Changelog/1.2.4+13|1.2.4+13]]", "[[99 - Changelog/1.2.5+14|1.2.5+14]]"]
 ---
 
 # Docker Hub Page
@@ -34,3 +34,5 @@ Without `IMAGE_BASE_URL` the overview starts with the name as a heading. The log
 
 - [[04 - Architecture/Code Map|Code Map]]
 - [[99 - Changelog/1.2.3+11|1.2.3+11]]
+- [[99 - Changelog/1.2.4+13|1.2.4+13]]
+- [[99 - Changelog/1.2.5+14|1.2.5+14]]
