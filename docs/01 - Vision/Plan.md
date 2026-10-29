@@ -1,8 +1,8 @@
 ---
 title: Plan
 tags: [vision, plan]
-version: 0.2.0+3
-related: ["[[01 - Vision/Vision|Vision]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Overview|Architecture Overview]]", "[[03 - Features/Features Index|Features Index]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[05 - UI-UX/Preview|Preview]]", "[[06 - API/API Overview|API Overview]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]", "[[03 - Features/Overview|Overview]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]"]
+version: 1.0.0+4
+related: ["[[01 - Vision/Vision|Vision]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Overview|Architecture Overview]]", "[[03 - Features/Features Index|Features Index]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[05 - UI-UX/Preview|Preview]]", "[[06 - API/API Overview|API Overview]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]", "[[03 - Features/Overview|Overview]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]"]
 ---
 
 # Plan
@@ -87,7 +87,7 @@ The preview was approved with one change: creating a route happens in a centered
 
 A fresh host with only Docker can: run eztraefik, finish onboarding, get Traefik running on 80/443, add two domains with Let's Encrypt certs, route one to a container and one to an external URL, add a custom TCP port, protect a route with basic auth, and see its traffic in Stats. All from the UI, with docs and changelog up to date.
 
-Verified by `dev/test.py` in the [[08 - Deployment/Dev Environment|Dev Environment]], which runs this whole path with fake domains, ports 18080 / 18443 instead of 80 / 443, and Pebble standing in for Let's Encrypt.
+Reached in 1.0.0+4. Verified by `dev/test.py` in the [[08 - Deployment/Dev Environment|Dev Environment]], which runs this whole path with fake domains, ports 18080 / 18443 instead of 80 / 443, and Pebble standing in for Let's Encrypt.
 
 ## Related
 - [[01 - Vision/Vision|Vision]]
@@ -103,3 +103,4 @@ Verified by `dev/test.py` in the [[08 - Deployment/Dev Environment|Dev Environme
 - [[03 - Features/Overview|Overview]]
 - [[05 - UI-UX/Navigation|Navigation]]
 - [[99 - Changelog/0.2.0+3|0.2.0+3]]
+- [[99 - Changelog/1.0.0+4|1.0.0+4]]

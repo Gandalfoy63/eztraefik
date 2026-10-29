@@ -50,7 +50,7 @@ export function Overview() {
         <a className="card stat" href="#services">
           <span className="stat-label"><Server className="icon-sm" aria-hidden="true" />Services</span>
           <span className="stat-value">{c.services ?? 0}</span>
-          <span className={`stat-meta${c.servicesDown ? " is-danger" : ""}`}>{c.servicesDown ? `${c.servicesDown} with servers down` : "All servers up"}</span>
+          <span className={`stat-meta${c.servicesDown ? " is-danger" : ""}`}>{c.servicesDown ? `${c.servicesDown} with servers down` : c.services ? "All servers up" : "None yet"}</span>
         </a>
         <a className="card stat" href="#certificates">
           <span className="stat-label"><ShieldCheck className="icon-sm" aria-hidden="true" />Certificates</span>

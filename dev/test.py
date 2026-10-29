@@ -131,8 +131,9 @@ def main():
         t["entrypoints"] += [{"name": "pg", "port": 5432, "protocol": "tcp", "hostPort": TCP_PORT},
                              {"name": "dns", "port": 53, "protocol": "udp", "hostPort": UDP_PORT}]
         api("PUT", "/traefik", t)
-    pending = api("GET", "/traefik")["pending"]
-    check("New entrypoints wait for Apply", pending)
+        check("New entrypoints wait for Apply", api("GET", "/traefik")["pending"])
+    else:
+        check("Custom entrypoints already configured (repeat run)", True)
     api("POST", "/traefik/apply")
     wait("Traefik after apply", lambda: api("GET", "/overview")["traefik"]["reachable"])
     check("Traefik recreated, nothing pending", not api("GET", "/traefik")["pending"])
@@ -162,6 +163,12 @@ def main():
         {"name": "dns", "protocol": "udp", "entrypoints": ["dns"], "target": {"kind": "docker", "container": "ezt-dev-udp-echo", "port": 8080}, "tls": {"enabled": False, "mode": "resolver", "redirect": False}},
     ]
     # A plain HTTP route can't live on an entrypoint that redirects everything: eztraefik must refuse it.
+    # Make sure web redirects (as after setup) so the test also works on an environment it already ran on.
+    t = api("GET", "/traefik")["config"]
+    for e in t["entrypoints"]:
+        if e["name"] == "web":
+            e["redirectTo"] = "websecure"
+    api("PUT", "/traefik", t)
     plain = next(r for r in routes if r["name"] == "plain")
     err = api("POST", "/routes", {**plain, "entrypoints": [], "middlewares": [], "enabled": True}, ok=(422,))
     check("Plain HTTP route refused while web redirects everything", err.get("field") == "entrypoints")

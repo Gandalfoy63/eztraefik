@@ -3,7 +3,7 @@
 # Reference: docs/00 - Downloaded Docs/Docker/Multi-stage builds.md
 
 # 1. Web UI
-FROM node:24.11.1-alpine AS web
+FROM --platform=$BUILDPLATFORM node:24.11.1-alpine AS web
 WORKDIR /web
 COPY web/package.json web/package-lock.json ./
 RUN npm ci --no-audit --no-fund
@@ -11,13 +11,15 @@ COPY web/ ./
 RUN npm run build
 
 # 2. Go server, with the UI embedded. The version comes from the VERSION file.
-FROM golang:1.27.3-alpine AS server
+# Cross-compiles on the build machine for each target platform (amd64, arm64).
+FROM --platform=$BUILDPLATFORM golang:1.27.3-alpine AS server
+ARG TARGETOS TARGETARCH
 WORKDIR /src
 COPY server/go.mod ./
 COPY server/ ./
 COPY --from=web /web/dist ./internal/webui/dist
 COPY VERSION /VERSION
-RUN CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=$(cat /VERSION)" -o /out/eztraefik . \
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags "-s -w -X main.version=$(cat /VERSION)" -o /out/eztraefik . \
  && mkdir -p /out/data /out/shared
 
 # 3. Runtime: static binary on distroless. Runs as root because it talks to the Docker socket.

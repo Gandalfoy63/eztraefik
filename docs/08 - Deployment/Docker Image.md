@@ -1,16 +1,22 @@
 ---
 title: Docker Image
 tags: [deployment, docker]
-version: 0.2.0+3
-related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]"]
+version: 1.0.0+4
+related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]"]
 ---
 
 # Docker Image
 
 Built from [Dockerfile](../../Dockerfile) in three stages ([[00 - Downloaded Docs/Docker/Multi-stage builds|multi-stage builds]]):
-1. `node:24.11.1-alpine` builds the web UI (`npm ci`, type check, Vite build).
-2. `golang:1.27.3-alpine` builds a static binary with the UI embedded and the version from `VERSION` (`-X main.version`).
+1. `node:24.11.1-alpine` builds the web UI (`npm ci`, type check, Vite build), on the build machine's platform.
+2. `golang:1.27.3-alpine` cross-compiles a static binary for each target (`GOOS` / `GOARCH` from `TARGETOS` / `TARGETARCH`), with the UI embedded and the version from `VERSION` (`-X main.version`). So an arm64 image builds as fast as amd64, without emulation.
 3. `gcr.io/distroless/static-debian12` (pinned by digest) runs it. About 19 MB. Runs as root because it uses the Docker socket. Health check: `eztraefik healthcheck`.
+
+## Release 1.0.0
+- Local image: `eztraefik:1.0.0` (19.4 MB, amd64), label `org.opencontainers.image.version=1.0.0+4`.
+- File: `dist/eztraefik-1.0.0-amd64.tar.gz` (4.7 MB, not in git). Load it elsewhere with `docker load < eztraefik-1.0.0-amd64.tar.gz`.
+- arm64 build checked with `docker buildx build --platform linux/arm64`.
+- Tags never contain the `+BUILD` part (registries forbid `+`); it is in the image label.
 
 ## Build and publish
 ```bash
@@ -29,3 +35,4 @@ tools/publish.sh ghcr.io/<you>/eztraefik        # multi-arch (amd64, arm64) buil
 - [[02 - Tech/Stack|Stack]]
 - [[04 - Architecture/Code Map|Code Map]]
 - [[Home]]
+- [[99 - Changelog/1.0.0+4|1.0.0+4]]

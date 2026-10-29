@@ -1,8 +1,8 @@
 ---
 title: Dev Environment
 tags: [deployment, dev, testing]
-version: 0.2.0+3
-related: ["[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[00 - Downloaded Docs/Pebble/README|README]]", "[[00 - Downloaded Docs/whoami/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]"]
+version: 1.0.0+4
+related: ["[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[00 - Downloaded Docs/Pebble/README|README]]", "[[00 - Downloaded Docs/whoami/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]"]
 ---
 
 # Dev Environment
@@ -31,7 +31,9 @@ UI: `http://<host>:5181` (dev account in the test: `admin` / `dev-password-1234`
 ## What the test checks ([dev/test.py](../../dev/test.py))
 Setup through the API, custom TCP 15432 and UDP 15353 entrypoints (pending, then applied), apr1 basic auth, refusal of an HTTP-only route on a redirecting entrypoint, eight routes, HTTPS with a Pebble certificate, a container connected on save, the IP target, 401 / 200 with basic auth, load balancing over two servers, HTTP to HTTPS redirect keeping port 18443, plain HTTP, TCP and UDP traffic, relations, certificates, domains, stats, access and Traefik logs, history, overview counts, disabling a route. Requests are sent with the fake host name in SNI and `Host`, like `curl --resolve`.
 
-Last run (0.2.0+3): **30 of 30 passed** on a fresh environment.
+The test can run again on an environment it already set up: it restores its own preconditions (signs in instead of running setup, re-enables the `web` redirect before checking the refusal).
+
+Last runs (1.0.0+4): **30 of 30** on a fresh environment, **28 of 28** on a repeat run (the two setup checks only apply to a fresh one). The setup wizard was also clicked through in a real browser.
 
 ## Visiting it in a browser
 Point the fake names at the host, for example in `/etc/hosts`: `192.168.1.101 a.ezt.test c.ezt.test ext.ezt.test secure.ezt.test pool.ezt.test plain.ezt.test`, then open `https://a.ezt.test:18443` and accept the untrusted certificate.
@@ -46,3 +48,4 @@ Point the fake names at the host, for example in `/etc/hosts`: `192.168.1.101 a.
 - [[01 - Vision/Plan|Plan]]
 - [[04 - Architecture/Code Map|Code Map]]
 - [[Home]]
+- [[99 - Changelog/1.0.0+4|1.0.0+4]]
