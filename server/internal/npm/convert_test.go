@@ -132,3 +132,24 @@ func TestConflictsAndRedirectingWeb(t *testing.T) {
 		t.Errorf("plain host on a redirecting web entrypoint must get HTTPS from the existing resolver: %+v", rd.Route.TLS)
 	}
 }
+
+// NPM 2.12+ keeps no email in Let's Encrypt certificates: the NPM account email must be used, not every host skipped.
+func TestLetsEncryptWithoutEmailUsesNPMAccount(t *testing.T) {
+	d := load(t)
+	for i := range d.Certificates {
+		d.Certificates[i].Meta.Email = ""
+	}
+	if it := item(BuildPlan(d, state(), containers(), Options{Htpasswd: map[int][]string{1: {"alice:h"}}}), "proxy-1"); it.Action != "skip" {
+		t.Fatalf("without any email the host can't get a resolver: %+v", it)
+	}
+	p := BuildPlan(d, state(), containers(), Options{Htpasswd: map[int][]string{1: {"alice:h"}}, FallbackEmail: "me@npm.test"})
+	if it := item(p, "proxy-1"); it.Action != "import" || p.Resolver == nil || p.Resolver.Email != "me@npm.test" {
+		t.Fatalf("NPM account email not used: %+v resolver %+v", it, p.Resolver)
+	}
+	if len(p.Warnings) == 0 || !strings.Contains(p.Warnings[0], "me@npm.test") {
+		t.Errorf("the plan must say which email it used: %v", p.Warnings)
+	}
+	if s := item(p, "stream-1-tcp"); strings.HasPrefix(s.Target, "://") {
+		t.Errorf("stream target shown as %q", s.Target)
+	}
+}

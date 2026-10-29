@@ -156,7 +156,8 @@ export function ImportNPM() {
   };
 
   const needPasswords = useMemo(() => Array.from(new Set(plan?.items.flatMap(i => i.passwords ?? []) ?? [])), [plan]);
-  const needEmail = !!plan?.items.some(i => i.reason?.includes("no email is known"));
+  // The email field shows when a host waits for one, or when a new resolver will be created (to check or change its email).
+  const needEmail = !!plan?.items.some(i => i.reason?.includes("no email is known")) || !!plan?.resolver;
   const importable = plan?.items.filter(i => i.action === "import") ?? [];
   const counts = plan ? { import: importable.length, skip: plan.items.length - importable.length } : null;
   const m = s?.migration;
@@ -278,8 +279,8 @@ export function ImportNPM() {
                 </>
               )}
               {needEmail && (
-                <Field label="Email for Let's Encrypt" htmlFor="npm-le-email" hint="NPM's certificates don't say which email they used. Traefik needs one for its own certificates.">
-                  <input className="input" type="email" {...invalid("npm-le-email")} value={email} onChange={e => setEmail(e.target.value)} style={{ maxWidth: 360 }} />
+                <Field label="Email for Let's Encrypt" htmlFor="npm-le-email" hint="Let's Encrypt sends expiry notices here. Defaults to your NPM account email.">
+                  <input className="input" type="email" {...invalid("npm-le-email")} value={email || plan?.resolver?.email || ""} onChange={e => setEmail(e.target.value)} style={{ maxWidth: 360 }} />
                 </Field>
               )}
               <div className="form-actions start"><Button busy={busy === "plan"} busyLabel="Checking" onClick={replan}>Update review</Button></div>

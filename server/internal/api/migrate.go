@@ -28,6 +28,7 @@ import (
 type npmSession struct {
 	mu        sync.Mutex
 	url       string
+	email     string // the NPM account email, the default for a new Let's Encrypt resolver
 	container string
 	data      *npm.Data
 	htpasswd  map[int][]string
@@ -178,6 +179,9 @@ func (a *App) npmConnect(w http.ResponseWriter, r *http.Request) {
 	}
 	npmSess.mu.Lock()
 	npmSess.url, npmSess.container, npmSess.data, npmSess.htpasswd, npmSess.expires = in.URL, in.Container, &data, ht, time.Now().Add(time.Hour)
+	if in.Email != "" {
+		npmSess.email = strings.TrimSpace(in.Email)
+	}
 	npmSess.mu.Unlock()
 	ok(w, map[string]any{"plan": a.npmPlan(nil, ""), "version": data.Version, "warnings": warn})
 }
@@ -189,7 +193,13 @@ func (a *App) npmPlan(passwords map[string]string, email string) *npm.Plan {
 		return nil
 	}
 	containers, _ := a.Docker.Containers(context.Background(), true)
-	p := npm.BuildPlan(*npmSess.data, a.Store.Get(), containers, npm.Options{Htpasswd: npmSess.htpasswd, Passwords: passwords, Hash: auth.APR1, ResolverEmail: email})
+	// Recent NPM versions no longer keep the Let's Encrypt email in the certificate: default to the NPM account email.
+	fallback := ""
+	if email == "" {
+		fallback = npmSess.email
+	}
+	p := npm.BuildPlan(*npmSess.data, a.Store.Get(), containers, npm.Options{Htpasswd: npmSess.htpasswd, Passwords: passwords, Hash: auth.APR1,
+		ResolverEmail: email, FallbackEmail: fallback})
 	return &p
 }
 

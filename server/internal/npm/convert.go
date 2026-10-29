@@ -50,6 +50,8 @@ type Options struct {
 	// Hash turns a plain password into an htpasswd hash (apr1).
 	Hash          func(string) string
 	ResolverEmail string
+	// FallbackEmail is used when neither ResolverEmail nor NPM's certificates give one (the NPM account email).
+	FallbackEmail string
 }
 
 var invalidName = regexp.MustCompile(`[^a-z0-9-]+`)
@@ -86,6 +88,9 @@ func target(host string, port int, scheme string, containers []docker.ContainerS
 			t := store.Target{Kind: "docker", Container: c.Name(), Port: port, Scheme: scheme}
 			return t, fmt.Sprintf("container %s:%d", c.Name(), port)
 		}
+	}
+	if scheme == "" { // streams: an address, not a URL
+		return store.Target{Kind: "ip", Address: h, Port: port}, fmt.Sprintf("%s:%d", h, port)
 	}
 	return store.Target{Kind: "ip", Address: h, Port: port, Scheme: scheme}, fmt.Sprintf("%s://%s:%d", scheme, h, port)
 }
@@ -181,6 +186,10 @@ func BuildPlan(d Data, st store.State, containers []docker.ContainerSummary, opt
 				}
 				break
 			}
+		}
+		if email == "" && opt.FallbackEmail != "" {
+			email = opt.FallbackEmail
+			p.Warnings = append(p.Warnings, fmt.Sprintf("NPM's certificates don't say which email they used: the new Let's Encrypt resolver uses your NPM account email, %s. Change it below if needed.", email))
 		}
 		if email == "" {
 			return ""
