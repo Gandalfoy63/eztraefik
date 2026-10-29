@@ -188,6 +188,25 @@ tr.is-skipped td { color: var(--text-muted); }
 .alert.is-success-soft { background: var(--success-soft); border-color: transparent; }
 .alert.is-success-soft > svg.lucide { color: var(--success); margin-top: 2px; }
 
+/* ---------- Brand (docs/05 - UI-UX/Logo.md) ---------- */
+.brand-mark { display: block; flex-shrink: 0; }
+.brand-ez { color: var(--accent-text); }
+.brand-lockup { display: inline-flex; }
+.brand-lockup img { display: block; max-width: 100%; height: auto; }
+/* Show the lockup that matches the theme: dark by default, light from the system or the theme switch. */
+.brand-on-light { display: none !important; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .brand-on-light { display: block !important; }
+  :root:not([data-theme="dark"]) .brand-on-dark { display: none !important; }
+}
+:root[data-theme="light"] .brand-on-light { display: block !important; }
+:root[data-theme="light"] .brand-on-dark { display: none !important; }
+.login-brand { flex-direction: column; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-4); }
+.login-brand .brand-lockup { margin: 0 0 var(--space-3) -6px; }
+.login-brand h1 { font-size: var(--text-xl); }
+.ob-top .brand { display: flex; align-items: center; gap: var(--space-4); }
+.brand-setup { font-weight: 500; color: var(--text-muted); padding-left: var(--space-4); border-left: 1px solid var(--border-strong); }
+
 @media (max-width: 1100px) {
   .chart-grid { grid-template-columns: minmax(0, 1fr); }
 }
@@ -199,3 +218,6 @@ tr.is-skipped td { color: var(--text-muted); }
   .inline-field .select { min-width: 0; }
   .login { padding: var(--space-6); }
 }
+
+/* Headings that receive focus from code (page or step changes) are announced, not outlined: they are not controls. */
+h1[tabindex="-1"]:focus { outline: none; }

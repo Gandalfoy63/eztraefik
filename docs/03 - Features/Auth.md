@@ -19,7 +19,7 @@ Status: implemented in 0.2.0+3.
 
 ## Code
 - [Sessions](../../server/internal/auth/auth.go#L55-L63), guard [guard](../../server/internal/api/api.go#L126-L142), [login](../../server/internal/api/api.go#L269-L288)
-- [Login](../../web/src/pages/Login.tsx#L8-L53)
+- [Login](../../web/src/pages/Login.tsx#L8-L51)
 
 ## Related
 - [[03 - Features/Onboarding|Onboarding]]

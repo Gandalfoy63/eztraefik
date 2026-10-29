@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, Box, CircleAlert, CircleCheck, Container, Lock, 
 import { api, ApiError, type EnvVar } from "../api";
 import { Button, Spinner } from "../ui/feedback";
 import { Field, SettingRow, invalid } from "../ui/controls";
-import { BrandMark } from "../app/Shell";
+import { BrandLockup } from "../ui/Brand";
 
 interface Check {
   docker: { ok: boolean; version?: string; containers?: number; networks?: number; error?: string };
@@ -301,7 +301,7 @@ export function Onboarding({ devMode, onDone }: { devMode: boolean; onDone: () =
     <div className="onboarding is-open" role="main">
       <div className="ob-shell">
         <div className="ob-top">
-          <div className="brand"><BrandMark /><span className="brand-name">eztraefik setup</span></div>
+          <div className="brand"><BrandLockup height={36} animated /><span className="brand-setup">Setup</span></div>
           {devMode && <span className="badge is-warning">Dev environment</span>}
         </div>
         <ol className="steps" aria-label="Setup steps">

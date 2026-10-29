@@ -25,7 +25,7 @@ Status: built in 0.2.0+3.
 ```
 
 ## Parts
-- **eztraefik** (one container, one static Go binary, no third-party Go modules). Serves the UI ([Handler](../../server/internal/webui/webui.go#L18-L40)) and the API ([[06 - API/API Overview|API Overview]]). Entry point and settings: [main](../../server/main.go#L42-L129), [[08 - Deployment/Configuration|Configuration]].
+- **eztraefik** (one container, one static Go binary, no third-party Go modules). Serves the UI ([Handler](../../server/internal/webui/webui.go#L24-L46)) and the API ([[06 - API/API Overview|API Overview]]). Entry point and settings: [main](../../server/main.go#L42-L129), [[08 - Deployment/Configuration|Configuration]].
 - **State** in `/data/state.json` plus `/data/history/` ([[09 - Data/Data Model|Data Model]]).
 - **Traefik container**, created and owned by eztraefik ([[03 - Features/Traefik Container|Traefik Container]]). It gets the shared volume, the Docker socket (read-only, for label routes) and the Traefik network, with the alias `traefik`.
 - **Shared volume**: `dynamic/ezt.yml` (written by eztraefik, watched by Traefik's [[00 - Downloaded Docs/Traefik/reference/install-configuration/providers/others/file|File provider]]), `acme/<resolver>.json` (written by Traefik), `certs/` (uploaded certificates), `ca/` (private ACME CAs), `logs/access.log`.

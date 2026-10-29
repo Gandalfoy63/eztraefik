@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { api } from "../api";
 import { useLoad, reducedMotion } from "../ui/hooks";
+import { BrandMark, BrandName } from "../ui/Brand";
 
 interface NavItem {
   page: string;
@@ -55,15 +56,6 @@ export function pageMeta(page: string) {
   return null;
 }
 
-function BrandMark() {
-  return (
-    <svg className="brand-mark" viewBox="0 0 28 28" aria-hidden="true">
-      <rect x="1" y="1" width="26" height="26" rx="7" fill="currentColor" />
-      <path d="M8 9h4.5c2 0 3 1 3.5 2.5L17 14l1 2.5c.5 1.5 1.5 2.5 3.5 2.5M8 19h4.5c2 0 3-1 3.5-2.5M17 14h4" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-export { BrandMark };
 
 interface OverviewLite {
   traefik: { status: { running: boolean; exists: boolean }; version: string; reachable: boolean };
@@ -148,7 +140,7 @@ export function Shell({ page, version, user, onSignOut, children }: { page: stri
         <div className="sidebar-head">
           <BrandMark />
           <div className="brand-text">
-            <div className="brand-name">eztraefik</div>
+            <BrandName />
             <div className="brand-version">{version}</div>
           </div>
         </div>

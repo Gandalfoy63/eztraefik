@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import { api, ApiError } from "../api";
 import { Button } from "../ui/feedback";
 import { Field, invalid } from "../ui/controls";
-import { BrandMark } from "../app/Shell";
+import { BrandLockup } from "../ui/Brand";
 
 export function Login({ version, onDone }: { version: string; onDone: () => void }) {
   const [username, setUsername] = useState("");
@@ -32,11 +32,9 @@ export function Login({ version, onDone }: { version: string; onDone: () => void
     <div className="center-screen">
       <form className="login card" onSubmit={submit} noValidate>
         <div className="login-brand">
-          <BrandMark />
-          <div>
-            <h1>Sign in to eztraefik</h1>
-            <p className="hint">Version {version}</p>
-          </div>
+          <BrandLockup height={56} animated />
+          <h1>Sign in</h1>
+          <p className="hint">Version {version}</p>
         </div>
         <Field label="Username" htmlFor="login-user">
           <input className="input" {...invalid("login-user", error)} autoComplete="username" value={username} onChange={e => setUsername(e.target.value)} autoFocus />

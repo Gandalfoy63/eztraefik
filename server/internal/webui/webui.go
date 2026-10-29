@@ -6,10 +6,16 @@ package webui
 import (
 	"embed"
 	"io/fs"
+	"mime"
 	"net/http"
 	"path"
 	"strings"
 )
+
+func init() {
+	// Go does not know this extension; browsers expect the manifest type.
+	_ = mime.AddExtensionType(".webmanifest", "application/manifest+json")
+}
 
 //go:embed all:dist
 var files embed.FS

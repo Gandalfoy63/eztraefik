@@ -1,8 +1,8 @@
 ---
 title: Logo
 tags: [ui-ux, brand]
-version: 1.2.0+8
-related: ["[[05 - UI-UX/Style|Style]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[04 - Architecture/Code Map|Code Map]]", "[[00 - Downloaded Docs/fontTools/README|fontTools docs]]", "[[00 - Downloaded Docs/Google Fonts/README|Google Fonts docs]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]", "[[Home]]"]
+version: 1.2.1+9
+related: ["[[05 - UI-UX/Style|Style]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[04 - Architecture/Code Map|Code Map]]", "[[00 - Downloaded Docs/fontTools/README|fontTools docs]]", "[[00 - Downloaded Docs/Google Fonts/README|Google Fonts docs]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]", "[[Home]]", "[[99 - Changelog/1.2.1+9|1.2.1+9]]"]
 ---
 
 # Logo
@@ -33,6 +33,13 @@ Route Blue `#2D68CF` (the app accent), Deep Blue `#163A7A` (start), Signal Orang
 | `final/gif` | 14 looping GIFs (symbol and icon 256 / 512, lockup 600 / 1200, wordmark 800) |
 | `final/web` | favicon.ico (16 / 32 / 48), favicon.svg, Apple touch icon, PWA icons, manifest, `<head>` snippet, Docker Hub avatar |
 
+## In the app
+- Sidebar: the app icon (blue tile) with the name, "ez" in Route Blue ([BrandMark](../../web/src/ui/Brand.tsx#L5-L7)).
+- Sign-in and setup: the lockup in the colours of the current theme, **animated once** on load ([BrandLockup](../../web/src/ui/Brand.tsx#L12-L21)).
+- Favicon set from `final/web`: `favicon.ico`, `favicon.svg`, Apple touch icon, PWA icons and `site.webmanifest` (served as `application/manifest+json`), theme colour `#2D68CF` ([index.html](../../web/index.html)).
+- The files are **copies** in `web/public/` and `web/public/brand/`. After rebuilding the logo, copy `final/svg/static/icon-light.svg`, `lockup-light.svg`, `lockup-dark.svg`, `final/svg/animated/lockup-*-animated.svg` and the `final/web` icons there again.
+
 ## Build
 `marketing/logo/build/build.sh` regenerates everything in about a minute (Chromium and fontTools in containers, ffmpeg on the host): [keyframes](../../marketing/logo/build/make_svgs.py#L57-L75) builds the shared animation clock, [mark](../../marketing/logo/build/make_svgs.py#L90-L101) the mark, [write_ico](../../marketing/logo/build/make_web.py#L15-L27) the favicon.
 - [[Home]]
+- [[99 - Changelog/1.2.1+9|1.2.1+9]]

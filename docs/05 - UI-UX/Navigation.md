@@ -7,7 +7,7 @@ related: ["[[05 - UI-UX/Style|Style]]", "[[05 - UI-UX/Components|Components]]", 
 
 # Navigation
 
-Implemented in [Shell](../../web/src/app/Shell.tsx#L99-L237), menu in [NAV](../../web/src/app/Shell.tsx#L17-L51).
+Implemented in [Shell](../../web/src/app/Shell.tsx#L91-L229), menu in [NAV](../../web/src/app/Shell.tsx#L18-L52).
 
 - Fixed sidebar, grouped and labeled: Overview; Routing (Routes, Services, Middlewares); Network (Domains, Certificates, Entrypoints); Sources (Docker); Observe (Stats, Logs); System (Traefik, Import from NPM, Settings).
 - Current page: tinted item with a 3px accent bar, `aria-current="page"`, breadcrumb (group / page) in the top bar, page title in the tab.

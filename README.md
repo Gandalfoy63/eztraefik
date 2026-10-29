@@ -1,3 +1,5 @@
+<p><img src="marketing/logo/final/svg/static/lockup-light.svg" alt="eztraefik" width="360"></p>
+
 # eztraefik
 
 A self-hosted web app to run and manage [Traefik](https://traefik.io/traefik/): it creates the Traefik container and lets you edit everything from one UI.
