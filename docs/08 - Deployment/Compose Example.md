@@ -1,8 +1,8 @@
 ---
 title: Compose Example
 tags: [deployment, docker]
-version: 1.1.1+6
-related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Docker|Docker]]", "[[00 - Downloaded Docs/Docker/README|Docker docs]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[04 - Architecture/Code Map|Code Map]]"]
+version: 1.1.2+7
+related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Docker|Docker]]", "[[00 - Downloaded Docs/Docker/README|Docker docs]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]"]
 ---
 
 # Compose Example
@@ -29,7 +29,7 @@ All three join the network `ezt`, which is also the network setup proposes for T
 | `EZT_PORT` | 8080 | host port of the eztraefik UI |
 | `EZT_HTTP_PORT`, `EZT_HTTPS_PORT` | 80, 443 | ports setup proposes for Traefik; change them if something else (for example Nginx Proxy Manager) holds 80 / 443 |
 | `EZT_SECURE_COOKIES` | 0 | 1 once the UI is served over HTTPS |
-| `EZT_IMAGE` | eztraefik:1.1.1 | the image, for example `ghcr.io/<you>/eztraefik:1.1.1` |
+| `EZT_IMAGE` | gandasdevstudio/eztraefik:1.1.1 | the image, from [Docker Hub](https://hub.docker.com/r/gandasdevstudio/eztraefik) |
 
 All variables eztraefik reads: [[08 - Deployment/Configuration|Configuration]]. Compose syntax: [[00 - Downloaded Docs/Docker/Compose services|services]], [[00 - Downloaded Docs/Docker/Compose networks|networks]], [[00 - Downloaded Docs/Docker/Compose volumes|volumes]].
 
@@ -39,3 +39,4 @@ Remove the Traefik container eztraefik created first (`docker rm -f traefik`): i
 ## Tested (1.1.1+6)
 `docker compose config` passes. With `EZT_PORT=5182 EZT_HTTP_PORT=38080 EZT_HTTPS_PORT=38443` (to leave this host's 80 / 443 alone): setup through the API created Traefik on 38080 / 38443, a route to `whoami` created from the API answered through Traefik, and `labeled-app@docker` was listed as an active label route. Everything was removed afterwards.
 - [[04 - Architecture/Code Map|Code Map]]
+- [[99 - Changelog/1.1.2+7|1.1.2+7]]

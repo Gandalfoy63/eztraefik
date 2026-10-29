@@ -12,6 +12,8 @@ A self-hosted web app to run and manage [Traefik](https://traefik.io/traefik/): 
 
 ## Run
 
+Image: [`gandasdevstudio/eztraefik`](https://hub.docker.com/r/gandasdevstudio/eztraefik) on Docker Hub (amd64, arm64).
+
 ```bash
 docker compose -f deploy/compose.yml up -d
 ```

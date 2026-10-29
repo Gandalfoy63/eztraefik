@@ -1,8 +1,8 @@
 ---
 title: Changelog
 tags: [changelog, index]
-version: 1.1.1+6
-related: ["[[Home]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[99 - Changelog/0.1.1+2|0.1.1+2]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[04 - Architecture/Code Map|Code Map]]"]
+version: 1.1.2+7
+related: ["[[Home]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[99 - Changelog/0.1.1+2|0.1.1+2]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[04 - Architecture/Code Map|Code Map]]"]
 ---
 
 # Changelog
@@ -11,6 +11,7 @@ Newest first. Version format `MAJOR.MEDIUM.MINOR+BUILD`, source of truth in [VER
 
 | Version | Date | Summary |
 |---|---|---|
+| [[99 - Changelog/1.1.2+7|1.1.2+7]] | 2026-10-29 | Image published on Docker Hub, compose files use it |
 | [[99 - Changelog/1.1.1+6|1.1.1+6]] | 2026-10-29 | Docker Compose example with apps |
 | [[99 - Changelog/1.1.0+5|1.1.0+5]] | 2026-10-29 | Import from Nginx Proxy Manager, with traffic switch and switch back |
 | [[99 - Changelog/1.0.0+4|1.0.0+4]] | 2026-10-29 | First release: publishable image, cross-platform build |
@@ -27,3 +28,4 @@ Newest first. Version format `MAJOR.MEDIUM.MINOR+BUILD`, source of truth in [VER
 - [[99 - Changelog/1.0.0+4|1.0.0+4]]
 - [[99 - Changelog/1.1.0+5|1.1.0+5]]
 - [[99 - Changelog/1.1.1+6|1.1.1+6]]
+- [[99 - Changelog/1.1.2+7|1.1.2+7]]

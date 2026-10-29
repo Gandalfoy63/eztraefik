@@ -1,8 +1,8 @@
 ---
 title: Install
 tags: [deployment]
-version: 1.1.1+6
-related: ["[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Auth|Auth]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]"]
+version: 1.1.2+7
+related: ["[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Auth|Auth]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]"]
 ---
 
 # Install
@@ -10,7 +10,7 @@ related: ["[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/
 On a host with Docker:
 
 ```bash
-docker compose -f deploy/compose.yml up -d     # or EZT_IMAGE=ghcr.io/<you>/eztraefik:1.1.1
+docker compose -f deploy/compose.yml up -d     # pulls gandasdevstudio/eztraefik:1.1.1 from Docker Hub
 ```
 
 Open `http://<server-ip>:8080` and follow the setup ([[03 - Features/Onboarding|Onboarding]]). Compose file: [deploy/compose.yml](../../deploy/compose.yml). A fuller, commented one with example apps: [[08 - Deployment/Compose Example|Compose Example]].
@@ -34,3 +34,4 @@ Pull the new image and recreate the eztraefik container. Traefik keeps running d
 - [[04 - Architecture/Code Map|Code Map]]
 - [[Home]]
 - [[99 - Changelog/1.1.1+6|1.1.1+6]]
+- [[99 - Changelog/1.1.2+7|1.1.2+7]]
