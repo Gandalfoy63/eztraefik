@@ -1,13 +1,13 @@
 ---
 title: Design Principles
 tags: [ui-ux, design-system]
-version: 0.1.0+1
-related: ["[[05 - UI-UX/Preview|Preview]]", "[[01 - Vision/Plan|Plan]]", "[[01 - Vision/Vision|Vision]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[00 - Downloaded Docs/Google Fonts/README|Google Fonts docs]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]"]
+version: 0.2.0+3
+related: ["[[05 - UI-UX/Preview|Preview]]", "[[01 - Vision/Plan|Plan]]", "[[01 - Vision/Vision|Vision]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[00 - Downloaded Docs/Google Fonts/README|Google Fonts docs]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]", "[[05 - UI-UX/Components|Components]]"]
 ---
 
 # Design Principles
 
-Proposed direction. When you confirm the [[05 - UI-UX/Preview|Preview]], the exact tokens move to `05 - UI-UX/Style.md` and become binding.
+Approved. The exact, binding values are in [[05 - UI-UX/Style|Style]]; this note keeps the reasons.
 
 Direction comes from the ui-ux-pro-max skill (`--design-system` for "devops admin dashboard infrastructure minimal", style "Minimalism & Swiss", palette "Developer Tool / IDE", font pairing "Dashboard Data"), adjusted where the result clashed with our rules:
 - The suggested green accent was dropped: green means "healthy" here, so the accent is blue and green is status only.
@@ -26,7 +26,7 @@ Direction comes from the ui-ux-pro-max skill (`--design-system` for "devops admi
 9. **Forms explain themselves.** Visible labels, hint under the field, error under the field in words, "Advanced" sections closed by default, generated YAML preview on every config form.
 10. **Short human copy.** "1 of 2 servers down", not "Service degradation detected".
 
-## Tokens (proposal)
+## Tokens (see [[05 - UI-UX/Style|Style]] for the final table)
 
 | Group | Values |
 |---|---|
@@ -74,3 +74,4 @@ Easing: `cubic-bezier(0.22, 1, 0.36, 1)` for entering, `cubic-bezier(0.65, 0, 0.
 - [[04 - Architecture/Code Map|Code Map]]
 - [[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]
 - [[Home]]
+- [[05 - UI-UX/Components|Components]]

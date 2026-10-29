@@ -1,26 +1,31 @@
 ---
 title: Config History
 tags: [feature, core]
-version: 0.1.0+1
-status: planned
-related: ["[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Overview|Architecture Overview]]"]
+version: 0.2.0+3
+related: ["[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Overview|Architecture Overview]]", "[[09 - Data/Data Model|Data Model]]"]
 ---
 
 # Config History
 
-Status: planned. Not implemented yet.
+Status: implemented in 0.2.0+3.
 
-## Scope
-- Every save writes a snapshot of the dynamic files and the static settings to SQLite with author and time.
-- History page: list, diff between any two, rollback.
-- Import / export: the whole config as one archive.
-- Before writing, eztraefik validates the YAML; after writing, it checks `/api/rawdata` for new errors and offers to roll back.
+- Every change is a snapshot in `/data/history/` with time, user and a message ([Update](../../server/internal/store/store.go#L81-L95)); the last 200 are kept. The admin password hash is never part of a snapshot.
+- Settings > History: list, view the dynamic config a version produced, restore. A restore is itself a new entry, so it can be undone. It keeps the account; restored Traefik settings show as pending until applied.
+- Settings > Backup: export everything except the account as JSON (includes secret env values), import with confirmation.
+- Settings also shows the current generated `ezt.yml`.
+- After every save, eztraefik waits for Traefik to reload and returns Traefik's errors on its own objects, shown as a warning toast ([traefikErrors](../../server/internal/api/api.go#L211-L243)).
 
-Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/providers/others/file|File provider]].
+## Code
+- [rollback](../../server/internal/api/setup.go#L200-L218), [importState](../../server/internal/api/setup.go#L234-L267)
+- [SettingsPage](../../web/src/pages/Settings.tsx#L153-L171)
 
 ## Related
 - [[03 - Features/Routes|Routes]]
 - [[03 - Features/Traefik Container|Traefik Container]]
 - [[03 - Features/Features Index|Features Index]]
 - [[01 - Vision/Plan|Plan]]
+- [[99 - Changelog/0.2.0+3|0.2.0+3]]
+- [[06 - API/API Overview|API Overview]]
+- [[04 - Architecture/Code Map|Code Map]]
 - [[04 - Architecture/Overview|Architecture Overview]]
+- [[09 - Data/Data Model|Data Model]]

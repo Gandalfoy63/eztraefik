@@ -1,0 +1,8 @@
+.git
+docs
+preview
+dev
+web/node_modules
+web/dist
+server/internal/webui/dist
+**/*.md

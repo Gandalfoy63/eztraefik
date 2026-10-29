@@ -1,32 +1,40 @@
 ---
 title: Routes
 tags: [feature, routing]
-version: 0.1.0+1
-status: planned
-related: ["[[03 - Features/Services|Services]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[05 - UI-UX/Preview|Preview]]"]
+version: 0.2.0+3
+related: ["[[03 - Features/Services|Services]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[05 - UI-UX/Preview|Preview]]"]
 ---
 
 # Routes
 
-Status: planned. Not implemented yet.
+Status: implemented in 0.2.0+3.
 
-Every router, HTTP, TCP and UDP, in one table with a protocol filter.
+## Page
+- One table for HTTP, TCP and UDP routes eztraefik manages: name, rule, forwarding to, HTTPS, live status from Traefik (Active, Error with the message on hover, Not loaded yet, Disabled), enable switch, edit, delete (with confirmation).
+- Search and protocol filter, empty state and "no match" state.
+- A second, read-only table lists routers from other providers (Docker labels).
+- `#routes?new=1&host=...` or `&container=...&port=...` opens the window prefilled: used by Domains ("Add route on this domain") and Docker. Creating a route still happens only in this window.
 
-## Table
-Name, protocol, rule (in Fira Code), entrypoints, service, TLS, status (enabled / warning / error from `/api/rawdata`), source (eztraefik, Docker labels, file).
+## New / edit route window
+Centered window with two tabs, as approved in the preview review:
+- **Common**: Name, Domain (several allowed), **Forwarding to**: Docker container (port prefilled from the container) or IP address, plus port; or a shared Service when one exists. "More options" (closed by default): protocol HTTP / TCP / UDP, entrypoints (ports), path prefix, backend uses HTTPS, middlewares, custom rule, priority.
+- **Certificates**: Serve over HTTPS; certificate choice lists only certificates that cover every domain of the route, plus "Generate a new certificate" per resolver (or "Keep using the issued certificate" once it exists); TCP adds TLS passthrough; Redirect HTTP to HTTPS.
+- "Generated config" shows the YAML for the draft, from [previewRoute](../../server/internal/api/routes.go#L332-L348).
+- Server errors come back with the field name: the message appears under that field, the tab gets a red dot, and the window switches to it.
 
-## Create / edit form
-- **Protocol**: HTTP, TCP, UDP.
-- **Rule builder** (HTTP): Host, HostRegexp, Path, PathPrefix, PathRegexp, Method, Header, HeaderRegexp, Query, QueryRegexp, ClientIP, combined with AND / OR / NOT. Raw rule editor as fallback. See [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/routing/rules-and-priority|HTTP rules and priority]].
-- **Rule builder** (TCP): HostSNI, HostSNIRegexp, ClientIP, ALPN. See [[00 - Downloaded Docs/Traefik/reference/routing-configuration/tcp/routing/rules-and-priority|TCP rules]]. UDP has no rule, only entrypoints: [[00 - Downloaded Docs/Traefik/reference/routing-configuration/udp/routing/router|UDP router]].
-- **Entrypoints**: pick one or more, including custom ports.
-- **TLS**: off, on with a cert resolver, on with uploaded cert, TLS options, passthrough (TCP).
-- **Middlewares**: ordered list, drag or arrow buttons to reorder.
-- **Service**: pick existing or create inline.
-- **Priority**: auto by default, manual in Advanced.
-- **Preview**: generated YAML, read-only.
+## Rules enforced by the server ([validateRoute](../../server/internal/api/routes.go#L97-L243))
+- Names: lowercase, digits, dashes; `ezt-` is reserved; unique among routes, and not taken by a shared service (a route to a container or IP gets a service with its own name).
+- Entrypoints must match the protocol (UDP vs TCP). HTTP defaults to `websecure` with HTTPS, `web` without.
+- An HTTP route without HTTPS is refused on an entrypoint that redirects everything to HTTPS, because it could never answer. The same check runs the other way when an entrypoint redirect is turned on. Found by the dev test.
+- Middlewares must exist with the same protocol; UDP has none.
+- Targeting a container connects it to the Traefik network on save.
 
-Reference: [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/routing/router|HTTP router]], [[00 - Downloaded Docs/Traefik/reference/routing-configuration/tcp/routing/router|TCP router]].
+## Generated config
+See [[04 - Architecture/Dynamic Config|Dynamic Config]]. Rule syntax: [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/routing/rules-and-priority|HTTP rules]], [[00 - Downloaded Docs/Traefik/reference/routing-configuration/tcp/routing/rules-and-priority|TCP rules]], [[00 - Downloaded Docs/Traefik/reference/routing-configuration/udp/routing/router|UDP router]].
+
+## Code
+- API: [listRoutes](../../server/internal/api/routes.go#L69-L95), [saveRoute](../../server/internal/api/routes.go#L259-L312), [deleteRoute](../../server/internal/api/routes.go#L314-L329)
+- Page: [Routes](../../web/src/pages/Routes.tsx#L29-L181), window [RouteModal](../../web/src/pages/RouteModal.tsx#L27-L339)
 
 ## Related
 - [[03 - Features/Services|Services]]
@@ -38,4 +46,8 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/r
 - [[03 - Features/Config History|Config History]]
 - [[03 - Features/Features Index|Features Index]]
 - [[01 - Vision/Plan|Plan]]
+- [[99 - Changelog/0.2.0+3|0.2.0+3]]
+- [[06 - API/API Overview|API Overview]]
+- [[03 - Features/Overview|Overview]]
+- [[04 - Architecture/Code Map|Code Map]]
 - [[05 - UI-UX/Preview|Preview]]

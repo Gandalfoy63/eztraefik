@@ -1,0 +1,28 @@
+# Docs: docs/08 - Deployment/Install.md
+# Production install: eztraefik creates and manages the Traefik container itself.
+#
+#   docker compose -f deploy/compose.yml up -d
+#   then open http://<server-ip>:8080 and follow the setup.
+#
+# After setup you can put eztraefik behind Traefik with HTTPS: create a route to the container
+# "eztraefik" on port 8080, then remove the ports: line below (and set EZT_SECURE_COOKIES=1).
+name: eztraefik
+
+services:
+  eztraefik:
+    image: ${EZT_IMAGE:-eztraefik:1.0.0}
+    container_name: eztraefik
+    restart: unless-stopped
+    environment:
+      EZT_SHARED_VOLUME: eztraefik-shared   # mounted into Traefik too; must match the volume name below
+      # EZT_SECURE_COOKIES: "1"             # once the UI is served over HTTPS
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - eztraefik-data:/data
+      - eztraefik-shared:/shared
+    ports:
+      - "8080:8080"
+
+volumes:
+  eztraefik-data: { name: eztraefik-data }
+  eztraefik-shared: { name: eztraefik-shared }

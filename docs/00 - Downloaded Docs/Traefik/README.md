@@ -1,7 +1,7 @@
 ---
 title: Traefik documentation (downloaded)
 tags: [downloaded-docs, traefik]
-version: 0.1.0+1
+version: 0.2.0+3
 related: ["[[Home]]", "[[02 - Tech/Stack|Stack]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]"]
 ---
 
@@ -32,7 +32,7 @@ Only the parts eztraefik uses. Excluded: Kubernetes, Swarm, KV/HashiCorp/ECS-lik
 | TLS and certificates | [[reference/routing-configuration/http/tls/overview|TLS overview]], [[reference/routing-configuration/http/tls/tls-certificates|TLS certificates]], [[reference/routing-configuration/http/tls/tls-options|TLS options]] |
 | ACME / Let's Encrypt | [[reference/install-configuration/tls/certificate-resolvers/acme|ACME resolver]] |
 | Metrics, logs, health | [[reference/install-configuration/observability/metrics|Metrics]], [[reference/install-configuration/observability/logs-and-accesslogs|Logs and access logs]], [[reference/install-configuration/observability/healthcheck|Healthcheck]] |
-| Static config reference | [[reference/static-configuration/cli-ref|CLI reference]], [[reference/static-configuration/env-ref|Environment variables]] |
+| Install (static) options, full list | [[reference/install-configuration/configuration-options|Configuration options]]. Each option `a.b.c` is the CLI flag `--a.b.c` and the env var `TRAEFIK_A_B_C`. (`static-configuration/cli-ref.md` and `env-ref.md` are empty upstream: they are generated at docs build time.) |
 
 ## Traefik Hub only
 

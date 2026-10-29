@@ -1,22 +1,23 @@
 ---
 title: Certificates
 tags: [feature, network, tls]
-version: 0.1.0+1
-status: planned
-related: ["[[03 - Features/Domains|Domains]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]"]
+version: 0.2.0+3
+related: ["[[03 - Features/Domains|Domains]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]"]
 ---
 
 # Certificates
 
-Status: planned. Not implemented yet.
+Status: implemented in 0.2.0+3.
 
-## Scope
-- **Resolvers**: create ACME resolvers (Let's Encrypt prod / staging, other CA via URL), challenge type HTTP-01, TLS-ALPN-01 or DNS-01 with provider picker. DNS credentials become Traefik env vars. Editing a resolver recreates the Traefik container.
-- **Issued certificates**: read from the resolver storage (`acme.json`): domains, SANs, issuer, expiry. Warning at 14 days, error at 3.
-- **Uploaded certificates**: cert + key PEM, stored as files referenced by the File provider.
-- **TLS options**: min / max version, cipher suites, client auth (mTLS), default certificate.
+- **Resolvers**: ACME accounts with HTTP, TLS-ALPN or DNS challenge, email, optional private ACME server URL and its CA certificate (written to the shared volume and trusted through `LEGO_CA_CERTIFICATES`). DNS provider credentials are added as secret env vars. Saving needs Apply on the Traefik page.
+- **Certificates**: ACME certificates read from each resolver's storage file ([ACMECerts](../../server/internal/traefik/certs.go#L33-L72)) and uploaded ones, with domains, issuer and expiry (warning at 14 days, error at 3).
+- **Upload**: certificate + key PEM (paste or file), checked as a pair before saving ([ValidatePair](../../server/internal/traefik/certs.go#L89-L94)), served through the File provider's `tls.certificates`.
 
-Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/tls/certificate-resolvers/acme|ACME resolver]], [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/tls/tls-certificates|TLS certificates]], [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/tls/tls-options|TLS options]].
+Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/tls/certificate-resolvers/acme|ACME]], [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/tls/tls-certificates|TLS certificates]].
+
+## Code
+- [uploadCert](../../server/internal/api/resources.go#L551-L586), [allCerts](../../server/internal/api/resources.go#L534-L544)
+- [Certificates](../../web/src/pages/Certificates.tsx#L15-L217)
 
 ## Related
 - [[03 - Features/Domains|Domains]]
@@ -25,3 +26,8 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/tls/ce
 - [[03 - Features/Onboarding|Onboarding]]
 - [[03 - Features/Features Index|Features Index]]
 - [[01 - Vision/Plan|Plan]]
+- [[99 - Changelog/0.2.0+3|0.2.0+3]]
+- [[06 - API/API Overview|API Overview]]
+- [[03 - Features/Overview|Overview]]
+- [[04 - Architecture/Code Map|Code Map]]
+- [[04 - Architecture/Dynamic Config|Dynamic Config]]

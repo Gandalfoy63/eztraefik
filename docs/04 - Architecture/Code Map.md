@@ -1,26 +1,125 @@
 ---
 title: Code Map
 tags: [architecture, code-map]
-version: 0.1.0+1
-related: ["[[04 - Architecture/Overview|Architecture Overview]]", "[[05 - UI-UX/Preview|Preview]]", "[[Home]]"]
+version: 0.2.0+3
+related: ["[[04 - Architecture/Overview|Overview]]", "[[Home]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Docker Client|Docker Client]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Preview|Preview]]", "[[05 - UI-UX/Style|Style]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Install|Install]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/Changelog|Changelog]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[05 - UI-UX/Design Principles|Design Principles]]"]
 ---
 
 # Code Map
 
-Every source file, what it does, and its doc note.
+Every source file, what it does, and its note. Third-party files not listed: `preview/vendor/lucide.min.js`, `web/public/fonts/*` (SIL OFL), `web/package-lock.json`.
 
-| File | Purpose | Doc |
+| File | Purpose | Note |
 |---|---|---|
-| [VERSION](../../VERSION) | Single source of truth for the version | [[99 - Changelog/Changelog|Changelog]] |
-| [CLAUDE.md](../../CLAUDE.md) | Project rules for every change | [[Home]] |
-| [preview/index.html](../../preview/index.html) | Style preview markup | [[05 - UI-UX/Preview|Preview]] |
-| [preview/styles.css](../../preview/styles.css) | Style preview tokens and components | [[05 - UI-UX/Design Principles|Design Principles]] |
-| [preview/app.js](../../preview/app.js) | Style preview behaviour (nav, drawer, onboarding) | [[05 - UI-UX/Preview|Preview]] |
-| [tools/check_docs.py](../../tools/check_docs.py) | Checks the vault: broken links, missing backlinks, orphans, emoji, frontmatter | [[04 - Architecture/Code Map|Code Map]] |
-| preview/vendor/lucide.min.js | Lucide 1.56.0, third party, not edited | [[00 - Downloaded Docs/Lucide/README|Lucide docs]] |
+| [VERSION](../../VERSION) | Single source of truth for the version, read by the Go build and publish script | [[99 - Changelog/Changelog|Changelog]] |
+| [CLAUDE.md](../../CLAUDE.md) | Project rules | [[Home|Home]] |
+| [Dockerfile](../../Dockerfile) | Three-stage image build: web, Go, distroless | [[08 - Deployment/Docker Image|Docker Image]] |
+| [deploy/compose.yml](../../deploy/compose.yml) | Production install | [[08 - Deployment/Install|Install]] |
+| [dev/compose.yml](../../dev/compose.yml) | Dev environment with fake domains, ports and Pebble | [[08 - Deployment/Dev Environment|Dev Environment]] |
+| [dev/test.py](../../dev/test.py) | End-to-end test against the dev environment (30 checks) | [[08 - Deployment/Dev Environment|Dev Environment]] |
+| [dev/down.sh](../../dev/down.sh) | Removes the dev environment | [[08 - Deployment/Dev Environment|Dev Environment]] |
+| [dev/pebble/pebble.minica.pem](../../dev/pebble/pebble.minica.pem) | Pebble's test CA, trusted by the dev Traefik | [[08 - Deployment/Dev Environment|Dev Environment]] |
+| [server/main.go](../../server/main.go) | Entry point: env config, wiring, HTTP server, healthcheck | [[08 - Deployment/Configuration|Configuration]] |
+| [server/internal/api/api.go](../../server/internal/api/api.go) | Router, auth guard, errors, Commit (save + write + Traefik check), login | [[06 - API/API Overview|API Overview]] |
+| [server/internal/api/routes.go](../../server/internal/api/routes.go) | Routes: list, validate, save, delete, preview | [[03 - Features/Routes|Routes]] |
+| [server/internal/api/resources.go](../../server/internal/api/resources.go) | Services, middlewares, domains, certificates | [[03 - Features/Services|Services]] |
+| [server/internal/api/system.go](../../server/internal/api/system.go) | Traefik settings, apply, restart; Docker containers and networks | [[03 - Features/Traefik Container|Traefik Container]] |
+| [server/internal/api/observe.go](../../server/internal/api/observe.go) | Stats, logs, runtime data, overview | [[03 - Features/Overview|Overview]] |
+| [server/internal/api/setup.go](../../server/internal/api/setup.go) | Defaults, onboarding, history, export / import | [[03 - Features/Onboarding|Onboarding]] |
+| [server/internal/auth/auth.go](../../server/internal/auth/auth.go) | Password hashing, sessions, login limit, apr1 | [[03 - Features/Auth|Auth]] |
+| [server/internal/auth/auth_test.go](../../server/internal/auth/auth_test.go) | apr1 against OpenSSL, password round trip | [[03 - Features/Auth|Auth]] |
+| [server/internal/docker/docker.go](../../server/internal/docker/docker.go) | Docker Engine API client | [[04 - Architecture/Docker Client|Docker Client]] |
+| [server/internal/store/model.go](../../server/internal/store/model.go) | State types | [[09 - Data/Data Model|Data Model]] |
+| [server/internal/store/store.go](../../server/internal/store/store.go) | JSON store, atomic writes, history | [[09 - Data/Data Model|Data Model]] |
+| [server/internal/traefik/container.go](../../server/internal/traefik/container.go) | Flags, env, container spec, apply with fallback, status | [[03 - Features/Traefik Container|Traefik Container]] |
+| [server/internal/traefik/dynamic.go](../../server/internal/traefik/dynamic.go) | State to Traefik dynamic config | [[04 - Architecture/Dynamic Config|Dynamic Config]] |
+| [server/internal/traefik/yaml.go](../../server/internal/traefik/yaml.go) | YAML writer | [[04 - Architecture/Dynamic Config|Dynamic Config]] |
+| [server/internal/traefik/api.go](../../server/internal/traefik/api.go) | Traefik API client (rawdata, version, ping, metrics) | [[03 - Features/Relations|Relations]] |
+| [server/internal/traefik/certs.go](../../server/internal/traefik/certs.go) | ACME storage reader, PEM checks, wildcard matching | [[03 - Features/Certificates|Certificates]] |
+| [server/internal/traefik/metrics.go](../../server/internal/traefik/metrics.go) | Prometheus parser and per-minute collector | [[03 - Features/Stats|Stats]] |
+| [server/internal/traefik/traefik_test.go](../../server/internal/traefik/traefik_test.go) | Rules, rendering, flags, parser, wildcard tests | [[04 - Architecture/Dynamic Config|Dynamic Config]] |
+| [server/internal/webui/webui.go](../../server/internal/webui/webui.go) | Serves the embedded UI with cache headers | [[04 - Architecture/Frontend|Frontend]] |
+| [web/index.html](../../web/index.html) | HTML shell, theme before first paint | [[04 - Architecture/Frontend|Frontend]] |
+| [web/vite.config.ts](../../web/vite.config.ts) | Vite build and dev proxy | [[04 - Architecture/Frontend|Frontend]] |
+| [web/package.json](../../web/package.json) | Pinned web dependencies and scripts | [[02 - Tech/Stack|Stack]] |
+| [web/src/main.tsx](../../web/src/main.tsx) | React entry | [[04 - Architecture/Frontend|Frontend]] |
+| [web/src/api.ts](../../web/src/api.ts) | API client and types | [[06 - API/API Overview|API Overview]] |
+| [web/src/styles.css](../../web/src/styles.css) | Design tokens and base components (from the preview) | [[05 - UI-UX/Style|Style]] |
+| [web/src/app.css](../../web/src/app.css) | App components on the same tokens | [[05 - UI-UX/Style|Style]] |
+| [web/src/fonts.css](../../web/src/fonts.css) | Self-hosted Fira fonts | [[05 - UI-UX/Style|Style]] |
+| [web/src/app/App.tsx](../../web/src/app/App.tsx) | Setup / sign-in / app gate, page table | [[04 - Architecture/Frontend|Frontend]] |
+| [web/src/app/Shell.tsx](../../web/src/app/Shell.tsx) | Sidebar, top bar, page transition | [[05 - UI-UX/Navigation|Navigation]] |
+| [web/src/app/router.ts](../../web/src/app/router.ts) | Hash router | [[04 - Architecture/Frontend|Frontend]] |
+| [web/src/app/Tooltip.tsx](../../web/src/app/Tooltip.tsx) | Global tooltip | [[05 - UI-UX/Components|Components]] |
+| [web/src/ui/controls.tsx](../../web/src/ui/controls.tsx) | Field, Switch, Segmented, TagInput, CheckChips | [[05 - UI-UX/Components|Components]] |
+| [web/src/ui/feedback.tsx](../../web/src/ui/feedback.tsx) | Button, toasts, badges, empty / error / loading | [[05 - UI-UX/Components|Components]] |
+| [web/src/ui/Modal.tsx](../../web/src/ui/Modal.tsx) | Window, tabs, confirm dialog | [[05 - UI-UX/Components|Components]] |
+| [web/src/ui/Page.tsx](../../web/src/ui/Page.tsx) | Page header, card, code block | [[05 - UI-UX/Components|Components]] |
+| [web/src/ui/LineChart.tsx](../../web/src/ui/LineChart.tsx) | Line chart and sparkline | [[05 - UI-UX/Charts|Charts]] |
+| [web/src/ui/hooks.ts](../../web/src/ui/hooks.ts) | useLoad, time formatting | [[05 - UI-UX/Components|Components]] |
+| [web/src/ui/certs.ts](../../web/src/ui/certs.ts) | Certificate name matching | [[03 - Features/Certificates|Certificates]] |
+| [web/src/pages/Onboarding.tsx](../../web/src/pages/Onboarding.tsx) | Setup wizard | [[03 - Features/Onboarding|Onboarding]] |
+| [web/src/pages/Login.tsx](../../web/src/pages/Login.tsx) | Sign in | [[03 - Features/Auth|Auth]] |
+| [web/src/pages/Overview.tsx](../../web/src/pages/Overview.tsx) | Overview | [[03 - Features/Overview|Overview]] |
+| [web/src/pages/Relations.tsx](../../web/src/pages/Relations.tsx) | Traffic path strips | [[03 - Features/Relations|Relations]] |
+| [web/src/pages/Routes.tsx](../../web/src/pages/Routes.tsx) | Routes page | [[03 - Features/Routes|Routes]] |
+| [web/src/pages/RouteModal.tsx](../../web/src/pages/RouteModal.tsx) | New / edit route window | [[03 - Features/Routes|Routes]] |
+| [web/src/pages/Services.tsx](../../web/src/pages/Services.tsx) | Services page and window | [[03 - Features/Services|Services]] |
+| [web/src/pages/Middlewares.tsx](../../web/src/pages/Middlewares.tsx) | Middlewares page, type forms | [[03 - Features/Middlewares|Middlewares]] |
+| [web/src/pages/Domains.tsx](../../web/src/pages/Domains.tsx) | Domains page | [[03 - Features/Domains|Domains]] |
+| [web/src/pages/Certificates.tsx](../../web/src/pages/Certificates.tsx) | Resolvers, certificates, upload | [[03 - Features/Certificates|Certificates]] |
+| [web/src/pages/Entrypoints.tsx](../../web/src/pages/Entrypoints.tsx) | Entrypoints page | [[03 - Features/Entrypoints|Entrypoints]] |
+| [web/src/pages/Docker.tsx](../../web/src/pages/Docker.tsx) | Docker page | [[03 - Features/Docker|Docker]] |
+| [web/src/pages/Stats.tsx](../../web/src/pages/Stats.tsx) | Stats page | [[03 - Features/Stats|Stats]] |
+| [web/src/pages/Logs.tsx](../../web/src/pages/Logs.tsx) | Logs page | [[03 - Features/Logs|Logs]] |
+| [web/src/pages/Traefik.tsx](../../web/src/pages/Traefik.tsx) | Traefik container page | [[03 - Features/Traefik Container|Traefik Container]] |
+| [web/src/pages/traefikConfig.tsx](../../web/src/pages/traefikConfig.tsx) | Traefik config hook, pending banner | [[03 - Features/Traefik Container|Traefik Container]] |
+| [web/src/pages/Settings.tsx](../../web/src/pages/Settings.tsx) | History, account, backup | [[03 - Features/Config History|Config History]] |
+| [web/src/pages/NotFound.tsx](../../web/src/pages/NotFound.tsx) | Unknown page | [[05 - UI-UX/Navigation|Navigation]] |
+| [preview/index.html](../../preview/index.html) | Approved style preview (static, not the app) | [[05 - UI-UX/Preview|Preview]] |
+| [preview/styles.css](../../preview/styles.css) | Preview styles, origin of the app tokens | [[05 - UI-UX/Preview|Preview]] |
+| [preview/app.js](../../preview/app.js) | Preview behaviour | [[05 - UI-UX/Preview|Preview]] |
+| [tools/check_docs.py](../../tools/check_docs.py) | Vault check: links, backlinks, orphans, emoji, code Docs comments | [[04 - Architecture/Code Map|Code Map]] |
+| [tools/relink.py](../../tools/relink.py) | Re-points code line links to where symbols are now | [[04 - Architecture/Code Map|Code Map]] |
+| [tools/publish.sh](../../tools/publish.sh) | Multi-arch build and push | [[08 - Deployment/Docker Image|Docker Image]] |
+
+Keep line links right with `python3 tools/relink.py`; check the vault with `python3 tools/check_docs.py`.
 
 ## Related
-- [[04 - Architecture/Overview|Architecture Overview]]
-- [[05 - UI-UX/Preview|Preview]]
-- [[99 - Changelog/Changelog|Changelog]]
+- [[04 - Architecture/Overview|Overview]]
 - [[Home]]
+- [[99 - Changelog/0.2.0+3|0.2.0+3]]
+- [[02 - Tech/Stack|Stack]]
+- [[03 - Features/Auth|Auth]]
+- [[03 - Features/Certificates|Certificates]]
+- [[03 - Features/Config History|Config History]]
+- [[03 - Features/Docker|Docker]]
+- [[03 - Features/Domains|Domains]]
+- [[03 - Features/Entrypoints|Entrypoints]]
+- [[03 - Features/Logs|Logs]]
+- [[03 - Features/Middlewares|Middlewares]]
+- [[03 - Features/Onboarding|Onboarding]]
+- [[03 - Features/Overview|Overview]]
+- [[03 - Features/Relations|Relations]]
+- [[03 - Features/Routes|Routes]]
+- [[03 - Features/Services|Services]]
+- [[03 - Features/Stats|Stats]]
+- [[03 - Features/Traefik Container|Traefik Container]]
+- [[04 - Architecture/Code Map|Code Map]]
+- [[04 - Architecture/Docker Client|Docker Client]]
+- [[04 - Architecture/Dynamic Config|Dynamic Config]]
+- [[04 - Architecture/Frontend|Frontend]]
+- [[05 - UI-UX/Charts|Charts]]
+- [[05 - UI-UX/Components|Components]]
+- [[05 - UI-UX/Navigation|Navigation]]
+- [[05 - UI-UX/Preview|Preview]]
+- [[05 - UI-UX/Style|Style]]
+- [[06 - API/API Overview|API Overview]]
+- [[08 - Deployment/Configuration|Configuration]]
+- [[08 - Deployment/Dev Environment|Dev Environment]]
+- [[08 - Deployment/Docker Image|Docker Image]]
+- [[08 - Deployment/Install|Install]]
+- [[09 - Data/Data Model|Data Model]]
+- [[99 - Changelog/Changelog|Changelog]]
+- [[00 - Downloaded Docs/Lucide/README|Lucide docs]]
+- [[05 - UI-UX/Design Principles|Design Principles]]

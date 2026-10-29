@@ -1,3 +1,8 @@
 node_modules/
 .DS_Store
 .obsidian/workspace*.json
+web/node_modules/
+web/dist/
+server/internal/webui/dist/*
+!server/internal/webui/dist/.gitkeep
+dist/

@@ -1,13 +1,13 @@
 ---
 title: Plan
 tags: [vision, plan]
-version: 0.1.0+1
-related: ["[[01 - Vision/Vision|Vision]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Overview|Architecture Overview]]", "[[03 - Features/Features Index|Features Index]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[05 - UI-UX/Preview|Preview]]", "[[06 - API/API Overview|API Overview]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]"]
+version: 0.2.0+3
+related: ["[[01 - Vision/Vision|Vision]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Overview|Architecture Overview]]", "[[03 - Features/Features Index|Features Index]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[05 - UI-UX/Preview|Preview]]", "[[06 - API/API Overview|API Overview]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]", "[[03 - Features/Overview|Overview]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]"]
 ---
 
 # Plan
 
-What eztraefik is, how it works, what it contains, and what is still to decide. This is a single plan, not a list of phases: everything here is in scope for `1.0.0`.
+What eztraefik is, how it works, what it contains, and what is still to decide. This is a single plan, not a list of phases: everything here is in scope for `1.0.0`, and everything here is built (see [[03 - Features/Features Index|Features Index]]).
 
 ## 1. How eztraefik controls Traefik
 
@@ -15,7 +15,7 @@ Traefik has two kinds of configuration ([[00 - Downloaded Docs/Traefik/getting-s
 
 | Kind | What it holds | How eztraefik manages it |
 |---|---|---|
-| Install (static) config | Entrypoints (ports), providers, API, certificate resolvers, metrics, logs | Written as CLI flags / environment variables of the Traefik container. eztraefik creates and recreates that container through the Docker API. See [[00 - Downloaded Docs/Traefik/reference/static-configuration/env-ref|Env reference]]. |
+| Install (static) config | Entrypoints (ports), providers, API, certificate resolvers, metrics, logs | Written as CLI flags / environment variables of the Traefik container. eztraefik creates and recreates that container through the Docker API. See [[00 - Downloaded Docs/Traefik/reference/install-configuration/configuration-options|Configuration options]]. |
 | Routing (dynamic) config | Routers, services, middlewares, TLS certificates and options | Written as YAML files into a folder Traefik watches with the [[00 - Downloaded Docs/Traefik/reference/install-configuration/providers/others/file|File provider]]. Changes apply without restart. |
 
 Reading back the live state uses the Traefik API ([[00 - Downloaded Docs/Traefik/reference/install-configuration/api-dashboard|API and dashboard]]): `/api/rawdata` gives every router, service and middleware from every provider, with status, errors and which router uses which service. That is what powers the relation views.
@@ -66,34 +66,28 @@ One note per feature in [[03 - Features/Features Index|Features Index]]. Short v
 - **Config preview and history.** Every save shows the generated YAML / flags, keeps a version history, allows rollback. [[03 - Features/Config History|Config History]]
 - **Auth.** Single admin account for `1.0.0`, session cookie, eztraefik itself served through Traefik with HTTPS. [[03 - Features/Auth|Auth]]
 
-## 4. Stack (proposed, needs your confirmation)
+## 4. Stack (confirmed)
 
-| Layer | Proposal | Why |
-|---|---|---|
-| Backend | Go, single binary | Same ecosystem as Traefik, official Docker SDK, small container image, no runtime |
-| Frontend | React + TypeScript + Vite | Large ecosystem for forms, tables and charts |
-| Styling | Tailwind CSS v4 with our own tokens | Tokens as CSS variables, no component kit look |
-| Icons | Lucide | One consistent outline set, 1.5px stroke |
-| Charts | uPlot or Recharts (decided when Stats is built) | Light, readable time series |
-| Storage | SQLite | eztraefik state (users, history, settings). Traefik config itself lives in files. |
-| Shipping | One Docker image, `docker compose` example | Needs the Docker socket and a shared config volume with Traefik |
+Go backend (standard library only), React + TypeScript + Vite frontend, one Docker image. Details and the changes from the first proposal: [[02 - Tech/Stack|Stack]].
 
-Alternative: TypeScript end to end (Node + Fastify backend). Simpler for one language, heavier image. Full reasoning in [[02 - Tech/Stack|Stack]].
+## 5. Design direction (approved)
 
-## 5. Design direction
+The preview was approved with one change: creating a route happens in a centered window with **Common** and **Certificates** tabs. Binding style: [[05 - UI-UX/Style|Style]].
 
-Dark-first with a full light theme. Slate neutrals, one blue accent for actions, green / amber / red only for status. Fira Sans for text, Fira Code for values like hosts, ports and rules. Solid colors, thin borders, almost no shadows. Motion only on: page entrance, sidebar toggle, drawers and dialogs, feedback after an action. See [[05 - UI-UX/Design Principles|Design Principles]] and the [[05 - UI-UX/Preview|Preview]].
+## 6. Decisions taken
 
-## 6. Decisions needed from you
-
-1. **Stack**: Go backend (recommended) or TypeScript backend.
-2. **Traefik ownership**: eztraefik creates and owns the Traefik container (recommended, needed for "custom vars for everything"), or it also supports attaching to an existing Traefik it does not control.
-3. **Style**: confirm the preview, or say what to change. After confirmation `05 - UI-UX/Style.md` gets written.
-4. **"Custom APIs"**: this plan reads it as "route to any external URL or IP:port, not only Docker containers". Correct me if you meant something else, like an API eztraefik exposes for automation.
+| Question | Answer (2026-10-28 / 29) |
+|---|---|
+| Backend | "The fastest language": Go |
+| Traefik ownership | eztraefik creates and owns the Traefik container |
+| Style | Approved, with the route window change above |
+| "Custom APIs" | Routing to any external URL or IP:port, not only containers |
 
 ## 7. Done means `1.0.0`
 
 A fresh host with only Docker can: run eztraefik, finish onboarding, get Traefik running on 80/443, add two domains with Let's Encrypt certs, route one to a container and one to an external URL, add a custom TCP port, protect a route with basic auth, and see its traffic in Stats. All from the UI, with docs and changelog up to date.
+
+Verified by `dev/test.py` in the [[08 - Deployment/Dev Environment|Dev Environment]], which runs this whole path with fake domains, ports 18080 / 18443 instead of 80 / 443, and Pebble standing in for Let's Encrypt.
 
 ## Related
 - [[01 - Vision/Vision|Vision]]
@@ -106,3 +100,6 @@ A fresh host with only Docker can: run eztraefik, finish onboarding, get Traefik
 - [[06 - API/API Overview|API Overview]]
 - [[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]
 - [[Home]]
+- [[03 - Features/Overview|Overview]]
+- [[05 - UI-UX/Navigation|Navigation]]
+- [[99 - Changelog/0.2.0+3|0.2.0+3]]

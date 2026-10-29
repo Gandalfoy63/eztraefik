@@ -1,21 +1,70 @@
 ---
 title: API Overview
 tags: [api]
-version: 0.1.0+1
-status: planned
-related: ["[[04 - Architecture/Overview|Architecture Overview]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]"]
+version: 0.2.0+3
+related: ["[[04 - Architecture/Overview|Overview]]", "[[01 - Vision/Plan|Plan]]", "[[03 - Features/Auth|Auth]]", "[[04 - Architecture/Frontend|Frontend]]", "[[03 - Features/Features Index|Features Index]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[Home]]"]
 ---
 
 # API Overview
 
-Status: planned. The eztraefik REST API the web UI uses. Defined once the stack is confirmed.
+Status: implemented in 0.2.0+3. JSON over `/api/v1`, used by the web UI. Routes are registered in [Handler](../../server/internal/api/api.go#L53-L114).
 
-Planned shape: JSON over `/api/v1`, one resource per feature (`/routes`, `/services`, `/middlewares`, `/domains`, `/certificates`, `/entrypoints`, `/docker/containers`, `/traefik`, `/stats`, `/logs`, `/history`). Each mutation returns the generated config and the Traefik status after apply.
+## Conventions
+- Sign-in with the `ezt_session` cookie. Every non-GET request needs the header `X-EZT: 1` ([guard](../../server/internal/api/api.go#L118-L134)).
+- Errors: `{"error": "message"}` with a fitting status. Validation errors are `422` with `{"error", "field"}` so the UI puts the message under the field ([FieldError](../../server/internal/api/api.go#L153-L156)).
+- Saves that change the dynamic config return `warnings`: errors Traefik reported on eztraefik's objects after reloading.
+- This is not Traefik's own API ([[00 - Downloaded Docs/Traefik/reference/install-configuration/api-dashboard|Traefik API]]); eztraefik only reads that one, internally.
 
-It is separate from Traefik's own API ([[00 - Downloaded Docs/Traefik/reference/install-configuration/api-dashboard|Traefik API]]), which eztraefik only reads internally.
+## Endpoints
+| Method | Path | What | Sign-in |
+|---|---|---|---|
+| GET | `/meta` | version, onboarded, signed in, dev mode | no |
+| POST | `/auth/login, /auth/logout` | session cookie | no |
+| GET | `/onboarding/check` | Docker, existing Traefik, used ports, defaults (only before setup) | no |
+| POST | `/onboarding/complete` | save setup, create admin, start Traefik (only once) | no |
+| GET | `/overview` | counts, attention, recent changes, traffic | yes |
+| GET | `/runtime` | Traefik /api/rawdata | yes |
+| GET POST | `/routes` | list (managed + runtime + other providers) / create | yes |
+| PUT DELETE | `/routes/{id}` | update / delete | yes |
+| POST | `/routes/preview` | YAML for a draft route | yes |
+| GET POST PUT DELETE | `/services, /services/{id}` | shared services and runtime health | yes |
+| GET POST PUT DELETE | `/middlewares, /middlewares/{id}` | middlewares, runtime, allowed types | yes |
+| POST | `/tools/htpasswd` | apr1 hash for basic auth | yes |
+| GET POST DELETE | `/domains, /domains/{name}` | domains with hosts and routes | yes |
+| GET | `/domains/{name}/dns` | DNS lookup | yes |
+| GET POST DELETE | `/certificates, /certificates/{id}` | resolvers, issued and uploaded certificates | yes |
+| GET PUT | `/traefik` | install config (secrets masked), status, pending diff | yes |
+| POST | `/traefik/apply, /traefik/restart` | recreate / restart the container | yes |
+| GET POST | `/docker/containers, /docker/containers/{id}/connect` | containers, join the Traefik network | yes |
+| GET | `/docker/networks` | networks | yes |
+| GET | `/stats?key=&range=` | time series (15m, 1h, 24h, 7d) | yes |
+| GET | `/logs/traefik?tail=, /logs/access?limit=&q=&status=` | logs | yes |
+| GET POST | `/history, /history/{id}, /history/{id}/rollback` | history and restore | yes |
+| GET | `/config/dynamic` | current ezt.yml | yes |
+| GET POST | `/export, /import` | backup | yes |
+| PUT | `/account/password` | change password | yes |
 
 ## Related
-- [[04 - Architecture/Overview|Architecture Overview]]
+- [[04 - Architecture/Overview|Overview]]
 - [[01 - Vision/Plan|Plan]]
-- [[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]
+- [[03 - Features/Auth|Auth]]
+- [[04 - Architecture/Frontend|Frontend]]
+- [[03 - Features/Features Index|Features Index]]
+- [[99 - Changelog/0.2.0+3|0.2.0+3]]
+- [[03 - Features/Routes|Routes]]
+- [[03 - Features/Services|Services]]
+- [[03 - Features/Middlewares|Middlewares]]
+- [[03 - Features/Domains|Domains]]
+- [[03 - Features/Certificates|Certificates]]
+- [[03 - Features/Traefik Container|Traefik Container]]
+- [[03 - Features/Docker|Docker]]
+- [[03 - Features/Stats|Stats]]
+- [[03 - Features/Logs|Logs]]
+- [[03 - Features/Config History|Config History]]
+- [[03 - Features/Onboarding|Onboarding]]
+- [[03 - Features/Overview|Overview]]
+- [[03 - Features/Relations|Relations]]
+- [[03 - Features/Entrypoints|Entrypoints]]
+- [[04 - Architecture/Code Map|Code Map]]
+- [[99 - Changelog/0.1.0+1|0.1.0+1]]
 - [[Home]]

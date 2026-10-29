@@ -1,0 +1,85 @@
+# Docs: docs/08 - Deployment/Dev Environment.md
+# Virtual environment to try eztraefik with fake domains (*.ezt.test) and fake ports, without touching 80/443.
+# Reference: docs/00 - Downloaded Docs/Docker/Compose services.md, docs/00 - Downloaded Docs/Pebble/README.md
+#
+#   docker compose -f dev/compose.yml up -d --build
+#   UI:      http://<host>:5181        Traefik (created by eztraefik): HTTP 18080, HTTPS 18443
+#   Test:    dev/test.sh
+#   Remove:  dev/down.sh
+name: ezt-dev
+
+services:
+  eztraefik:
+    build: { context: .., dockerfile: Dockerfile }
+    image: eztraefik:dev
+    container_name: ezt-dev-eztraefik
+    restart: unless-stopped
+    environment:
+      EZT_DEV: "1"
+      # Onboarding proposes these instead of 80/443 so nothing on the host is disturbed.
+      EZT_DEFAULT_HTTP_PORT: "18080"
+      EZT_DEFAULT_HTTPS_PORT: "18443"
+      # Pebble is a test ACME server: Traefik gets certificates for fake domains, untrusted by browsers.
+      EZT_DEFAULT_ACME_CA_SERVER: https://pebble:14000/dir
+      EZT_DEFAULT_ACME_CA_CERT_FILE: /dev-ca/pebble.minica.pem
+      EZT_SHARED_VOLUME: ezt-dev-shared
+      EZT_DEFAULT_NETWORK: ezt-dev
+      EZT_DEFAULT_TRAEFIK_NAME: ezt-dev-traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ezt-dev-data:/data
+      - ezt-dev-shared:/shared
+      - ./pebble/pebble.minica.pem:/dev-ca/pebble.minica.pem:ro
+    ports: ["5181:8080"]
+    networks: [ezt]
+
+  pebble:
+    image: ghcr.io/letsencrypt/pebble:2.8.0
+    container_name: ezt-dev-pebble
+    command: -config test/config/pebble-config.json
+    environment:
+      PEBBLE_VA_ALWAYS_VALID: "1"   # skip challenges: fake domains can't be validated
+      PEBBLE_WFE_NONCEREJECT: "0"
+    networks: [ezt]
+
+  # HTTP backends, reached by container name ("Docker container" targets).
+  app-a:
+    image: traefik/whoami:v1.11.0
+    container_name: ezt-dev-app-a
+    command: --name app-a
+    networks: [ezt]
+  app-b:
+    image: traefik/whoami:v1.11.0
+    container_name: ezt-dev-app-b
+    command: --name app-b
+    networks: [ezt]
+  # Not on the Traefik network: eztraefik connects it when a route targets it.
+  app-c:
+    image: traefik/whoami:v1.11.0
+    container_name: ezt-dev-app-c
+    command: --name app-c
+  # Published on the host: stands in for an app on another machine ("IP address" targets).
+  external-api:
+    image: traefik/whoami:v1.11.0
+    container_name: ezt-dev-external-api
+    command: --name external-api
+    ports: ["18090:80"]
+  # Raw TCP and UDP backends for custom ports.
+  tcp-echo:
+    image: traefik/whoamitcp:v0.3.0
+    container_name: ezt-dev-tcp-echo
+    command: -name tcp-echo -port :8080
+    networks: [ezt]
+  udp-echo:
+    image: traefik/whoamiudp:v0.2.0
+    container_name: ezt-dev-udp-echo
+    command: -name udp-echo -port :8080
+    networks: [ezt]
+
+networks:
+  ezt:
+    name: ezt-dev
+
+volumes:
+  ezt-dev-data: { name: ezt-dev-data }
+  ezt-dev-shared: { name: ezt-dev-shared }

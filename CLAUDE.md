@@ -33,7 +33,7 @@ Before writing code that depends on anything that is not our own code (framework
 3. Store in `docs/00 - Downloaded Docs/<Technology Name>/`.
 4. Add a `README.md` there: source URL, version, date downloaded.
 5. Link those pages from every note and code reference that uses the tech.
-Refer to these local docs instead of guessing APIs. Already downloaded: Traefik v3.7.16, Lucide 1.56.0, Google Fonts CSS2 API.
+Refer to these local docs instead of guessing APIs. Already downloaded: Traefik v3.7.16, Go 1.27.3 stdlib, Docker Engine API v1.47, React 19, Vite 8, TypeScript, Lucide (vanilla + React), Google Fonts CSS2 API, Docker build and Compose, Pebble, whoami.
 
 ### Linking: the vault is one connected graph, no orphan notes
 - Note to note: wikilinks `[[03 - Features/Routes|Routes]]`. Links are two-way: if A links to B, B links back. Every note ends with a `## Related` section.
@@ -72,12 +72,14 @@ Required:
 3. Implement.
 4. Update or create the doc notes, links and line references; update the Code Map.
 5. Bump `VERSION` and write the changelog entry.
-6. Run `python3 tools/check_docs.py` and fix everything it reports.
+6. Run `python3 tools/relink.py`, then `python3 tools/check_docs.py`, and fix everything it reports.
 7. Commit as `[MAJOR.MEDIUM.MINOR+BUILD] Message`.
 8. Report briefly: new version, what changed, which notes were updated.
 
 Ask before architecture-level decisions when the brief is ambiguous. For small decisions, pick the sensible default and write it down in the relevant note.
 
 ## Current state
-- Stack, Traefik ownership model and the style are proposals waiting for confirmation (Plan, section 6).
-- `preview/` is a static style preview, not the app. Open `preview/index.html` directly.
+- Decided: Go backend (standard library only), React + Vite + TypeScript UI, eztraefik owns the Traefik container, style approved (`docs/05 - UI-UX/Style.md` is binding), "custom APIs" = routes to external URLs.
+- Build and test: `docker compose -f dev/compose.yml up -d --build` then `python3 dev/test.py` (fake domains `*.ezt.test`, ports 18080 / 18443, Pebble as ACME). Unit tests: `go test ./...` in `server/` (run in `golang:1.27.3-alpine`, Go is not installed on the host). Web: `npm run build` in `web/`.
+- Before committing: `python3 tools/relink.py` (fixes code line links), then `python3 tools/check_docs.py` (must print OK).
+- `preview/` is the static style preview, kept as reference.

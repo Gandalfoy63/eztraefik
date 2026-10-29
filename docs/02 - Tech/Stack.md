@@ -1,44 +1,53 @@
 ---
 title: Stack
 tags: [tech]
-version: 0.1.0+1
-status: proposed
-related: ["[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Overview|Architecture Overview]]", "[[00 - Downloaded Docs/Traefik/README|Traefik docs]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[00 - Downloaded Docs/Google Fonts/README|Google Fonts docs]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]"]
+version: 0.2.0+3
+related: ["[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Overview|Overview]]", "[[04 - Architecture/Frontend|Frontend]]", "[[09 - Data/Data Model|Data Model]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[00 - Downloaded Docs/Traefik/README|README]]", "[[00 - Downloaded Docs/Go/README|README]]", "[[00 - Downloaded Docs/Docker Engine API/README|README]]", "[[00 - Downloaded Docs/React/README|README]]", "[[00 - Downloaded Docs/Vite/README|README]]", "[[00 - Downloaded Docs/TypeScript/README|README]]", "[[00 - Downloaded Docs/Lucide/README|README]]", "[[00 - Downloaded Docs/Google Fonts/README|README]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[00 - Downloaded Docs/Pebble/README|README]]", "[[00 - Downloaded Docs/whoami/README|README]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[Home]]"]
 ---
 
 # Stack
 
-Status: proposed, waiting for confirmation. Nothing below is installed yet except what the style preview uses.
+Confirmed in 0.2.0+3. The brief asked for "the fastest language": Go is the fastest of the options with first-class Docker and Traefik tooling (Rust is a bit faster at runtime, but has no official Docker SDK and builds much slower).
 
-## In use now
-| Tech | Version | Used for | Docs |
+| Layer | Choice | Version | Docs |
 |---|---|---|---|
-| Traefik | v3.7.16 | The proxy eztraefik manages | [[00 - Downloaded Docs/Traefik/README|Traefik docs]] |
-| Lucide | 1.56.0 | Icons (vendored UMD build in the preview) | [[00 - Downloaded Docs/Lucide/README|Lucide docs]] |
-| Fira Sans, Fira Code | Google Fonts CSS2 | Type | [[00 - Downloaded Docs/Google Fonts/README|Google Fonts docs]] |
+| Proxy managed | Traefik Proxy | v3.7.16 | [[00 - Downloaded Docs/Traefik/README|Traefik]] |
+| Backend | Go, standard library only (net/http, embed, crypto/pbkdf2, log/slog) | 1.27.3 | [[00 - Downloaded Docs/Go/README|Go]] |
+| Docker access | Engine API over the socket, own client | API v1.47 | [[00 - Downloaded Docs/Docker Engine API/README|Docker Engine API]] |
+| Frontend | React | 19.3.1 | [[00 - Downloaded Docs/React/README|React]] |
+| Build | Vite with @vitejs/plugin-react | 8.3.4 / 6.1.2 | [[00 - Downloaded Docs/Vite/README|Vite]] |
+| Language | TypeScript (strict) | 7.0.2 | [[00 - Downloaded Docs/TypeScript/README|TypeScript]] |
+| Icons | lucide-react (preview: lucide 1.56.0) | 1.57.0 | [[00 - Downloaded Docs/Lucide/README|Lucide]] |
+| Fonts | Fira Sans, Fira Code, self-hosted woff2 | Google Fonts CSS2 | [[00 - Downloaded Docs/Google Fonts/README|Google Fonts]] |
+| Storage | one JSON file + history snapshots | | [[09 - Data/Data Model|Data Model]] |
+| Image | multi-stage Dockerfile, distroless static | | [[00 - Downloaded Docs/Docker/README|Docker]] |
+| Dev environment | Pebble (test ACME CA), whoami / whoamitcp / whoamiudp | 2.8.0, 1.11.0, 0.3.0, 0.2.0 | [[00 - Downloaded Docs/Pebble/README|Pebble]], [[00 - Downloaded Docs/whoami/README|whoami]] |
 
-## Proposed for the app
-
-| Layer | Option A (recommended) | Option B |
-|---|---|---|
-| Backend | Go: `net/http`, Docker Engine SDK, `gopkg.in/yaml.v3` | Node + TypeScript: Fastify, `dockerode`, `yaml` |
-| Frontend | React + TypeScript + Vite | same |
-| Styling | Tailwind CSS v4, theme mapped to our tokens | same |
-| Data fetching | TanStack Query | same |
-| Storage | SQLite | same |
-| Image | Distroless, about 25 MB | Node slim, about 180 MB |
-
-Why A: Traefik and Docker are Go projects, so their types and client libraries are first class; one static binary is easy to ship and to run next to Traefik; low memory on small home servers.
-
-Why B: one language for the whole repo.
-
-Once chosen, each technology's official docs get downloaded into `00 - Downloaded Docs/` before any code uses it.
+## Changes from the proposal
+- **No Tailwind**: the approved preview already had a complete token-based stylesheet. Reusing it kept the look identical and removed a dependency.
+- **No TanStack Query, no router library, no chart library**: a 40-line fetch hook, a hash router and one SVG chart component cover what the app needs ([[04 - Architecture/Frontend|Frontend]]).
+- **JSON file instead of SQLite**: see [[09 - Data/Data Model|Data Model]].
+- **PBKDF2 instead of Argon2id**: in the standard library ([[03 - Features/Auth|Auth]]).
+- Exact versions: npm packages pinned in `web/package.json`; base images pinned in the Dockerfile.
 
 ## Related
 - [[01 - Vision/Plan|Plan]]
-- [[04 - Architecture/Overview|Architecture Overview]]
-- [[00 - Downloaded Docs/Traefik/README|Traefik docs]]
-- [[00 - Downloaded Docs/Lucide/README|Lucide docs]]
-- [[00 - Downloaded Docs/Google Fonts/README|Google Fonts docs]]
-- [[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]
+- [[04 - Architecture/Overview|Overview]]
+- [[04 - Architecture/Frontend|Frontend]]
+- [[09 - Data/Data Model|Data Model]]
+- [[08 - Deployment/Docker Image|Docker Image]]
+- [[99 - Changelog/0.2.0+3|0.2.0+3]]
+- [[00 - Downloaded Docs/Traefik/README|README]]
+- [[00 - Downloaded Docs/Go/README|README]]
+- [[00 - Downloaded Docs/Docker Engine API/README|README]]
+- [[00 - Downloaded Docs/React/README|README]]
+- [[00 - Downloaded Docs/Vite/README|README]]
+- [[00 - Downloaded Docs/TypeScript/README|README]]
+- [[00 - Downloaded Docs/Lucide/README|README]]
+- [[00 - Downloaded Docs/Google Fonts/README|README]]
+- [[00 - Downloaded Docs/Docker/README|README]]
+- [[00 - Downloaded Docs/Pebble/README|README]]
+- [[00 - Downloaded Docs/whoami/README|README]]
+- [[04 - Architecture/Code Map|Code Map]]
+- [[99 - Changelog/0.1.0+1|0.1.0+1]]
 - [[Home]]

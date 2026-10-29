@@ -1,11 +1,13 @@
 ---
 title: Preview
 tags: [ui-ux, preview]
-version: 0.1.1+2
+version: 0.2.0+3
 related: ["[[05 - UI-UX/Design Principles|Design Principles]]", "[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Code Map|Code Map]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Routes|Routes]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[99 - Changelog/0.1.0+1|Changelog 0.1.0+1]]", "[[Home]]"]
 ---
 
 # Style preview
+
+Approved in 0.1.1+2. The real app now implements this style ([[05 - UI-UX/Style|Style]]); the preview stays as a static reference.
 
 A static page to judge the look and feel before any real code is written. No backend, made-up data, most pages are placeholders.
 

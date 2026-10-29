@@ -1,0 +1,48 @@
+---
+title: Dev Environment
+tags: [deployment, dev, testing]
+version: 0.2.0+3
+related: ["[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[00 - Downloaded Docs/Pebble/README|README]]", "[[00 - Downloaded Docs/whoami/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[01 - Vision/Plan|Plan]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]"]
+---
+
+# Dev Environment
+
+A virtual environment to try eztraefik with **fake domains** (`*.ezt.test`) and **fake ports**, without touching the host's 80 / 443 (in use here by another proxy).
+
+```bash
+docker compose -f dev/compose.yml up -d --build   # build eztraefik and start everything
+python3 dev/test.py                                # end-to-end test, 30 checks
+dev/down.sh                                        # remove it all, including the Traefik container
+```
+
+UI: `http://<host>:5181` (dev account in the test: `admin` / `dev-password-1234`).
+
+## What runs ([dev/compose.yml](../../dev/compose.yml))
+| Container | Role |
+|---|---|
+| ezt-dev-eztraefik | the image under test, with dev defaults: ports 18080 / 18443, network `ezt-dev`, Traefik named `ezt-dev-traefik`, ACME server Pebble |
+| ezt-dev-traefik | created by eztraefik during setup (not in the compose file) |
+| ezt-dev-pebble | [[00 - Downloaded Docs/Pebble/README|Pebble]], a test ACME CA. `PEBBLE_VA_ALWAYS_VALID=1` skips challenges, so fake domains get certificates (not trusted by browsers) |
+| ezt-dev-app-a, app-b | [[00 - Downloaded Docs/whoami/README|whoami]] HTTP backends on the Traefik network |
+| ezt-dev-app-c | whoami **not** on the network: eztraefik must connect it |
+| ezt-dev-external-api | whoami published on host port 18090: the "IP address" target |
+| ezt-dev-tcp-echo, udp-echo | whoamitcp / whoamiudp for custom TCP and UDP ports |
+
+## What the test checks ([dev/test.py](../../dev/test.py))
+Setup through the API, custom TCP 15432 and UDP 15353 entrypoints (pending, then applied), apr1 basic auth, refusal of an HTTP-only route on a redirecting entrypoint, eight routes, HTTPS with a Pebble certificate, a container connected on save, the IP target, 401 / 200 with basic auth, load balancing over two servers, HTTP to HTTPS redirect keeping port 18443, plain HTTP, TCP and UDP traffic, relations, certificates, domains, stats, access and Traefik logs, history, overview counts, disabling a route. Requests are sent with the fake host name in SNI and `Host`, like `curl --resolve`.
+
+Last run (0.2.0+3): **30 of 30 passed** on a fresh environment.
+
+## Visiting it in a browser
+Point the fake names at the host, for example in `/etc/hosts`: `192.168.1.101 a.ezt.test c.ezt.test ext.ezt.test secure.ezt.test pool.ezt.test plain.ezt.test`, then open `https://a.ezt.test:18443` and accept the untrusted certificate.
+
+## Related
+- [[08 - Deployment/Configuration|Configuration]]
+- [[08 - Deployment/Docker Image|Docker Image]]
+- [[04 - Architecture/Dynamic Config|Dynamic Config]]
+- [[00 - Downloaded Docs/Pebble/README|README]]
+- [[00 - Downloaded Docs/whoami/README|README]]
+- [[99 - Changelog/0.2.0+3|0.2.0+3]]
+- [[01 - Vision/Plan|Plan]]
+- [[04 - Architecture/Code Map|Code Map]]
+- [[Home]]

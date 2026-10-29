@@ -37,4 +37,24 @@ for a in ours:
 inbound = {b for a in ours for b in out[a]}
 for a in ours:
     if a != "Home" and a not in inbound: bad.append(f"ORPHAN {a}")
-print("\n".join(sorted(set(bad))) or "OK", f"\n{len(ours)} own notes, {len(notes)} total")
+# Code -> note: every "Docs: docs/..." comment in our source must name existing notes.
+code_dirs = ["server", "web/src", "web/index.html", "web/vite.config.ts", "preview", "dev", "tools", "Dockerfile", "deploy"]
+code_files = 0
+for cd in code_dirs:
+    base = os.path.join(root, cd)
+    paths = [base] if os.path.isfile(base) else [os.path.join(d, f) for d, _, fs in os.walk(base) if "node_modules" not in d and "/dist" not in d and "vendor" not in d for f in fs]
+    for path in paths:
+        if not path.endswith((".go", ".ts", ".tsx", ".css", ".html", ".js", ".py", ".sh", ".yml", "Dockerfile")):
+            continue
+        try:
+            head = open(path, encoding="utf-8").read(600)
+        except (OSError, UnicodeDecodeError):
+            continue
+        m = re.search(r"Docs: (.+)", head)
+        if not m:
+            continue
+        code_files += 1
+        for ref in re.findall(r"docs/[^,*\n]+?\.md", m.group(1)):
+            if not os.path.exists(os.path.join(root, ref)):
+                bad.append(f"CODEREF {os.path.relpath(path, root)} -> {ref}")
+print("\n".join(sorted(set(bad))) or "OK", f"\n{len(ours)} own notes, {len(notes)} total, {code_files} code files with a Docs: comment")
