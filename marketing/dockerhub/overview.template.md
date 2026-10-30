@@ -17,7 +17,7 @@ Source code, docs and issues: **[github.com/Gandalfoy63/eztraefik](https://githu
 ```yaml
 services:
   eztraefik:
-    image: gandasdevstudio/eztraefik:1.7.0
+    image: gandasdevstudio/eztraefik:1.8.0
     container_name: eztraefik
     restart: unless-stopped
     environment:
@@ -43,6 +43,6 @@ Then open `http://<server-ip>:8080`. The setup creates Traefik on ports 80 and 4
 ## Tags
 | Tag | |
 |---|---|
-| `1.7.0`, `1.7`, `latest` | current release, `linux/amd64` and `linux/arm64` |
+| `1.8.0`, `1.8`, `latest` | current release, `linux/amd64` and `linux/arm64` |
 
 Image: about 20 MB, a static Go binary on distroless. Traefik v3.7.16 by default.
