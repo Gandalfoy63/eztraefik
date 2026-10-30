@@ -35,8 +35,27 @@ func TestCertHostsSkipsWhatGetsNoACMECertificate(t *testing.T) {
 		{Enabled: true, Hosts: []string{"plain.test"}},
 		{Enabled: true, Hosts: []string{"upload.test"}, TLS: store.RouteTLS{Enabled: true, Mode: "existing", Domain: "upload.test"}},
 	}}
-	if got := certHosts(st); !slices.Equal(got, []string{"on.test"}) {
+	if got := certHosts(st, ""); !slices.Equal(got, []string{"on.test"}) {
 		t.Errorf("%v", got)
+	}
+}
+
+// A retry looks at one resolver: its hosts, and only its certificates count.
+func TestRetryIsLimitedToOneResolver(t *testing.T) {
+	st := store.State{Traefik: store.TraefikConfig{Resolvers: []store.Resolver{{Name: "first"}, {Name: "second"}}}, Routes: []store.Route{
+		{Enabled: true, Hosts: []string{"a.test"}, TLS: store.RouteTLS{Enabled: true, Mode: "resolver", Resolver: "first"}},
+		{Enabled: true, Hosts: []string{"b.test"}, TLS: store.RouteTLS{Enabled: true, Mode: "resolver", Resolver: "second"}},
+	}}
+	hosts := certHosts(st, "second")
+	if !slices.Equal(hosts, []string{"b.test"}) {
+		t.Fatalf("%v", hosts)
+	}
+	certs := []traefik.Cert{{Source: "acme", Resolver: "first", Domains: []string{"b.test"}}}
+	if p := computeProgress(hosts, resolverCerts(certs, "second"), nil); !slices.Equal(p.Waiting, []string{"b.test"}) {
+		t.Errorf("another resolver's certificate must not count: %+v", p)
+	}
+	if len(certs) != 1 {
+		t.Errorf("the list itself must stay: %v", certs)
 	}
 }
 

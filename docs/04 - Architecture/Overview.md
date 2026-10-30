@@ -29,11 +29,11 @@ Status: built in 0.2.0+3.
 - **State** in `/data/state.json` plus `/data/history/` ([[09 - Data/Data Model|Data Model]]).
 - **Traefik container**, created and owned by eztraefik ([[03 - Features/Traefik Container|Traefik Container]]). It gets the shared volume, the Docker socket (read-only, for label routes) and the Traefik network, with the alias `traefik`.
 - **Shared volume**: `dynamic/ezt.yml` (written by eztraefik, watched by Traefik's [[00 - Downloaded Docs/Traefik/reference/install-configuration/providers/others/file|File provider]]), `acme/<resolver>.json` (written by Traefik), `certs/` (uploaded certificates), `ca/` (private ACME CAs), `logs/access.log`.
-- **Network**: eztraefik connects its own container to the Traefik network at start ([EnsureSelfOnNetwork](../../server/internal/api/api.go#L338-L354)), so it reaches `http://traefik:8080` while that port stays unpublished.
+- **Network**: eztraefik connects its own container to the Traefik network at start ([EnsureSelfOnNetwork](../../server/internal/api/api.go#L340-L356)), so it reaches `http://traefik:8080` while that port stays unpublished.
 
 ## Write path (routes, services, middlewares, domains, uploaded certificates)
 1. The UI sends the object. The server validates it and returns `{error, field}` on a problem.
-2. [Commit](../../server/internal/api/api.go#L214-L223): update state (history entry), render the dynamic config ([[04 - Architecture/Dynamic Config|Dynamic Config]]), write `ezt.yml` atomically (temp file + rename).
+2. [Commit](../../server/internal/api/api.go#L216-L225): update state (history entry), render the dynamic config ([[04 - Architecture/Dynamic Config|Dynamic Config]]), write `ezt.yml` atomically (temp file + rename).
 3. Traefik reloads by itself. eztraefik waits 0.7 s, reads `/api/rawdata` and returns errors on its own objects as warnings.
 
 ## Install path (entrypoints, resolvers, env vars, image)

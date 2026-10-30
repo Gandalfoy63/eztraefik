@@ -19,7 +19,7 @@ Status: implemented in 0.2.0+3.
 - "Add route on this domain" opens the route window with the domain filled in.
 
 ## Code
-- [listDomains](../../server/internal/api/resources.go#L413-L454), [checkDNS](../../server/internal/api/resources.go#L513-L523), wildcard rendering [domainFor](../../server/internal/traefik/dynamic.go#L359-L368)
+- [listDomains](../../server/internal/api/resources.go#L413-L454), [checkDNS](../../server/internal/api/resources.go#L513-L523), wildcard rendering [domainFor](../../server/internal/traefik/dynamic.go#L364-L373)
 - [Domains](../../web/src/pages/Domains.tsx#L51-L138)
 
 ## Related

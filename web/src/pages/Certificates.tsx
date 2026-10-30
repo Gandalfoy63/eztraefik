@@ -1,7 +1,7 @@
 // Docs: docs/03 - Features/Certificates.md
 // Resolvers (how certificates are issued), issued ACME certificates, and uploaded ones.
 import { useEffect, useState, type ChangeEvent } from "react";
-import { Pencil, Plus, RefreshCw, ShieldCheck, Trash2, Upload } from "lucide-react";
+import { Pencil, Plus, RefreshCw, RotateCw, ShieldCheck, Trash2, Upload } from "lucide-react";
 import { api, ApiError, type Cert, type DomainInfo, type EnvVar, type Resolver, type Route } from "../api";
 import { Badge, Button, Empty, ErrorBox, SkeletonRows, useToast } from "../ui/feedback";
 import { Combobox, Field, Segmented, StepSlider, TagInput, invalid } from "../ui/controls";
@@ -12,7 +12,7 @@ import { daysUntil, useLoad } from "../ui/hooks";
 import { SortTh, useSort } from "../ui/sort";
 import { PendingBanner, saveTraefik, useTraefik } from "./traefikConfig";
 import { ResolverChecks } from "./ResolverChecks";
-import { HardRefreshProgress, HardRefreshWarning, type RefreshStatus } from "./HardRefresh";
+import { HardRefreshProgress, HardRefreshWarning, RetryWarning, type RefreshStatus } from "./HardRefresh";
 
 const blankResolver = (): Resolver => ({ name: "", email: "", challenge: "http", httpEntrypoint: "web", dnsProvider: "", caServer: "", caCertPEM: "" });
 
@@ -46,6 +46,20 @@ export function Certificates() {
       setRefreshAsk(false);
       setRefreshOpen(true);
       certs.reload();
+    } catch (e) {
+      toast((e as Error).message, "error");
+    } finally {
+      setRefreshBusy(false);
+    }
+  };
+  const [retryAsk, setRetryAsk] = useState<string | null>(null);
+  const retryResolver = async () => {
+    setRefreshBusy(true);
+    try {
+      const r = await api.post<{ missing: number }>(`/certificates/resolvers/${retryAsk}/retry`);
+      if (r.missing) setRefreshOpen(true);
+      else toast(`Every host on ${retryAsk} already has a certificate. Nothing restarted.`);
+      setRetryAsk(null);
     } catch (e) {
       toast((e as Error).message, "error");
     } finally {
@@ -214,6 +228,7 @@ export function Certificates() {
                 <td className="muted">{challengeText(r)}</td>
                 <td className="col-optional muted mono-sm">{r.caServer || "Let's Encrypt"}</td>
                 <td className="actions nowrap">
+                  <button className="icon-btn" type="button" aria-label={`Retry certificates of ${r.name}`} data-tooltip="Retry certificates" data-tooltip-side="bottom" onClick={() => setRetryAsk(r.name)}><RotateCw className="icon-sm" aria-hidden="true" /></button>
                   <button className="icon-btn" type="button" aria-label={`Edit ${r.name}`} data-tooltip="Edit" data-tooltip-side="bottom" onClick={() => setResModal({ open: true, index: i })}><Pencil className="icon-sm" aria-hidden="true" /></button>
                   <button className="icon-btn" type="button" aria-label={`Delete ${r.name}`} data-tooltip="Delete" data-tooltip-side="bottom" onClick={() => setDel({ kind: "resolver", id: r.name, label: `Resolver ${r.name}`, match: x => x.tls.resolver === r.name })}><Trash2 className="icon-sm" aria-hidden="true" /></button>
                 </td>
@@ -323,6 +338,7 @@ export function Certificates() {
       </Modal>
 
       <HardRefreshWarning open={refreshAsk} busy={refreshBusy} onConfirm={hardRefresh} onClose={() => setRefreshAsk(false)} />
+      <RetryWarning resolver={retryAsk} busy={refreshBusy} onConfirm={retryResolver} onClose={() => setRetryAsk(null)} />
       {refreshOpen && <HardRefreshProgress onClose={() => setRefreshOpen(false)} onChanged={certs.reload} />}
       {checks && <ResolverChecks name={checks.name} domains={checks.domains} onClose={() => { setChecks(null); certs.reload(); domainList.reload(); }} onApplied={traefik.reload} />}
 

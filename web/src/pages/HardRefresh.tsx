@@ -11,6 +11,7 @@ export interface RefreshStatus {
   started: boolean;
   backup: boolean;
   deleted: number;
+  resolver?: string;
   running?: boolean;
   progress?: { total: number; done: string[]; failed: { host: string; reason: string }[]; waiting: string[] };
 }
@@ -30,12 +31,26 @@ export function HardRefreshWarning({ open, busy, onConfirm, onClose }: { open: b
   );
 }
 
+export function RetryWarning({ resolver, busy, onConfirm, onClose }: { resolver: string | null; busy: boolean; onConfirm: () => void; onClose: () => void }) {
+  return (
+    <ConfirmDialog open={!!resolver} title={`Retry certificates of ${resolver ?? ""}?`} confirmLabel="Restart and Retry" busy={busy} onConfirm={onConfirm} onClose={onClose}>
+      <p>Traefik requests the certificates {resolver} is missing. Certificates it already has stay.</p>
+      <ul>
+        <li><strong>All your sites go down for a few seconds</strong> while Traefik restarts.</li>
+        <li><strong>Other resolvers:</strong> Traefik also tries again for their missing certificates, a restart can't leave them out.</li>
+        <li><strong>Let's Encrypt limits failures</strong> to 5 an hour per domain. Fix DNS and credentials first.</li>
+      </ul>
+    </ConfirmDialog>
+  );
+}
+
 export function HardRefreshProgress({ onClose, onChanged }: { onClose: () => void; onChanged: () => void }) {
   const toast = useToast();
   const { data, reload } = useLoad(() => api.get<RefreshStatus>("/certificates/refresh"), [], 3000);
   const [confirmRestore, setConfirmRestore] = useState(false);
   const [busy, setBusy] = useState(false);
   const p = data?.progress;
+  const retry = data?.resolver;
   const handled = p ? p.done.length + p.failed.length : 0;
   const restore = async () => {
     setBusy(true);
@@ -54,8 +69,8 @@ export function HardRefreshProgress({ onClose, onChanged }: { onClose: () => voi
   };
   return (
     <>
-      <Modal open onClose={onClose} title="Renewing all certificates" description={data ? `${data.deleted} deleted. Traefik is requesting new ones. You can close this window, it keeps going.` : undefined}
-        footer={<>{data?.backup && <Button icon={RotateCcw} onClick={() => setConfirmRestore(true)}>Restore Previous Certificates</Button>}<Button variant="primary" onClick={onClose}>Close</Button></>}>
+      <Modal open onClose={onClose} title={!data ? "Certificate progress" : retry ? `Retrying ${retry}` : "Renewing all certificates"} description={data ? `${retry ? "Traefik is requesting the missing certificates." : `${data.deleted} deleted. Traefik is requesting new ones.`} You can close this window, it keeps going.` : undefined}
+        footer={<>{data?.backup && !retry && <Button icon={RotateCcw} onClick={() => setConfirmRestore(true)}>Restore Previous Certificates</Button>}<Button variant="primary" onClick={onClose}>Close</Button></>}>
         <div className="modal-body">
           {!p ? <Spinner label="Checking progress" /> : (
             <>
@@ -67,7 +82,7 @@ export function HardRefreshProgress({ onClose, onChanged }: { onClose: () => voi
               <p className="hint" role="status">
                 {data?.running ? `${handled} of ${p.total} answered so far. Some DNS providers, like DuckDNS, only handle one at a time, so this can take a while.`
                   : p.waiting.length ? `No answer for ${p.waiting.length} after 30 minutes. See the Logs page.`
-                  : p.failed.length ? "Finished, with failures. Traefik retries when a route changes or it restarts." : "All certificates are renewed."}
+                  : p.failed.length ? "Finished, with failures. Traefik retries when a route changes or it restarts." : retry ? "Every host has a certificate." : "All certificates are renewed."}
               </p>
               {p.failed.length > 0 && (
                 <ul className="check-rows spaced">
