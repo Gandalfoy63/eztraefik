@@ -1,8 +1,8 @@
 ---
 title: Certificates
 tags: [feature, network, tls]
-version: 1.7.0+26
-related: ["[[03 - Features/Domains|Domains]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[03 - Features/Import from NPM|Import from NPM]]", "[[00 - Downloaded Docs/lego/README|lego docs]]", "[[99 - Changelog/1.4.0+21|1.4.0+21]]", "[[05 - UI-UX/Components|Components]]", "[[99 - Changelog/1.6.0+25|1.6.0+25]]", "[[99 - Changelog/1.7.0+26|1.7.0+26]]"]
+version: 1.7.2+28
+related: ["[[03 - Features/Domains|Domains]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[03 - Features/Import from NPM|Import from NPM]]", "[[00 - Downloaded Docs/lego/README|lego docs]]", "[[99 - Changelog/1.4.0+21|1.4.0+21]]", "[[05 - UI-UX/Components|Components]]", "[[99 - Changelog/1.6.0+25|1.6.0+25]]", "[[99 - Changelog/1.7.0+26|1.7.0+26]]", "[[99 - Changelog/1.7.2+28|1.7.2+28]]"]
 ---
 
 # Certificates
@@ -54,3 +54,4 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/tls/ce
 - [[05 - UI-UX/Components|Components]]
 - [[99 - Changelog/1.6.0+25|1.6.0+25]]
 - [[99 - Changelog/1.7.0+26|1.7.0+26]]
+- [[99 - Changelog/1.7.2+28|1.7.2+28]]

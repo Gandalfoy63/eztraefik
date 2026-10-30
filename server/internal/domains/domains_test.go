@@ -7,14 +7,14 @@ func TestRegistrable(t *testing.T) {
 		"myhome.duckdns.org":     "myhome.duckdns.org",
 		"app.myhome.duckdns.org": "myhome.duckdns.org",
 		"*.myhome.duckdns.org":   "myhome.duckdns.org",
-		"app.example.com":          "example.com",
-		"example.com":              "example.com",
-		"a.b.example.co.uk":        "example.co.uk",
-		"foo.bar.ck":               "foo.bar.ck", // wildcard rule *.ck
-		"www.ck":                   "www.ck",     // exception !www.ck
-		"a.www.ck":                 "www.ck",
-		"localhost":                "localhost",
-		"app.home.unknowntld":      "home.unknowntld",
+		"app.example.com":        "example.com",
+		"example.com":            "example.com",
+		"a.b.example.co.uk":      "example.co.uk",
+		"foo.bar.ck":             "foo.bar.ck", // wildcard rule *.ck
+		"www.ck":                 "www.ck",     // exception !www.ck
+		"a.www.ck":               "www.ck",
+		"localhost":              "localhost",
+		"app.home.unknowntld":    "home.unknowntld",
 	} {
 		if got := Registrable(host); got != want {
 			t.Errorf("Registrable(%q) = %q, want %q", host, got, want)

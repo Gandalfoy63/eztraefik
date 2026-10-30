@@ -65,6 +65,12 @@ Required:
 - Motion only when it communicates (state change, feedback, entrance): short, subtle, respects `prefers-reduced-motion`. Wanted: light hover feedback where useful, click/press feedback, smooth page entrance on every page change, a distinctive animated sidebar toggle icon. Timings are in Design Principles.
 - Copy is short, specific and human. No marketing filler.
 
+## Privacy: no personal or real data in anything we ship
+Placeholders, examples, sample data, tests, comments, docs and commit messages never contain real or personal information: no people's names (not even "John Doe"), emails, the owner's domains, hostnames, IPs, container names or tokens. This repo and its image are public.
+- Use neutral values: `My Website`, `example.com`, `admin@example.com`, `192.0.2.1`, `myhome.duckdns.org`.
+- Something the owner mentions while asking for a change is context, not sample text. Even when named as an example, use a neutral value and say so.
+- The only exception is the public identity the project publishes under: the `LICENSE` copyright, the GitHub and Docker Hub accounts.
+
 ## 4. Workflow for every task
 
 1. Read the relevant notes in `/docs` and the relevant `00 - Downloaded Docs`.

@@ -1,8 +1,8 @@
 ---
 title: Changelog
 tags: [changelog, index]
-version: 1.7.1+27
-related: ["[[Home]]", "[[99 - Changelog/1.2.9+18|1.2.9+18]]", "[[99 - Changelog/1.2.8+17|1.2.8+17]]", "[[99 - Changelog/1.2.7+16|1.2.7+16]]", "[[99 - Changelog/1.2.6+15|1.2.6+15]]", "[[99 - Changelog/1.2.5+14|1.2.5+14]]", "[[99 - Changelog/1.2.4+13|1.2.4+13]]", "[[99 - Changelog/1.2.3+11|1.2.3+11]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[99 - Changelog/1.2.1+9|1.2.1+9]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[99 - Changelog/0.1.1+2|0.1.1+2]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/1.3.0+19|1.3.0+19]]", "[[99 - Changelog/1.3.1+20|1.3.1+20]]", "[[99 - Changelog/1.4.0+21|1.4.0+21]]", "[[99 - Changelog/1.5.0+22|1.5.0+22]]", "[[99 - Changelog/1.5.1+23|1.5.1+23]]", "[[99 - Changelog/1.5.2+24|1.5.2+24]]", "[[99 - Changelog/1.6.0+25|1.6.0+25]]", "[[99 - Changelog/1.7.0+26|1.7.0+26]]", "[[99 - Changelog/1.7.1+27|1.7.1+27]]"]
+version: 1.7.2+28
+related: ["[[Home]]", "[[99 - Changelog/1.2.9+18|1.2.9+18]]", "[[99 - Changelog/1.2.8+17|1.2.8+17]]", "[[99 - Changelog/1.2.7+16|1.2.7+16]]", "[[99 - Changelog/1.2.6+15|1.2.6+15]]", "[[99 - Changelog/1.2.5+14|1.2.5+14]]", "[[99 - Changelog/1.2.4+13|1.2.4+13]]", "[[99 - Changelog/1.2.3+11|1.2.3+11]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[99 - Changelog/1.2.1+9|1.2.1+9]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[99 - Changelog/0.1.1+2|0.1.1+2]]", "[[99 - Changelog/0.1.0+1|0.1.0+1]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/1.3.0+19|1.3.0+19]]", "[[99 - Changelog/1.3.1+20|1.3.1+20]]", "[[99 - Changelog/1.4.0+21|1.4.0+21]]", "[[99 - Changelog/1.5.0+22|1.5.0+22]]", "[[99 - Changelog/1.5.1+23|1.5.1+23]]", "[[99 - Changelog/1.5.2+24|1.5.2+24]]", "[[99 - Changelog/1.6.0+25|1.6.0+25]]", "[[99 - Changelog/1.7.0+26|1.7.0+26]]", "[[99 - Changelog/1.7.1+27|1.7.1+27]]", "[[99 - Changelog/1.7.2+28|1.7.2+28]]"]
 ---
 
 # Changelog
@@ -11,6 +11,7 @@ Newest first. Version format `MAJOR.MEDIUM.MINOR+BUILD`, source of truth in [VER
 
 | Version | Date | Summary |
 |---|---|---|
+| [[99 - Changelog/1.7.2+28|1.7.2+28]] | 2026-10-30 | Neutral placeholders and examples; privacy rule |
 | [[99 - Changelog/1.7.1+27|1.7.1+27]] | 2026-10-30 | Image 1.7.0 published, compose files use it |
 | [[99 - Changelog/1.7.0+26|1.7.0+26]] | 2026-10-30 | After saving a resolver: apply now, check DNS and certificates |
 | [[99 - Changelog/1.6.0+25|1.6.0+25]] | 2026-10-30 | Domains on a resolver, certificate dropdown on routes, route uses its domain's resolver |
@@ -65,3 +66,4 @@ Newest first. Version format `MAJOR.MEDIUM.MINOR+BUILD`, source of truth in [VER
 - [[99 - Changelog/1.6.0+25|1.6.0+25]]
 - [[99 - Changelog/1.7.0+26|1.7.0+26]]
 - [[99 - Changelog/1.7.1+27|1.7.1+27]]
+- [[99 - Changelog/1.7.2+28|1.7.2+28]]
