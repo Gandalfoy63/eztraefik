@@ -58,3 +58,4 @@ for cd in code_dirs:
             if not os.path.exists(os.path.join(root, ref)):
                 bad.append(f"CODEREF {os.path.relpath(path, root)} -> {ref}")
 print("\n".join(sorted(set(bad))) or "OK", f"\n{len(ours)} own notes, {len(notes)} total, {code_files} code files with a Docs: comment")
+sys.exit(1 if bad else 0)
