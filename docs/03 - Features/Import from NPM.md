@@ -1,8 +1,8 @@
 ---
 title: Import from NPM
 tags: [feature, migration]
-version: 1.2.8+17
-related: ["[[03 - Features/Routes|Routes]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Features Index|Features Index]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[00 - Downloaded Docs/Nginx Proxy Manager/README|README]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/1.2.8+17|1.2.8+17]]"]
+version: 1.3.0+19
+related: ["[[03 - Features/Routes|Routes]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Features Index|Features Index]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[00 - Downloaded Docs/Nginx Proxy Manager/README|README]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/1.2.8+17|1.2.8+17]]", "[[03 - Features/Route Settings|Route Settings]]", "[[99 - Changelog/1.3.0+19|1.3.0+19]]", "[[00 - Downloaded Docs/nginx/README|nginx docs]]"]
 ---
 
 # Import from NPM
@@ -16,7 +16,7 @@ Status: implemented in 1.1.0+5. Page: System > Import from NPM. Moves a [Nginx P
 - When NPM runs on this host, the access list password hashes are copied from its container (`/data/access/<id>`, through the Docker API, [readHtpasswd](../../server/internal/api/migrate.go#L98-L125)). NPM's API never returns passwords.
 
 ## 2. Review
-Nothing is saved yet. Each NPM object is one row: what it becomes, or why it is skipped, and a note for every behavior change ([BuildPlan](../../server/internal/npm/convert.go#L135-L534)).
+Nothing is saved yet. Each NPM object is one row: what it becomes, or why it is skipped, and a note for every behavior change ([BuildPlan](../../server/internal/npm/convert.go#L149-L543)).
 
 | NPM | eztraefik |
 |---|---|
@@ -37,7 +37,9 @@ Items are skipped with a reason when:
 - they need a Let's Encrypt resolver and no email is known at all (the screen asks for one);
 - they are plain HTTP while eztraefik's `web` entrypoint redirects everything (they get HTTPS instead when a resolver exists).
 
-Notes, not blockers: custom nginx config (not converted, first line shown), "Block common exploits" and caching (no Traefik Proxy equivalent), deny rules in access lists (Traefik Proxy only allows), "satisfy any" (Traefik requires IP and password), 307 / 308 redirects.
+Custom nginx config is read directive by directive: it becomes named settings on the route, or stays as a note, see [[03 - Features/Route Settings|Route Settings]].
+
+Notes, not blockers: custom nginx config that has no conversion, "Block common exploits" and caching (no Traefik Proxy equivalent), deny rules in access lists (Traefik Proxy only allows), "satisfy any" (Traefik requires IP and password), 307 / 308 redirects.
 
 ## 3. Import
 The selected items are saved in one change (one history entry, so Settings > History can undo it) ([npmImport](../../server/internal/api/migrate.go#L231-L356)). Every route goes through the normal route checks; a failing one is reported and the rest is saved. New entrypoints and the resolver are saved as pending Traefik settings. NPM keeps serving until the switch.
@@ -54,12 +56,12 @@ Only when NPM runs on this host ([npmSwitch](../../server/internal/api/migrate.g
 When NPM runs elsewhere, the page explains the manual switch (stop it there, move DNS or port forwarding, set the ports in [[03 - Features/Entrypoints|Entrypoints]]).
 
 ## Tested
-- Unit: [TestPlanMapsEveryKind](../../server/internal/npm/convert_test.go#L60-L108), [TestProtectedHostNeedsPasswords](../../server/internal/npm/convert_test.go#L110-L120), [TestConflictsAndRedirectingWeb](../../server/internal/npm/convert_test.go#L122-L134).
+- Unit: [TestPlanMapsEveryKind](../../server/internal/npm/convert_test.go#L60-L112), [TestProtectedHostNeedsPasswords](../../server/internal/npm/convert_test.go#L114-L124), [TestConflictsAndRedirectingWeb](../../server/internal/npm/convert_test.go#L126-L138).
 - End to end: `dev/test_npm.py` against a real NPM 2.15.1 in the [[08 - Deployment/Dev Environment|Dev Environment]]: the same seven requests (proxy, custom location, basic auth 401 and 200, uploaded wildcard certificate, redirection, TCP stream) answer the same through NPM, then through Traefik after the switch, then NPM again after switching back. **26 of 26** pass. Not tested: Let's Encrypt certificate download (not used, see above) and 2FA (code path only).
 
 ## Code
-- [Client](../../server/internal/npm/client.go#L128-L132), [Item](../../server/internal/npm/convert.go#L15-L31)
-- [ImportNPM](../../web/src/pages/ImportNPM.tsx#L57-L343)
+- [Client](../../server/internal/npm/client.go#L128-L132), [Item](../../server/internal/npm/convert.go#L15-L32)
+- [ImportNPM](../../web/src/pages/ImportNPM.tsx#L58-L347)
 
 ## Related
 - [[03 - Features/Routes|Routes]]
@@ -75,3 +77,6 @@ When NPM runs elsewhere, the page explains the manual switch (stop it there, mov
 - [[00 - Downloaded Docs/Nginx Proxy Manager/README|README]]
 - [[04 - Architecture/Code Map|Code Map]]
 - [[99 - Changelog/1.2.8+17|1.2.8+17]]
+- [[03 - Features/Route Settings|Route Settings]]
+- [[99 - Changelog/1.3.0+19|1.3.0+19]]
+- [[00 - Downloaded Docs/nginx/README|nginx docs]]

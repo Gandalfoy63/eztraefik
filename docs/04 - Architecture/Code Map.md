@@ -1,8 +1,8 @@
 ---
 title: Code Map
 tags: [architecture, code-map]
-version: 1.2.7+16
-related: ["[[04 - Architecture/Overview|Overview]]", "[[Home]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Docker Client|Docker Client]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Preview|Preview]]", "[[05 - UI-UX/Style|Style]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Install|Install]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/Changelog|Changelog]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]", "[[99 - Changelog/1.2.1+9|1.2.1+9]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]"]
+version: 1.3.0+19
+related: ["[[04 - Architecture/Overview|Overview]]", "[[Home]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Docker Client|Docker Client]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Preview|Preview]]", "[[05 - UI-UX/Style|Style]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Install|Install]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/Changelog|Changelog]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]", "[[99 - Changelog/1.2.1+9|1.2.1+9]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[03 - Features/Route Settings|Route Settings]]"]
 ---
 
 # Code Map
@@ -31,6 +31,8 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [server/internal/npm/client.go](../../server/internal/npm/client.go) | NPM API client (sign-in with 2FA, read config) | [[03 - Features/Import from NPM|Import from NPM]] |
 | [server/internal/npm/convert.go](../../server/internal/npm/convert.go) | NPM objects to eztraefik routes, middlewares, ports, certificates | [[03 - Features/Import from NPM|Import from NPM]] |
 | [server/internal/npm/convert_test.go](../../server/internal/npm/convert_test.go) | Converter tests on real NPM output shapes | [[03 - Features/Import from NPM|Import from NPM]] |
+| [server/internal/npm/nginx.go](../../server/internal/npm/nginx.go) | Custom nginx config parser, to named route settings | [[03 - Features/Route Settings|Route Settings]] |
+| [server/internal/npm/nginx_test.go](../../server/internal/npm/nginx_test.go) | Parser tests | [[03 - Features/Route Settings|Route Settings]] |
 | [web/src/pages/ImportNPM.tsx](../../web/src/pages/ImportNPM.tsx) | Import from NPM page | [[03 - Features/Import from NPM|Import from NPM]] |
 | [dev/test_npm.py](../../dev/test_npm.py) | End-to-end NPM import and switch test (26 checks) | [[08 - Deployment/Dev Environment|Dev Environment]] |
 | [server/internal/api/setup_test.go](../../server/internal/api/setup_test.go) | Setup never offers eztraefik itself as a Traefik | [[03 - Features/Onboarding|Onboarding]] |
@@ -41,6 +43,8 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [server/internal/store/store.go](../../server/internal/store/store.go) | JSON store, atomic writes, history | [[09 - Data/Data Model|Data Model]] |
 | [server/internal/traefik/container.go](../../server/internal/traefik/container.go) | Flags, env, container spec, apply with fallback, status | [[03 - Features/Traefik Container|Traefik Container]] |
 | [server/internal/traefik/dynamic.go](../../server/internal/traefik/dynamic.go) | State to Traefik dynamic config | [[04 - Architecture/Dynamic Config|Dynamic Config]] |
+| [server/internal/traefik/settings.go](../../server/internal/traefik/settings.go) | Route settings to middlewares and a transport | [[03 - Features/Route Settings|Route Settings]] |
+| [server/internal/traefik/settings_test.go](../../server/internal/traefik/settings_test.go) | Route settings rendering tests | [[03 - Features/Route Settings|Route Settings]] |
 | [server/internal/traefik/yaml.go](../../server/internal/traefik/yaml.go) | YAML writer | [[04 - Architecture/Dynamic Config|Dynamic Config]] |
 | [server/internal/traefik/api.go](../../server/internal/traefik/api.go) | Traefik API client (rawdata, version, ping, metrics) | [[03 - Features/Relations|Relations]] |
 | [server/internal/traefik/certs.go](../../server/internal/traefik/certs.go) | ACME storage reader, PEM checks, wildcard matching | [[03 - Features/Certificates|Certificates]] |
@@ -59,7 +63,7 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [web/src/app/Shell.tsx](../../web/src/app/Shell.tsx) | Sidebar, top bar, page transition | [[05 - UI-UX/Navigation|Navigation]] |
 | [web/src/app/router.ts](../../web/src/app/router.ts) | Hash router | [[04 - Architecture/Frontend|Frontend]] |
 | [web/src/app/Tooltip.tsx](../../web/src/app/Tooltip.tsx) | Global tooltip | [[05 - UI-UX/Components|Components]] |
-| [web/src/ui/controls.tsx](../../web/src/ui/controls.tsx) | Field, Switch, Segmented, TagInput, CheckChips | [[05 - UI-UX/Components|Components]] |
+| [web/src/ui/controls.tsx](../../web/src/ui/controls.tsx) | Field, Switch, StepSlider, Segmented, TagInput, CheckChips | [[05 - UI-UX/Components|Components]] |
 | [web/src/ui/feedback.tsx](../../web/src/ui/feedback.tsx) | Button, toasts, badges, empty / error / loading | [[05 - UI-UX/Components|Components]] |
 | [web/src/ui/Modal.tsx](../../web/src/ui/Modal.tsx) | Window, tabs, confirm dialog | [[05 - UI-UX/Components|Components]] |
 | [web/src/ui/Page.tsx](../../web/src/ui/Page.tsx) | Page header, card, code block | [[05 - UI-UX/Components|Components]] |
@@ -73,6 +77,7 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [web/src/pages/Relations.tsx](../../web/src/pages/Relations.tsx) | Traffic path strips | [[03 - Features/Relations|Relations]] |
 | [web/src/pages/Routes.tsx](../../web/src/pages/Routes.tsx) | Routes page | [[03 - Features/Routes|Routes]] |
 | [web/src/pages/RouteModal.tsx](../../web/src/pages/RouteModal.tsx) | New / edit route window | [[03 - Features/Routes|Routes]] |
+| [web/src/pages/RouteSettings.tsx](../../web/src/pages/RouteSettings.tsx) | Route Settings section of the route window | [[03 - Features/Route Settings|Route Settings]] |
 | [web/src/pages/Services.tsx](../../web/src/pages/Services.tsx) | Services page and window | [[03 - Features/Services|Services]] |
 | [web/src/pages/Middlewares.tsx](../../web/src/pages/Middlewares.tsx) | Middlewares page, type forms | [[03 - Features/Middlewares|Middlewares]] |
 | [web/src/pages/Domains.tsx](../../web/src/pages/Domains.tsx) | Domains page | [[03 - Features/Domains|Domains]] |
@@ -146,3 +151,4 @@ Keep line links right with `python3 tools/relink.py`; check the vault with `pyth
 - [[99 - Changelog/1.2.0+8|1.2.0+8]]
 - [[99 - Changelog/1.2.1+9|1.2.1+9]]
 - [[99 - Changelog/1.2.2+10|1.2.2+10]]
+- [[03 - Features/Route Settings|Route Settings]]

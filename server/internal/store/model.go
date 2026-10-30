@@ -2,7 +2,11 @@
 // Package store holds eztraefik's state: what the user configured, saved as one JSON file.
 package store
 
-import "time"
+import (
+	"maps"
+	"slices"
+	"time"
+)
 
 // State is everything eztraefik manages. Traefik's own runtime state is read from its API, not stored here.
 type State struct {
@@ -98,6 +102,43 @@ type Route struct {
 	Priority    int       `json:"priority,omitempty"`
 	Enabled     bool      `json:"enabled"`
 	UpdatedAt   time.Time `json:"updatedAt"`
+	// Settings are the named options of an HTTP route. Rendered as middlewares and a transport of its own.
+	Settings *RouteSettings `json:"settings,omitempty"`
+}
+
+// RouteSettings is what custom nginx config in NPM usually sets, in terms a person picks in the route window.
+type RouteSettings struct {
+	MaxBodyBytes         int64             `json:"maxBodyBytes,omitempty"`
+	ConnectTimeout       int               `json:"connectTimeout,omitempty"`  // seconds
+	ResponseTimeout      int               `json:"responseTimeout,omitempty"` // seconds
+	SkipCertificateCheck bool              `json:"skipCertificateCheck,omitempty"`
+	HidePublicDomain     bool              `json:"hidePublicDomain,omitempty"`
+	Compress             bool              `json:"compress,omitempty"`
+	BlockFrames          bool              `json:"blockFrames,omitempty"`
+	BlockSniffing        bool              `json:"blockSniffing,omitempty"`
+	AllowedIPs           []string          `json:"allowedIPs,omitempty"`
+	RequestHeaders       map[string]string `json:"requestHeaders,omitempty"`  // an empty value removes the header
+	ResponseHeaders      map[string]string `json:"responseHeaders,omitempty"` // an empty value removes the header
+	RewritePattern       string            `json:"rewritePattern,omitempty"`
+	RewriteTarget        string            `json:"rewriteTarget,omitempty"`
+	RedirectPattern      string            `json:"redirectPattern,omitempty"`
+	RedirectTarget       string            `json:"redirectTarget,omitempty"`
+	RedirectPermanent    bool              `json:"redirectPermanent,omitempty"`
+}
+
+// Clone copies the settings, so a custom location can inherit from its host without sharing its maps.
+func (s RouteSettings) Clone() RouteSettings {
+	s.AllowedIPs = slices.Clone(s.AllowedIPs)
+	s.RequestHeaders = maps.Clone(s.RequestHeaders)
+	s.ResponseHeaders = maps.Clone(s.ResponseHeaders)
+	return s
+}
+
+// IsEmpty reports whether no setting is on.
+func (s RouteSettings) IsEmpty() bool {
+	return s.MaxBodyBytes == 0 && s.ConnectTimeout == 0 && s.ResponseTimeout == 0 && !s.SkipCertificateCheck && !s.HidePublicDomain &&
+		!s.Compress && !s.BlockFrames && !s.BlockSniffing && len(s.AllowedIPs) == 0 && len(s.RequestHeaders) == 0 && len(s.ResponseHeaders) == 0 &&
+		s.RewritePattern == "" && s.RedirectPattern == ""
 }
 
 type Target struct {

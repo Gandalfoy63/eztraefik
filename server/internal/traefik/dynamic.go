@@ -97,7 +97,7 @@ func webEntrypoint(cfg store.TraefikConfig) (store.Entrypoint, bool) {
 
 // Render turns the state into Traefik's dynamic configuration (file provider format).
 func Render(st store.State) M {
-	httpRouters, httpServices, httpMws := M{}, M{}, M{}
+	httpRouters, httpServices, httpMws, httpTransports := M{}, M{}, M{}, M{}
 	tcpRouters, tcpServices, tcpMws := M{}, M{}, M{}
 	udpRouters, udpServices := M{}, M{}
 	needRedirect := false
@@ -111,8 +111,8 @@ func Render(st store.State) M {
 		switch r.Protocol {
 		case "http":
 			router := M{"rule": Rule(r), "service": ServiceName(r), "entryPoints": eps}
-			if len(r.Middlewares) > 0 {
-				router["middlewares"] = toAny(r.Middlewares)
+			if list := routeMiddlewares(r, httpMws); len(list) > 0 {
+				router["middlewares"] = toAny(list)
 			}
 			if r.Priority > 0 {
 				router["priority"] = r.Priority
@@ -132,7 +132,9 @@ func Render(st store.State) M {
 			}
 			httpRouters[r.Name] = router
 			if r.Target.Kind != "service" {
-				httpServices[r.Name] = M{"loadBalancer": M{"servers": []any{M{"url": TargetURL(r)}}}}
+				lb := M{"servers": []any{M{"url": TargetURL(r)}}}
+				routeTransport(r, lb, httpTransports)
+				httpServices[r.Name] = M{"loadBalancer": lb}
 			}
 		case "tcp":
 			router := M{"rule": Rule(r), "service": ServiceName(r), "entryPoints": eps}
@@ -207,7 +209,7 @@ func Render(st store.State) M {
 			out[proto] = sec
 		}
 	}
-	add("http", M{"routers": httpRouters, "services": httpServices, "middlewares": httpMws})
+	add("http", M{"routers": httpRouters, "services": httpServices, "middlewares": httpMws, "serversTransports": httpTransports})
 	add("tcp", M{"routers": tcpRouters, "services": tcpServices, "middlewares": tcpMws})
 	add("udp", M{"routers": udpRouters, "services": udpServices})
 
@@ -325,7 +327,12 @@ func RenderTransports(out M, st store.State) {
 				h = M{}
 				out["http"] = h
 			}
-			h["serversTransports"] = M{"ezt-insecure": M{"insecureSkipVerify": true}}
+			transports, _ := h["serversTransports"].(M)
+			if transports == nil {
+				transports = M{}
+				h["serversTransports"] = transports
+			}
+			transports["ezt-insecure"] = M{"insecureSkipVerify": true}
 			return
 		}
 	}

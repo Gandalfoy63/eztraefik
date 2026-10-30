@@ -22,6 +22,7 @@ type Item struct {
 	Target       string       `json:"target,omitempty"`
 	TLS          string       `json:"tls,omitempty"`
 	Notes        []string     `json:"notes"`
+	Converted    []string     `json:"converted"`           // named settings read from its custom nginx config
 	Passwords    []string     `json:"passwords,omitempty"` // "<access list id>/<user>" that still need a password
 	Middlewares  []string     `json:"middlewares"`
 	Entrypoints  []string     `json:"entrypoints"`
@@ -95,12 +96,25 @@ func target(host string, port int, scheme string, containers []docker.ContainerS
 	return store.Target{Kind: "ip", Address: h, Port: port, Scheme: scheme}, fmt.Sprintf("%s://%s:%d", scheme, h, port)
 }
 
-func firstLine(s string) string {
-	s = strings.TrimSpace(s)
-	if i := strings.IndexByte(s, '\n'); i >= 0 {
-		return s[:i] + " ..."
+// readNginx turns a host's custom nginx config into route settings and says what happened to each directive.
+func readNginx(it *Item, src string, inherited store.RouteSettings, forwards bool) store.RouteSettings {
+	n := ParseNginx(src, inherited, forwards)
+	it.Converted = append(it.Converted, n.Converted...)
+	for _, d := range n.Covered {
+		it.Converted = append(it.Converted, "No setting needed, Traefik already does this: "+d)
 	}
-	return s
+	for _, d := range n.Skipped {
+		it.Notes = append(it.Notes, "Custom nginx config is not converted: "+d)
+	}
+	return n.Settings
+}
+
+// settingsOf returns nil when no setting is on, so routes without any stay as they were.
+func settingsOf(s store.RouteSettings) *store.RouteSettings {
+	if s.IsEmpty() {
+		return nil
+	}
+	return &s
 }
 
 // dnsEnv maps NPM's certbot credential file to the variables Traefik's DNS providers (lego) read.
@@ -367,7 +381,7 @@ func BuildPlan(d Data, st store.State, containers []docker.ContainerSummary, opt
 
 	for _, h := range d.ProxyHosts {
 		hosts := lower(h.DomainNames)
-		it := Item{ID: fmt.Sprintf("proxy-%d", h.ID), Kind: "proxy", Source: strings.Join(hosts, ", "), Action: "import", Notes: []string{}, Middlewares: []string{}, Entrypoints: []string{}, Certs: []int{}}
+		it := Item{ID: fmt.Sprintf("proxy-%d", h.ID), Kind: "proxy", Source: strings.Join(hosts, ", "), Action: "import", Notes: []string{}, Converted: []string{}, Middlewares: []string{}, Entrypoints: []string{}, Certs: []int{}}
 		conflict(&it, hosts)
 		scheme := h.ForwardScheme
 		if scheme != "https" {
@@ -380,9 +394,7 @@ func BuildPlan(d Data, st store.State, containers []docker.ContainerSummary, opt
 			hsts(&it, bool(h.HSTSEnabled), bool(h.HSTSSubdomains))
 		}
 		acl(&it, h.AccessListID)
-		if strings.TrimSpace(h.AdvancedConfig) != "" {
-			it.Notes = append(it.Notes, "Custom nginx config is not converted: "+firstLine(h.AdvancedConfig))
-		}
+		hostSettings := readNginx(&it, h.AdvancedConfig, store.RouteSettings{}, true)
 		if h.BlockExploits {
 			it.Notes = append(it.Notes, "\"Block common exploits\" has no Traefik equivalent.")
 		}
@@ -394,14 +406,14 @@ func BuildPlan(d Data, st store.State, containers []docker.ContainerSummary, opt
 		}
 		if it.Action == "import" {
 			it.Name = nm.name(hosts[0])
-			rt := store.Route{Name: it.Name, Protocol: "http", Hosts: hosts, Entrypoints: []string{}, Target: t, Middlewares: it.Middlewares, TLS: tls, Enabled: bool(h.Enabled)}
+			rt := store.Route{Name: it.Name, Protocol: "http", Hosts: hosts, Entrypoints: []string{}, Target: t, Middlewares: it.Middlewares, TLS: tls, Enabled: bool(h.Enabled), Settings: settingsOf(hostSettings)}
 			it.Route = &rt
 		}
 		p.Items = append(p.Items, it)
 		// Custom locations become their own routes with a path prefix, same domains and protection.
 		for i, loc := range h.Locations {
 			li := Item{ID: fmt.Sprintf("proxy-%d-loc-%d", h.ID, i+1), Kind: "location", Source: strings.Join(hosts, ", ") + " " + loc.Path,
-				Action: it.Action, Reason: it.Reason, Notes: []string{}, Middlewares: it.Middlewares, Entrypoints: []string{}, Certs: it.Certs, TLS: it.TLS, UsesResolver: it.UsesResolver}
+				Action: it.Action, Reason: it.Reason, Notes: []string{}, Converted: []string{}, Middlewares: it.Middlewares, Entrypoints: []string{}, Certs: it.Certs, TLS: it.TLS, UsesResolver: it.UsesResolver}
 			ls := loc.ForwardScheme
 			if ls != "https" {
 				ls = "http"
@@ -412,13 +424,12 @@ func BuildPlan(d Data, st store.State, containers []docker.ContainerSummary, opt
 			if !strings.HasPrefix(path, "/") || strings.ContainsAny(path, "~^$*()") {
 				li.Action, li.Reason = "skip", fmt.Sprintf("Location %q is a regular expression; recreate it with a custom rule.", loc.Path)
 			}
-			if strings.TrimSpace(loc.AdvancedConfig) != "" {
-				li.Notes = append(li.Notes, "Custom nginx config is not converted: "+firstLine(loc.AdvancedConfig))
-			}
+			// nginx locations inherit what their server block sets.
+			locSettings := readNginx(&li, loc.AdvancedConfig, hostSettings, true)
 			if li.Action == "import" {
 				li.Name = nm.name(it.Name + "-" + strings.Trim(path, "/"))
 				rt := store.Route{Name: li.Name, Protocol: "http", Hosts: hosts, PathPrefix: strings.TrimSuffix(path, "/"), Entrypoints: []string{}, Target: lt,
-					Middlewares: it.Middlewares, TLS: tls, Enabled: bool(h.Enabled)}
+					Middlewares: it.Middlewares, TLS: tls, Enabled: bool(h.Enabled), Settings: settingsOf(locSettings)}
 				if rt.PathPrefix == "" {
 					rt.PathPrefix = "/"
 				}
@@ -430,7 +441,7 @@ func BuildPlan(d Data, st store.State, containers []docker.ContainerSummary, opt
 
 	for _, r := range d.Redirections {
 		hosts := lower(r.DomainNames)
-		it := Item{ID: fmt.Sprintf("redirect-%d", r.ID), Kind: "redirect", Source: strings.Join(hosts, ", "), Action: "import", Notes: []string{}, Middlewares: []string{}, Entrypoints: []string{}, Certs: []int{}}
+		it := Item{ID: fmt.Sprintf("redirect-%d", r.ID), Kind: "redirect", Source: strings.Join(hosts, ", "), Action: "import", Notes: []string{}, Converted: []string{}, Middlewares: []string{}, Entrypoints: []string{}, Certs: []int{}}
 		conflict(&it, hosts)
 		dest := strings.TrimSuffix(strings.TrimSpace(r.ForwardDomain), "/")
 		repl := ""
@@ -467,9 +478,7 @@ func BuildPlan(d Data, st store.State, containers []docker.ContainerSummary, opt
 		if code == 307 || code == 308 {
 			it.Notes = append(it.Notes, fmt.Sprintf("Traefik answers %d redirects as %d for GET requests.", code, map[int]int{307: 302, 308: 301}[code]))
 		}
-		if strings.TrimSpace(r.AdvancedConfig) != "" {
-			it.Notes = append(it.Notes, "Custom nginx config is not converted: "+firstLine(r.AdvancedConfig))
-		}
+		redirectSettings := readNginx(&it, r.AdvancedConfig, store.RouteSettings{}, false)
 		if it.Action == "import" {
 			it.Name = nm.name(hosts[0])
 			mw := nm.name("redirect-" + it.Name)
@@ -477,7 +486,7 @@ func BuildPlan(d Data, st store.State, containers []docker.ContainerSummary, opt
 				Config: map[string]any{"regex": regex, "replacement": repl, "permanent": code == 301 || code == 308}}
 			it.Middlewares = append([]string{mw}, it.Middlewares...)
 			rt := store.Route{Name: it.Name, Protocol: "http", Hosts: hosts, Entrypoints: []string{}, Target: store.Target{Kind: "service", Service: "noop@internal"},
-				Middlewares: it.Middlewares, TLS: tls, Enabled: bool(r.Enabled)}
+				Middlewares: it.Middlewares, TLS: tls, Enabled: bool(r.Enabled), Settings: settingsOf(redirectSettings)}
 			it.Route = &rt
 		}
 		p.Items = append(p.Items, it)
@@ -493,7 +502,7 @@ func BuildPlan(d Data, st store.State, containers []docker.ContainerSummary, opt
 				continue
 			}
 			it := Item{ID: fmt.Sprintf("stream-%d-%s", s.ID, proto), Kind: "stream", Source: fmt.Sprintf("port %d/%s", s.IncomingPort, proto), Action: "import",
-				Notes: []string{}, Middlewares: []string{}, Entrypoints: []string{}, Certs: []int{}}
+				Notes: []string{}, Converted: []string{}, Middlewares: []string{}, Entrypoints: []string{}, Certs: []int{}}
 			t, desc := target(s.ForwardingHost, s.ForwardingPort, "", containers)
 			t.Scheme = ""
 			it.Target = desc
@@ -527,7 +536,7 @@ func BuildPlan(d Data, st store.State, containers []docker.ContainerSummary, opt
 
 	for _, dh := range d.DeadHosts {
 		p.Items = append(p.Items, Item{ID: fmt.Sprintf("notfound-%d", dh.ID), Kind: "notfound", Source: strings.Join(lower(dh.DomainNames), ", "), Action: "skip",
-			Reason: "Not needed: Traefik already answers 404 for domains without a route.", Notes: []string{}, Middlewares: []string{}, Entrypoints: []string{}, Certs: []int{}})
+			Reason: "Not needed: Traefik already answers 404 for domains without a route.", Notes: []string{}, Converted: []string{}, Middlewares: []string{}, Entrypoints: []string{}, Certs: []int{}})
 	}
 	sort.SliceStable(p.Items, func(i, j int) bool { return kindOrder[p.Items[i].Kind] < kindOrder[p.Items[j].Kind] })
 	return p

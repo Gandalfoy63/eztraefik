@@ -20,7 +20,7 @@ Renames and deletes are blocked while a route or another service refers to the s
 Reference: [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/load-balancing/service|HTTP service]], [[00 - Downloaded Docs/Traefik/reference/routing-configuration/tcp/service|TCP service]], [[00 - Downloaded Docs/Traefik/reference/routing-configuration/udp/service|UDP service]].
 
 ## Code
-- [validateService](../../server/internal/api/resources.go#L70-L150), [saveService](../../server/internal/api/resources.go#L152-L199), rendering [renderService](../../server/internal/traefik/dynamic.go#L263-L317)
+- [validateService](../../server/internal/api/resources.go#L70-L150), [saveService](../../server/internal/api/resources.go#L152-L199), rendering [renderService](../../server/internal/traefik/dynamic.go#L265-L319)
 - [Services](../../web/src/pages/Services.tsx#L142-L238)
 
 ## Related

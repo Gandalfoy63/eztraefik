@@ -52,6 +52,26 @@ export function SettingRow({ title, description, checked, onChange, disabled }: 
   );
 }
 
+// StepSlider: a slider over useful steps, with a number box for any exact value. The first step means "off".
+export function StepSlider({
+  id, label, hint, error, unit, steps, format, value, onChange,
+}: { id: string; label: string; hint?: ReactNode; error?: string | null; unit: string; steps: number[]; format: (v: number) => string; value: number; onChange: (v: number) => void }) {
+  // A value between two steps (typed, or imported from NPM) shows at the nearest step and keeps its exact number.
+  const position = steps.reduce((best, s, i) => (Math.abs(s - value) < Math.abs(steps[best] - value) ? i : best), 0);
+  return (
+    <Field label={label} htmlFor={id} hint={hint} error={error}>
+      <div className="step-slider">
+        <input type="range" {...invalid(id, error)} min={0} max={steps.length - 1} step={1} value={position} aria-valuetext={format(value)} onChange={e => onChange(steps[+e.target.value])} />
+        <span className="step-slider-value">
+          <input className="input mono" aria-label={`${label} in ${unit}`} inputMode="numeric" value={value || ""} placeholder="0" onChange={e => onChange(+e.target.value.replace(/[^\d.]/g, "") || 0)} />
+          <span className="muted">{unit}</span>
+        </span>
+      </div>
+      <output className="step-slider-output" htmlFor={id}>{format(value)}</output>
+    </Field>
+  );
+}
+
 export function Segmented<T extends string>({
   value, onChange, options, label,
 }: { value: T; onChange: (v: T) => void; options: { value: T; label: string; icon?: LucideIcon }[]; label: string }) {

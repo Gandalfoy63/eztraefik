@@ -220,6 +220,9 @@ func (a *App) validateRoute(st *store.State, rt *store.Route) error {
 		rt.TLS = store.RouteTLS{}
 		rt.Middlewares = nil
 	}
+	if err := validateSettings(rt); err != nil {
+		return err
+	}
 	if rt.TLS.Enabled {
 		switch rt.TLS.Mode {
 		case "passthrough":
@@ -239,6 +242,62 @@ func (a *App) validateRoute(st *store.State, rt *store.Route) error {
 				return FieldError{"tls", "This certificate resolver does not exist."}
 			}
 		}
+	}
+	return nil
+}
+
+var headerRe = regexp.MustCompile(`^[A-Za-z0-9!#$%&'*+.^_|~-]+$`)
+
+// validateSettings checks the named settings of an HTTP route. Settings that make no sense for the route are dropped.
+func validateSettings(rt *store.Route) error {
+	s := rt.Settings
+	if s == nil {
+		return nil
+	}
+	if rt.Protocol != "http" {
+		rt.Settings = nil
+		return nil
+	}
+	if rt.Target.Kind == "service" { // a shared service has its own connection options
+		s.ConnectTimeout, s.ResponseTimeout, s.SkipCertificateCheck, s.HidePublicDomain = 0, 0, false, false
+	}
+	if s.MaxBodyBytes < 0 {
+		return FieldError{"maxBodyBytes", "Max Upload Size can't be negative."}
+	}
+	if s.ConnectTimeout < 0 || s.ConnectTimeout > 86400 {
+		return FieldError{"connectTimeout", "Connect Timeout must be between 0 and 86400 seconds."}
+	}
+	if s.ResponseTimeout < 0 || s.ResponseTimeout > 86400 {
+		return FieldError{"responseTimeout", "Response Timeout must be between 0 and 86400 seconds."}
+	}
+	for _, ip := range s.AllowedIPs {
+		if _, _, err := net.ParseCIDR(ip); err != nil && net.ParseIP(ip) == nil {
+			return FieldError{"allowedIPs", fmt.Sprintf("%q is not an IP address or range.", ip)}
+		}
+	}
+	for field, headers := range map[string]map[string]string{"requestHeaders": s.RequestHeaders, "responseHeaders": s.ResponseHeaders} {
+		for k, v := range headers {
+			if !headerRe.MatchString(k) {
+				return FieldError{field, fmt.Sprintf("%q is not a valid header name.", k)}
+			}
+			if strings.ContainsAny(v, "\r\n") {
+				return FieldError{field, fmt.Sprintf("The value of %s can't contain a line break.", k)}
+			}
+		}
+	}
+	for _, p := range []struct{ field, label, pattern, target string }{
+		{"rewritePattern", "Rewrite Path", s.RewritePattern, s.RewriteTarget},
+		{"redirectPattern", "Redirect Visitors", s.RedirectPattern, s.RedirectTarget},
+	} {
+		if (p.pattern == "") != (p.target == "") {
+			return FieldError{p.field, p.label + " needs both a pattern and a target."}
+		}
+		if _, err := regexp.Compile(p.pattern); err != nil {
+			return FieldError{p.field, p.label + ": the pattern is not a valid regular expression."}
+		}
+	}
+	if s.IsEmpty() {
+		rt.Settings = nil
 	}
 	return nil
 }

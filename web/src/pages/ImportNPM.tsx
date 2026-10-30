@@ -1,7 +1,7 @@
 // Docs: docs/03 - Features/Import from NPM.md
 // Import from Nginx Proxy Manager: connect, review what each host becomes, import, then switch traffic (and back).
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRightLeft, CircleCheck, Import, KeyRound, PlugZap, TriangleAlert, Undo2 } from "lucide-react";
+import { ArrowRightLeft, Check, CircleCheck, Import, KeyRound, PlugZap, TriangleAlert, Undo2 } from "lucide-react";
 import { api, ApiError } from "../api";
 import { Badge, Button, ErrorBox, SkeletonRows, useToast } from "../ui/feedback";
 import { Field, invalid } from "../ui/controls";
@@ -19,6 +19,7 @@ interface Item {
   target?: string;
   tls?: string;
   notes: string[];
+  converted: string[];
   passwords?: string[];
 }
 interface Plan {
@@ -250,6 +251,9 @@ export function ImportNPM() {
                           </>
                         ) : (
                           <div className="muted">{it.reason}</div>
+                        )}
+                        {it.converted?.length > 0 && (
+                          <ul className="note-list is-converted">{it.converted.map((n, i) => <li key={i}><Check className="icon-sm" aria-hidden="true" />{n}</li>)}</ul>
                         )}
                         {it.notes.length > 0 && (
                           <ul className="note-list">{it.notes.map((n, i) => <li key={i}><TriangleAlert className="icon-sm" aria-hidden="true" />{n}</li>)}</ul>

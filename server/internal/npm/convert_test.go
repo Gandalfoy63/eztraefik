@@ -84,10 +84,14 @@ func TestPlanMapsEveryKind(t *testing.T) {
 		t.Errorf("ip middleware: %+v", ips)
 	}
 	notes := strings.Join(s.Notes, " ")
-	for _, want := range []string{"10.9.9.9", "allowed IP OR a password", "Custom nginx config", "redirected to HTTPS"} {
+	for _, want := range []string{"10.9.9.9", "allowed IP OR a password", "redirected to HTTPS"} {
 		if !strings.Contains(notes, want) {
 			t.Errorf("proxy-2 notes miss %q: %s", want, notes)
 		}
+	}
+
+	if s.Route.Settings == nil || s.Route.Settings.MaxBodyBytes != 50*1024*1024 || len(s.Converted) != 1 || s.Converted[0] != "Max Upload Size: 50 MB" {
+		t.Errorf("proxy-2 custom nginx config: %+v %v", s.Route.Settings, s.Converted)
 	}
 
 	rd := item(p, "redirect-1")

@@ -120,6 +120,26 @@ export interface Route {
   priority?: number;
   enabled: boolean;
   updatedAt?: string;
+  settings?: RouteSettings;
+}
+
+export interface RouteSettings {
+  maxBodyBytes?: number;
+  connectTimeout?: number;
+  responseTimeout?: number;
+  skipCertificateCheck?: boolean;
+  hidePublicDomain?: boolean;
+  compress?: boolean;
+  blockFrames?: boolean;
+  blockSniffing?: boolean;
+  allowedIPs?: string[];
+  requestHeaders?: Record<string, string>;
+  responseHeaders?: Record<string, string>;
+  rewritePattern?: string;
+  rewriteTarget?: string;
+  redirectPattern?: string;
+  redirectTarget?: string;
+  redirectPermanent?: boolean;
 }
 
 export interface RuntimeRouter {

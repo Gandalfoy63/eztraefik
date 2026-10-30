@@ -33,7 +33,7 @@ Before writing code that depends on anything that is not our own code (framework
 3. Store in `docs/00 - Downloaded Docs/<Technology Name>/`.
 4. Add a `README.md` there: source URL, version, date downloaded.
 5. Link those pages from every note and code reference that uses the tech.
-Refer to these local docs instead of guessing APIs. Already downloaded: Traefik v3.7.16, Go 1.27.3 stdlib, Docker Engine API v1.47, React 19, Vite 8, TypeScript, Lucide (vanilla + React), Google Fonts CSS2 API, Docker build and Compose, Pebble, whoami, Nginx Proxy Manager 2.15.1.
+Refer to these local docs instead of guessing APIs. Already downloaded: Traefik v3.7.16, Go 1.27.3 stdlib, Docker Engine API v1.47, React 19, Vite 8, TypeScript, Lucide (vanilla + React), Google Fonts CSS2 API, Docker build and Compose, Pebble, whoami, Nginx Proxy Manager 2.15.1, nginx (directives read at NPM import).
 
 ### Linking: the vault is one connected graph, no orphan notes
 - Note to note: wikilinks `[[03 - Features/Routes|Routes]]`. Links are two-way: if A links to B, B links back. Every note ends with a `## Related` section.

@@ -7,6 +7,7 @@ import { Button, useToast } from "../ui/feedback";
 import { CheckChips, Field, Segmented, SettingRow, TagInput, invalid } from "../ui/controls";
 import { Modal, TabPanel, Tabs } from "../ui/Modal";
 import { covers } from "../ui/certs";
+import { RouteSettingsPanel, SETTING_FIELDS, settingsCount } from "./RouteSettings";
 
 const emptyRoute = (): Route => ({
   id: "", name: "", protocol: "http", hosts: [], pathPrefix: "", rawRule: "", entrypoints: [],
@@ -22,7 +23,7 @@ interface Ctx {
   middlewares: Middleware[];
 }
 
-const FIELD_TAB: Record<string, string> = { name: "common", hosts: "common", target: "common", port: "common", pathPrefix: "common", entrypoints: "common", middlewares: "common", tls: "certs" };
+const FIELD_TAB: Record<string, string> = { ...Object.fromEntries(SETTING_FIELDS.map(f => [f, "common"])), name: "common", hosts: "common", target: "common", port: "common", pathPrefix: "common", entrypoints: "common", middlewares: "common", tls: "certs" };
 
 export function RouteModal({ open, onClose, editing, prefillHost, prefillContainer, prefillPort, onSaved }: { open: boolean; onClose: () => void; editing: Route | null; prefillHost?: string; prefillContainer?: string; prefillPort?: number; onSaved: () => void }) {
   const toast = useToast();
@@ -34,6 +35,7 @@ export function RouteModal({ open, onClose, editing, prefillHost, prefillContain
   const [busy, setBusy] = useState(false);
   const [yaml, setYaml] = useState("");
   const [more, setMore] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -47,6 +49,7 @@ export function RouteModal({ open, onClose, editing, prefillHost, prefillContain
     setTab("common");
     setErrors({});
     setMore(!!editing && (editing.protocol !== "http" || !!editing.pathPrefix || editing.middlewares.length > 0 || !!editing.rawRule));
+    setShowSettings(settingsCount(editing?.settings) > 0);
     setCtxError(null);
     Promise.all([
       api.get<{ containers: ContainerInfo[] }>("/docker/containers").catch(() => ({ containers: [] })),
@@ -100,6 +103,7 @@ export function RouteModal({ open, onClose, editing, prefillHost, prefillContain
       setErrors({ [field || "_"]: ae.message });
       if (FIELD_TAB[field]) setTab(FIELD_TAB[field]);
       if (["pathPrefix", "entrypoints", "middlewares"].includes(field)) setMore(true);
+      if (SETTING_FIELDS.includes(field)) setShowSettings(true);
     } finally {
       setBusy(false);
     }
@@ -259,6 +263,18 @@ export function RouteModal({ open, onClose, editing, prefillHost, prefillContain
               )}
             </div>
           </details>
+
+          {r.protocol === "http" && (
+            <details className="advanced more-options" open={showSettings} onToggle={e => setShowSettings((e.target as HTMLDetailsElement).open)}>
+              <summary>
+                <ChevronRight aria-hidden="true" />Route Settings: Uploads, Timeouts, Headers, Access
+                {settingsCount(r.settings) > 0 && <span className="badge is-accent">{settingsCount(r.settings)} on</span>}
+              </summary>
+              <div className="more-body">
+                <RouteSettingsPanel value={r.settings ?? {}} onChange={settings => set({ settings })} forwards={r.target.kind !== "service"} errors={errors} />
+              </div>
+            </details>
+          )}
         </TabPanel>
 
         <TabPanel id="certs" active={tab}>

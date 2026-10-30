@@ -13,7 +13,7 @@ Version: see [VERSION](../VERSION). Rules: [CLAUDE.md](../CLAUDE.md). Install: [
 
 | Section | Start here |
 |---|---|
-| 00 Downloaded Docs | [[00 - Downloaded Docs/Traefik/README|Traefik]], [[00 - Downloaded Docs/Go/README|Go]], [[00 - Downloaded Docs/Docker Engine API/README|Docker Engine API]], [[00 - Downloaded Docs/React/README|React]], [[00 - Downloaded Docs/Vite/README|Vite]], [[00 - Downloaded Docs/TypeScript/README|TypeScript]], [[00 - Downloaded Docs/Lucide/README|Lucide]], [[00 - Downloaded Docs/Google Fonts/README|Google Fonts]], [[00 - Downloaded Docs/Docker/README|Docker]], [[00 - Downloaded Docs/Pebble/README|Pebble]], [[00 - Downloaded Docs/whoami/README|whoami]] |
+| 00 Downloaded Docs | [[00 - Downloaded Docs/Traefik/README|Traefik]], [[00 - Downloaded Docs/Go/README|Go]], [[00 - Downloaded Docs/Docker Engine API/README|Docker Engine API]], [[00 - Downloaded Docs/React/README|React]], [[00 - Downloaded Docs/Vite/README|Vite]], [[00 - Downloaded Docs/TypeScript/README|TypeScript]], [[00 - Downloaded Docs/Lucide/README|Lucide]], [[00 - Downloaded Docs/Google Fonts/README|Google Fonts]], [[00 - Downloaded Docs/Docker/README|Docker]], [[00 - Downloaded Docs/Pebble/README|Pebble]], [[00 - Downloaded Docs/whoami/README|whoami]], [[00 - Downloaded Docs/nginx/README|nginx docs]] |
 | 01 Vision | [[01 - Vision/Vision|Vision]], [[01 - Vision/Plan|Plan]] |
 | 02 Tech | [[02 - Tech/Stack|Stack]] |
 | 03 Features | [[03 - Features/Features Index|Features Index]] |

@@ -120,7 +120,7 @@ function UsersField({ value, onChange }: { value: string[]; onChange: (v: string
   );
 }
 
-function KVField({ value, onChange }: { value: Record<string, string>; onChange: (v: Record<string, string>) => void }) {
+export function KVField({ value, onChange, addLabel = "Add header" }: { value: Record<string, string>; onChange: (v: Record<string, string>) => void; addLabel?: string }) {
   const entries = Object.entries(value);
   const update = (list: [string, string][]) => onChange(Object.fromEntries(list));
   return (
@@ -132,7 +132,7 @@ function KVField({ value, onChange }: { value: Record<string, string>; onChange:
           <button className="icon-btn" type="button" aria-label={`Remove header ${k}`} data-tooltip="Remove" onClick={() => update(entries.filter((_, j) => j !== i))}><X className="icon-sm" aria-hidden="true" /></button>
         </div>
       ))}
-      <Button size="sm" icon={Plus} onClick={() => onChange({ ...value, [`X-Header-${entries.length + 1}`]: "" })}>Add header</Button>
+      <Button size="sm" icon={Plus} onClick={() => onChange({ ...value, [`X-Header-${entries.length + 1}`]: "" })}>{addLabel}</Button>
     </div>
   );
 }
