@@ -10,7 +10,7 @@ name: eztraefik-example
 
 services:
   eztraefik:
-    image: ${EZT_IMAGE:-gandasdevstudio/eztraefik:1.3.0}
+    image: ${EZT_IMAGE:-gandasdevstudio/eztraefik:1.5.0}
     container_name: eztraefik
     restart: unless-stopped
     environment:

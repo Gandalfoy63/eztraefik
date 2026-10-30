@@ -1,8 +1,8 @@
 ---
 title: Compose Example
 tags: [deployment, docker]
-version: 1.3.1+20
-related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Docker|Docker]]", "[[00 - Downloaded Docs/Docker/README|Docker docs]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[99 - Changelog/1.3.1+20|1.3.1+20]]"]
+version: 1.5.1+23
+related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Docker|Docker]]", "[[00 - Downloaded Docs/Docker/README|Docker docs]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[99 - Changelog/1.3.1+20|1.3.1+20]]", "[[99 - Changelog/1.5.1+23|1.5.1+23]]"]
 ---
 
 # Compose Example
@@ -29,7 +29,7 @@ All three join the network `ezt`, which is also the network setup proposes for T
 | `EZT_PORT` | 8080 | host port of the eztraefik UI |
 | `EZT_HTTP_PORT`, `EZT_HTTPS_PORT` | 80, 443 | ports setup proposes for Traefik; change them if something else (for example Nginx Proxy Manager) holds 80 / 443 |
 | `EZT_SECURE_COOKIES` | 0 | 1 once the UI is served over HTTPS |
-| `EZT_IMAGE` | gandasdevstudio/eztraefik:1.3.0 | the image, from [Docker Hub](https://hub.docker.com/r/gandasdevstudio/eztraefik) |
+| `EZT_IMAGE` | gandasdevstudio/eztraefik:1.5.0 | the image, from [Docker Hub](https://hub.docker.com/r/gandasdevstudio/eztraefik) |
 
 All variables eztraefik reads: [[08 - Deployment/Configuration|Configuration]]. Compose syntax: [[00 - Downloaded Docs/Docker/Compose services|services]], [[00 - Downloaded Docs/Docker/Compose networks|networks]], [[00 - Downloaded Docs/Docker/Compose volumes|volumes]].
 
@@ -41,3 +41,4 @@ Remove the Traefik container eztraefik created first (`docker rm -f traefik`): i
 - [[04 - Architecture/Code Map|Code Map]]
 - [[99 - Changelog/1.1.2+7|1.1.2+7]]
 - [[99 - Changelog/1.3.1+20|1.3.1+20]]
+- [[99 - Changelog/1.5.1+23|1.5.1+23]]
