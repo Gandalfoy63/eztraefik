@@ -19,7 +19,7 @@ The first page after sign-in: what Traefik serves and what needs attention.
 - Polls every 10 seconds. The sidebar counts come from the same endpoint every 15 seconds.
 
 ## Code
-- API: [overview](../../server/internal/api/observe.go#L173-L265). eztraefik's redirect helper routers (`*-redirect@file`) are not counted.
+- API: [overview](../../server/internal/api/observe.go#L178-L270). eztraefik's redirect helper routers (`*-redirect@file`) are not counted.
 - Page: [Overview](../../web/src/pages/Overview.tsx#L22-L117)
 
 ## Related

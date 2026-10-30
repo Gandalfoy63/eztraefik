@@ -115,3 +115,83 @@ func Covers(name, host string) bool {
 	}
 	return false
 }
+
+const acmeBackupDir = "before-hard-refresh"
+
+// ClearACMECerts backs up every resolver storage file, then empties its certificates. Accounts stay, so nothing
+// registers again. Traefik reads these files at start and rewrites them while running: call this only while it is stopped.
+func ClearACMECerts(sharedDir string) (int, error) {
+	dir := filepath.Join(sharedDir, "acme")
+	files, _ := filepath.Glob(filepath.Join(dir, "*.json"))
+	backup := filepath.Join(dir, acmeBackupDir)
+	if err := os.MkdirAll(backup, 0o700); err != nil {
+		return 0, err
+	}
+	// Everything is read and backed up before the first change, so a damaged file stops the whole operation.
+	cleared := map[string][]byte{}
+	count := 0
+	for _, f := range files {
+		raw, err := os.ReadFile(f)
+		if err != nil {
+			return 0, err
+		}
+		var storage map[string]map[string]json.RawMessage
+		if err := json.Unmarshal(raw, &storage); err != nil {
+			return 0, errors.New(filepath.Base(f) + " can't be read: " + err.Error())
+		}
+		for _, resolver := range storage {
+			var certs []json.RawMessage
+			_ = json.Unmarshal(resolver["Certificates"], &certs)
+			count += len(certs)
+			resolver["Certificates"] = json.RawMessage("[]")
+		}
+		out, err := json.MarshalIndent(storage, "", "  ")
+		if err != nil {
+			return 0, err
+		}
+		cleared[f] = out
+		if err := writeSecret(filepath.Join(backup, filepath.Base(f)), raw); err != nil {
+			return 0, err
+		}
+	}
+	for f, out := range cleared {
+		if err := writeSecret(f, out); err != nil {
+			return count, err
+		}
+	}
+	return count, nil
+}
+
+// RestoreACMECerts puts back the storage files of the last hard refresh. Call this only while Traefik is stopped.
+func RestoreACMECerts(sharedDir string) error {
+	dir := filepath.Join(sharedDir, "acme")
+	files, _ := filepath.Glob(filepath.Join(dir, acmeBackupDir, "*.json"))
+	if len(files) == 0 {
+		return errors.New("there is no backup to restore")
+	}
+	for _, f := range files {
+		raw, err := os.ReadFile(f)
+		if err != nil {
+			return err
+		}
+		if err := writeSecret(filepath.Join(dir, filepath.Base(f)), raw); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// HasACMEBackup reports whether a hard refresh left a backup.
+func HasACMEBackup(sharedDir string) bool {
+	files, _ := filepath.Glob(filepath.Join(sharedDir, "acme", acmeBackupDir, "*.json"))
+	return len(files) > 0
+}
+
+// writeSecret replaces a file atomically with mode 600: Traefik refuses an ACME storage file with wider permissions.
+func writeSecret(path string, data []byte) error {
+	tmp := path + ".tmp"
+	if err := os.WriteFile(tmp, data, 0o600); err != nil {
+		return err
+	}
+	return os.Rename(tmp, path)
+}

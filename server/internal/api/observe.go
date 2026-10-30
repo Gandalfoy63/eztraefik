@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -54,6 +55,8 @@ func (a *App) stats(w http.ResponseWriter, r *http.Request) {
 	ok(w, map[string]any{"key": key, "range": rng, "stepSeconds": step * 60, "points": out, "keys": a.Metrics.Keys(), "status": a.Metrics.Status()})
 }
 
+var tokenInURL = regexp.MustCompile(`(?i)([?&](?:token|key|secret|password)=)[^&\s"\]]+`)
+
 func (a *App) traefikLogs(w http.ResponseWriter, r *http.Request) {
 	st := a.Store.Get()
 	tail, _ := strconv.Atoi(r.URL.Query().Get("tail"))
@@ -73,6 +76,8 @@ func (a *App) traefikLogs(w http.ResponseWriter, r *http.Request) {
 	}
 	out := []line{}
 	for _, l := range lines {
+		// DNS providers' errors can quote a request URL with the API token in it.
+		l.Text = tokenInURL.ReplaceAllString(l.Text, "${1}***")
 		ln := line{Time: l.Time, Raw: l.Text, Message: l.Text, Level: "INFO"}
 		// Traefik's default log format: "2026-10-29T10:00:00Z INF message key=value"
 		if f := strings.Fields(l.Text); len(f) >= 2 {

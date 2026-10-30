@@ -1,8 +1,8 @@
 ---
 title: Certificates
 tags: [feature, network, tls]
-version: 1.7.2+28
-related: ["[[03 - Features/Domains|Domains]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[03 - Features/Import from NPM|Import from NPM]]", "[[00 - Downloaded Docs/lego/README|lego docs]]", "[[99 - Changelog/1.4.0+21|1.4.0+21]]", "[[05 - UI-UX/Components|Components]]", "[[99 - Changelog/1.6.0+25|1.6.0+25]]", "[[99 - Changelog/1.7.0+26|1.7.0+26]]", "[[99 - Changelog/1.7.2+28|1.7.2+28]]"]
+version: 1.8.0+30
+related: ["[[03 - Features/Domains|Domains]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[03 - Features/Import from NPM|Import from NPM]]", "[[00 - Downloaded Docs/lego/README|lego docs]]", "[[99 - Changelog/1.4.0+21|1.4.0+21]]", "[[05 - UI-UX/Components|Components]]", "[[99 - Changelog/1.6.0+25|1.6.0+25]]", "[[99 - Changelog/1.7.0+26|1.7.0+26]]", "[[99 - Changelog/1.7.2+28|1.7.2+28]]", "[[99 - Changelog/1.8.0+30|1.8.0+30]]"]
 ---
 
 # Certificates
@@ -27,6 +27,15 @@ A window offers the next steps instead of sending you to the Traefik page ([Reso
 - **Certificate**: issued with days left, or that it is requested on the first visit to a route. A wildcard only counts as issued when a certificate covers the wildcard itself. **Add Route** appears when the domain has no route.
 - **Check Again** repeats the checks; the certificate state also refreshes every 15 s.
 
+## Hard Refresh
+On the Certificates card ([startRefresh](../../server/internal/api/refresh.go#L133-L155)). It asks first, with the risks written out: downtime, browser warnings until new certificates arrive, Let's Encrypt limits, and that a domain that can't get a certificate today loses the one it has.
+- Traefik reads its storage files at start and rewrites them while running, so it is stopped, the files are emptied, and it starts again. Nothing changes if Traefik can't be stopped, or if any storage file is damaged.
+- Accounts stay, so nothing registers again. Uploaded certificates are not touched. Every file is copied to `acme/before-hard-refresh/` first; **Restore Previous Certificates** puts them back.
+- The progress window has a progress bar, polled every 3 s: hosts issued, failed with a reason, and waiting ([computeProgress](../../server/internal/api/refresh.go#L67-L97)). A later certificate wins over an earlier failure, because Traefik retries. Reasons are written by eztraefik and never quote Traefik's error, which can hold API tokens. Progress is kept in memory, so it is lost when eztraefik restarts; the backup is not.
+- It requests the same certificates with the same resolvers, so it fixes neither a wrong resolver nor wrong credentials.
+
+The Logs page now hides tokens in URLs quoted by DNS provider errors. The Docker logs of the Traefik container still hold them.
+
 ## Deleting
 Deleting an uploaded certificate or a resolver takes it off whatever used it, never the routes ([detachCert](../../server/internal/api/resources.go#L588-L605), [detachResolver](../../server/internal/api/resources.go#L608-L623)). The confirmation lists the routes. They stay on HTTPS with another resolver if there is one, else Traefik's default certificate; turning HTTPS off would expose the app. Entrypoints and domains using a deleted resolver lose it too, and a wildcard domain stops being one, since another resolver might not be able to issue it. Issued certificates have no delete button: they stay in the resolver's storage file. The files of a deleted upload stay on the shared volume, because Settings > History can bring the certificate back.
 
@@ -34,7 +43,7 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/tls/ce
 
 ## Code
 - [uploadCert](../../server/internal/api/resources.go#L544-L579), [allCerts](../../server/internal/api/resources.go#L527-L537)
-- [Certificates](../../web/src/pages/Certificates.tsx#L28-L317)
+- [Certificates](../../web/src/pages/Certificates.tsx#L29-L340)
 
 ## Related
 - [[03 - Features/Domains|Domains]]
@@ -55,3 +64,4 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/tls/ce
 - [[99 - Changelog/1.6.0+25|1.6.0+25]]
 - [[99 - Changelog/1.7.0+26|1.7.0+26]]
 - [[99 - Changelog/1.7.2+28|1.7.2+28]]
+- [[99 - Changelog/1.8.0+30|1.8.0+30]]

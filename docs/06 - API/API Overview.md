@@ -7,11 +7,11 @@ related: ["[[04 - Architecture/Overview|Overview]]", "[[01 - Vision/Plan|Plan]]"
 
 # API Overview
 
-Status: implemented in 0.2.0+3. JSON over `/api/v1`, used by the web UI. Routes are registered in [Handler](../../server/internal/api/api.go#L53-L122).
+Status: implemented in 0.2.0+3. JSON over `/api/v1`, used by the web UI. Routes are registered in [Handler](../../server/internal/api/api.go#L57-L129).
 
 ## Conventions
-- Sign-in with the `ezt_session` cookie. Every non-GET request needs the header `X-EZT: 1` ([guard](../../server/internal/api/api.go#L126-L142)).
-- Errors: `{"error": "message"}` with a fitting status. Validation errors are `422` with `{"error", "field"}` so the UI puts the message under the field ([FieldError](../../server/internal/api/api.go#L161-L164)).
+- Sign-in with the `ezt_session` cookie. Every non-GET request needs the header `X-EZT: 1` ([guard](../../server/internal/api/api.go#L133-L149)).
+- Errors: `{"error": "message"}` with a fitting status. Validation errors are `422` with `{"error", "field"}` so the UI puts the message under the field ([FieldError](../../server/internal/api/api.go#L168-L171)).
 - Saves that change the dynamic config return `warnings`: errors Traefik reported on eztraefik's objects after reloading.
 - This is not Traefik's own API ([[00 - Downloaded Docs/Traefik/reference/install-configuration/api-dashboard|Traefik API]]); eztraefik only reads that one, internally.
 

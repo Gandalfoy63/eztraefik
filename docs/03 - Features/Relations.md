@@ -14,7 +14,7 @@ A strip per router: entrypoint, route (rule, error badge), middlewares, service 
 Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/api-dashboard|API endpoints]].
 
 ## Code
-- [runtime](../../server/internal/api/observe.go#L154-L163), [RawData](../../server/internal/traefik/api.go#L72-L81)
+- [runtime](../../server/internal/api/observe.go#L159-L168), [RawData](../../server/internal/traefik/api.go#L72-L81)
 - [Relations](../../web/src/pages/Relations.tsx#L33-L95)
 
 ## Related

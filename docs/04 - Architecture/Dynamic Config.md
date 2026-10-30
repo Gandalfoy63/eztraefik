@@ -17,7 +17,7 @@ How the state becomes `ezt.yml`, the file Traefik's File provider reads ([[00 - 
 | Route with HTTPS + redirect | an extra router `<name>-redirect` on the `web` entrypoint with middleware `ezt-redirect-https` (redirectScheme, keeps a non-443 published port) |
 | Route TLS | resolver: `tls.certResolver`; wildcard domain: plus `tls.domains: [*.domain, domain]`; existing ACME certificate: resolver + `domains.main`; uploaded certificate: `tls: {}`; TCP passthrough: `tls.passthrough` |
 | Route, TCP / UDP | `tcp.routers` with `HostSNI` rules, `udp.routers` (no rule) and their services with `address` servers |
-| Shared service | load balancer, weighted, failover, mirroring ([renderService](../../server/internal/traefik/dynamic.go#L265-L319)) |
+| Shared service | load balancer, weighted, failover, mirroring ([renderService](../../server/internal/traefik/dynamic.go#L271-L325)) |
 | Middleware | `http.middlewares.<name>.<type>` or `tcp.middlewares`, config passed through |
 | Uploaded certificates | `tls.certificates` with paths in `/etc/eztraefik/certs/` |
 | Always | `tls.options.default.minVersion: VersionTLS12` |

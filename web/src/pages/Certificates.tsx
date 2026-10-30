@@ -1,7 +1,7 @@
 // Docs: docs/03 - Features/Certificates.md
 // Resolvers (how certificates are issued), issued ACME certificates, and uploaded ones.
 import { useEffect, useState, type ChangeEvent } from "react";
-import { Pencil, Plus, ShieldCheck, Trash2, Upload } from "lucide-react";
+import { Pencil, Plus, RefreshCw, ShieldCheck, Trash2, Upload } from "lucide-react";
 import { api, ApiError, type Cert, type DomainInfo, type EnvVar, type Resolver, type Route } from "../api";
 import { Badge, Button, Empty, ErrorBox, SkeletonRows, useToast } from "../ui/feedback";
 import { Combobox, Field, Segmented, StepSlider, TagInput, invalid } from "../ui/controls";
@@ -12,6 +12,7 @@ import { daysUntil, useLoad } from "../ui/hooks";
 import { SortTh, useSort } from "../ui/sort";
 import { PendingBanner, saveTraefik, useTraefik } from "./traefikConfig";
 import { ResolverChecks } from "./ResolverChecks";
+import { HardRefreshProgress, HardRefreshWarning, type RefreshStatus } from "./HardRefresh";
 
 const blankResolver = (): Resolver => ({ name: "", email: "", challenge: "http", httpEntrypoint: "web", dnsProvider: "", caServer: "", caCertPEM: "" });
 
@@ -31,6 +32,26 @@ export function Certificates() {
   const traefik = useTraefik();
   const domainList = useLoad(() => api.get<{ domains: DomainInfo[] }>("/domains"), []);
   const [resDomains, setResDomains] = useState<string[]>([]);
+  const [refreshAsk, setRefreshAsk] = useState(false);
+  const [refreshOpen, setRefreshOpen] = useState(false);
+  const [refreshBusy, setRefreshBusy] = useState(false);
+  // A refresh still running reopens its progress when the page is opened again.
+  useEffect(() => {
+    api.get<RefreshStatus>("/certificates/refresh").then(s => { if (s.running) setRefreshOpen(true); }).catch(() => {});
+  }, []);
+  const hardRefresh = async () => {
+    setRefreshBusy(true);
+    try {
+      await api.post("/certificates/refresh");
+      setRefreshAsk(false);
+      setRefreshOpen(true);
+      certs.reload();
+    } catch (e) {
+      toast((e as Error).message, "error");
+    } finally {
+      setRefreshBusy(false);
+    }
+  };
   const [checks, setChecks] = useState<{ name: string; domains: string[] } | null>(null);
   const cfg = traefik.data?.config;
   const [resModal, setResModal] = useState<{ open: boolean; index: number }>({ open: false, index: -1 });
@@ -201,7 +222,7 @@ export function Certificates() {
         )}
       </Card>
 
-      <Card title="Certificates" actions={<Button size="sm" icon={Upload} onClick={() => { setUp({ name: "", cert: "", key: "" }); setErrors({}); setUpload(true); }}>Upload certificate</Button>} flush>
+      <Card title="Certificates" actions={<><Button size="sm" icon={RefreshCw} onClick={() => setRefreshAsk(true)}>Hard Refresh</Button><Button size="sm" icon={Upload} onClick={() => { setUp({ name: "", cert: "", key: "" }); setErrors({}); setUpload(true); }}>Upload certificate</Button></>} flush>
         {certs.error && !certs.data ? <div className="card-body"><ErrorBox message={certs.error} onRetry={certs.reload} /></div> : !certs.data ? <div className="card-body"><SkeletonRows /></div> : !certs.data.certificates.length ? (
           <Empty icon={ShieldCheck} title="No certificates yet">They appear here once a route with HTTPS gets its first visit, or after an upload.</Empty>
         ) : (
@@ -301,6 +322,8 @@ export function Certificates() {
         </form>
       </Modal>
 
+      <HardRefreshWarning open={refreshAsk} busy={refreshBusy} onConfirm={hardRefresh} onClose={() => setRefreshAsk(false)} />
+      {refreshOpen && <HardRefreshProgress onClose={() => setRefreshOpen(false)} onChanged={certs.reload} />}
       {checks && <ResolverChecks name={checks.name} domains={checks.domains} onClose={() => { setChecks(null); certs.reload(); domainList.reload(); }} onApplied={traefik.reload} />}
 
       <ConfirmDialog open={!!del} title={`Delete ${del?.label}?`} confirmLabel="Delete" danger busy={busy} onConfirm={confirmDelete} onClose={() => setDel(null)}>

@@ -47,6 +47,10 @@ type App struct {
 	Log      *slog.Logger
 
 	applyMu sync.Mutex // one Traefik recreate at a time
+
+	refreshMu      sync.Mutex
+	refreshStarted time.Time // when the last hard refresh started; zero when none ran since eztraefik started
+	refreshDeleted int
 }
 
 // Handler wires every endpoint. Mutating requests need the X-EZT header (CSRF guard on top of SameSite cookies).
@@ -89,6 +93,9 @@ func (a *App) Handler() http.Handler {
 	priv("GET /api/v1/certificates", a.listCerts)
 	priv("POST /api/v1/certificates", a.uploadCert)
 	priv("DELETE /api/v1/certificates/{id}", a.deleteCert)
+	priv("GET /api/v1/certificates/refresh", a.refreshStatus)
+	priv("POST /api/v1/certificates/refresh", a.startRefresh)
+	priv("POST /api/v1/certificates/refresh/restore", a.restoreRefresh)
 
 	priv("GET /api/v1/traefik", a.getTraefik)
 	priv("PUT /api/v1/traefik", a.putTraefik)

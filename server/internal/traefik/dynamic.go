@@ -228,6 +228,12 @@ func Render(st store.State) M {
 	return out
 }
 
+// RequestsCert reports whether Traefik asks an ACME resolver for this route's certificate.
+func RequestsCert(r store.Route, st store.State) bool {
+	_, ok := routerTLS(r, st)["certResolver"]
+	return ok
+}
+
 func routerTLS(r store.Route, st store.State) M {
 	switch r.TLS.Mode {
 	case "existing":

@@ -39,6 +39,9 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [server/internal/domains/domains.go](../../server/internal/domains/domains.go) | Which domain a host belongs to | [[03 - Features/Domains|Domains]] |
 | [server/internal/domains/domains_test.go](../../server/internal/domains/domains_test.go) | Domain grouping tests | [[03 - Features/Domains|Domains]] |
 | [server/internal/domains/public_suffix_list.dat](../../server/internal/domains/public_suffix_list.dat) | Public Suffix List, embedded | [[03 - Features/Domains|Domains]] |
+| [server/internal/api/refresh.go](../../server/internal/api/refresh.go) | Hard refresh of certificates: start, progress, restore | [[03 - Features/Certificates|Certificates]] |
+| [server/internal/api/refresh_test.go](../../server/internal/api/refresh_test.go) | Hard refresh progress tests | [[03 - Features/Certificates|Certificates]] |
+| [server/internal/traefik/certs_test.go](../../server/internal/traefik/certs_test.go) | Emptying and restoring ACME storage | [[03 - Features/Certificates|Certificates]] |
 | [server/internal/api/certs_test.go](../../server/internal/api/certs_test.go) | Deleting a certificate or resolver keeps the routes | [[03 - Features/Certificates|Certificates]] |
 | [server/internal/auth/auth.go](../../server/internal/auth/auth.go) | Password hashing, sessions, login limit, apr1 | [[03 - Features/Auth|Auth]] |
 | [server/internal/auth/auth_test.go](../../server/internal/auth/auth_test.go) | apr1 against OpenSSL, password round trip | [[03 - Features/Auth|Auth]] |
@@ -82,6 +85,7 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [web/src/pages/Overview.tsx](../../web/src/pages/Overview.tsx) | Overview | [[03 - Features/Overview|Overview]] |
 | [web/src/pages/Relations.tsx](../../web/src/pages/Relations.tsx) | Traffic path strips | [[03 - Features/Relations|Relations]] |
 | [web/src/pages/Routes.tsx](../../web/src/pages/Routes.tsx) | Routes page | [[03 - Features/Routes|Routes]] |
+| [web/src/pages/HardRefresh.tsx](../../web/src/pages/HardRefresh.tsx) | Hard refresh warning and progress | [[03 - Features/Certificates|Certificates]] |
 | [web/src/pages/ResolverChecks.tsx](../../web/src/pages/ResolverChecks.tsx) | After saving a resolver: apply and check its domains | [[03 - Features/Certificates|Certificates]] |
 | [web/src/pages/RouteModal.tsx](../../web/src/pages/RouteModal.tsx) | New / edit route window | [[03 - Features/Routes|Routes]] |
 | [web/src/pages/RouteSettings.tsx](../../web/src/pages/RouteSettings.tsx) | Route Settings section of the route window | [[03 - Features/Route Settings|Route Settings]] |
