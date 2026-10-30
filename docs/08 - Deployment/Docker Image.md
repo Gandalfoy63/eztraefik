@@ -1,8 +1,8 @@
 ---
 title: Docker Image
 tags: [deployment, docker]
-version: 1.8.1+31
-related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[05 - UI-UX/Logo|Logo]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[99 - Changelog/1.2.7+16|1.2.7+16]]", "[[99 - Changelog/1.2.8+17|1.2.8+17]]", "[[99 - Changelog/1.2.9+18|1.2.9+18]]", "[[99 - Changelog/1.3.1+20|1.3.1+20]]", "[[99 - Changelog/1.5.1+23|1.5.1+23]]", "[[99 - Changelog/1.7.1+27|1.7.1+27]]", "[[99 - Changelog/1.7.3+29|1.7.3+29]]", "[[99 - Changelog/1.8.1+31|1.8.1+31]]"]
+version: 1.8.3+33
+related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[05 - UI-UX/Logo|Logo]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[99 - Changelog/1.2.7+16|1.2.7+16]]", "[[99 - Changelog/1.2.8+17|1.2.8+17]]", "[[99 - Changelog/1.2.9+18|1.2.9+18]]", "[[99 - Changelog/1.3.1+20|1.3.1+20]]", "[[99 - Changelog/1.5.1+23|1.5.1+23]]", "[[99 - Changelog/1.7.1+27|1.7.1+27]]", "[[99 - Changelog/1.7.3+29|1.7.3+29]]", "[[99 - Changelog/1.8.1+31|1.8.1+31]]", "[[99 - Changelog/1.8.3+33|1.8.3+33]]"]
 ---
 
 # Docker Image
@@ -17,7 +17,8 @@ Built from [Dockerfile](../../Dockerfile) in three stages ([[00 - Downloaded Doc
 
 | Tag | Image version | Pushed |
 |---|---|---|
-| `1.8.0`, `1.8`, `latest` | 1.8.0+30 (Hard Refresh of all certificates) | 2026-10-30 |
+| `1.8.2`, `1.8`, `latest` | 1.8.2+32 (retry button per resolver) | 2026-10-30 |
+| `1.8.0` | 1.8.0+30 (Hard Refresh of all certificates) | 2026-10-30 |
 | `1.7.0`, `1.7` | 1.7.0+26 (domains on a resolver, certificate dropdown on routes, apply and check after saving a resolver) | 2026-10-30 |
 | `1.5.0`, `1.5` | 1.5.0+22 (certificate deletion keeps routes, DNS provider list, Docker stacks, domain detection, sortable tables) | 2026-10-30 |
 | `1.3.0`, `1.3` | 1.3.0+19 (custom nginx config converted at NPM import, Route Settings) | 2026-10-30 |
@@ -27,7 +28,7 @@ Built from [Dockerfile](../../Dockerfile) in three stages ([[00 - Downloaded Doc
 | `1.1.1`, `1.1` | 1.1.1+6 | 2026-10-29, digest `sha256:6e1b73ebfbb5333b50dc4ef6e13eb912dcaa7463647a66c2b5914f9e32710fcc` |
 
 ```bash
-docker pull gandasdevstudio/eztraefik:1.8.0
+docker pull gandasdevstudio/eztraefik:1.8.2
 ```
 
 Every tag was rebuilt on 2026-10-30 from the cleaned history ([[99 - Changelog/1.7.3+29|1.7.3+29]]), so the Pushed column gives the first release date. Older builds lost their tags.
@@ -73,3 +74,4 @@ tools/publish.sh ghcr.io/<you>/eztraefik        # multi-arch (amd64, arm64) buil
 - [[99 - Changelog/1.7.1+27|1.7.1+27]]
 - [[99 - Changelog/1.7.3+29|1.7.3+29]]
 - [[99 - Changelog/1.8.1+31|1.8.1+31]]
+- [[99 - Changelog/1.8.3+33|1.8.3+33]]
