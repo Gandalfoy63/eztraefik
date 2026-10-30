@@ -132,6 +132,16 @@ tbody.stack-group:last-child tr:last-child td { border-bottom: 0; }
 .routes-table td:first-child { white-space: nowrap; }
 .routes-table td .rule { white-space: normal; overflow-wrap: anywhere; }
 
+/* Checks after saving a resolver */
+.check-title { margin: var(--space-5) 0 var(--space-3); }
+.check-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.check-row { border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
+.check-row-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.check-facts { display: grid; grid-template-columns: auto 1fr; gap: var(--space-1) var(--space-3); margin: var(--space-2) 0 0; font-size: var(--text-sm); }
+.check-facts dt { color: var(--text-muted); }
+.check-facts dd { margin: 0; min-width: 0; }
+.inline-status .muted { color: var(--text-muted); }
+
 /* Combobox */
 .combobox { position: relative; }
 .combobox > .input { padding-right: 36px; }

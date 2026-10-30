@@ -82,6 +82,7 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [web/src/pages/Overview.tsx](../../web/src/pages/Overview.tsx) | Overview | [[03 - Features/Overview|Overview]] |
 | [web/src/pages/Relations.tsx](../../web/src/pages/Relations.tsx) | Traffic path strips | [[03 - Features/Relations|Relations]] |
 | [web/src/pages/Routes.tsx](../../web/src/pages/Routes.tsx) | Routes page | [[03 - Features/Routes|Routes]] |
+| [web/src/pages/ResolverChecks.tsx](../../web/src/pages/ResolverChecks.tsx) | After saving a resolver: apply and check its domains | [[03 - Features/Certificates|Certificates]] |
 | [web/src/pages/RouteModal.tsx](../../web/src/pages/RouteModal.tsx) | New / edit route window | [[03 - Features/Routes|Routes]] |
 | [web/src/pages/RouteSettings.tsx](../../web/src/pages/RouteSettings.tsx) | Route Settings section of the route window | [[03 - Features/Route Settings|Route Settings]] |
 | [web/src/pages/Services.tsx](../../web/src/pages/Services.tsx) | Services page and window | [[03 - Features/Services|Services]] |

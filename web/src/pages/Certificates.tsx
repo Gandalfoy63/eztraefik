@@ -11,6 +11,7 @@ import { Card, PageHeader } from "../ui/Page";
 import { daysUntil, useLoad } from "../ui/hooks";
 import { SortTh, useSort } from "../ui/sort";
 import { PendingBanner, saveTraefik, useTraefik } from "./traefikConfig";
+import { ResolverChecks } from "./ResolverChecks";
 
 const blankResolver = (): Resolver => ({ name: "", email: "", challenge: "http", httpEntrypoint: "web", dnsProvider: "", caServer: "", caCertPEM: "" });
 
@@ -30,6 +31,7 @@ export function Certificates() {
   const traefik = useTraefik();
   const domainList = useLoad(() => api.get<{ domains: DomainInfo[] }>("/domains"), []);
   const [resDomains, setResDomains] = useState<string[]>([]);
+  const [checks, setChecks] = useState<{ name: string; domains: string[] } | null>(null);
   const cfg = traefik.data?.config;
   const [resModal, setResModal] = useState<{ open: boolean; index: number }>({ open: false, index: -1 });
   const [res, setRes] = useState<Resolver>(blankResolver);
@@ -117,7 +119,7 @@ export function Certificates() {
         if (!wanted.has(domain)) await api.post("/domains", { name: domain, resolver: "", wildcard: false });
       }
       domainList.reload();
-      toast(`Resolver ${name} saved. Apply it on the Traefik page.`);
+      setChecks({ name, domains: resDomains });
       setResModal({ open: false, index: -1 });
       traefik.reload();
     } catch (e) {
@@ -298,6 +300,8 @@ export function Certificates() {
           </Field>
         </form>
       </Modal>
+
+      {checks && <ResolverChecks name={checks.name} domains={checks.domains} onClose={() => { setChecks(null); certs.reload(); domainList.reload(); }} onApplied={traefik.reload} />}
 
       <ConfirmDialog open={!!del} title={`Delete ${del?.label}?`} confirmLabel="Delete" danger busy={busy} onConfirm={confirmDelete} onClose={() => setDel(null)}>
         {affected === null ? <p className="muted">Checking which routes use it...</p> : affected.length > 0 ? (

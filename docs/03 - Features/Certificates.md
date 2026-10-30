@@ -1,8 +1,8 @@
 ---
 title: Certificates
 tags: [feature, network, tls]
-version: 1.6.0+25
-related: ["[[03 - Features/Domains|Domains]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[03 - Features/Import from NPM|Import from NPM]]", "[[00 - Downloaded Docs/lego/README|lego docs]]", "[[99 - Changelog/1.4.0+21|1.4.0+21]]", "[[05 - UI-UX/Components|Components]]", "[[99 - Changelog/1.6.0+25|1.6.0+25]]"]
+version: 1.7.0+26
+related: ["[[03 - Features/Domains|Domains]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[03 - Features/Import from NPM|Import from NPM]]", "[[00 - Downloaded Docs/lego/README|lego docs]]", "[[99 - Changelog/1.4.0+21|1.4.0+21]]", "[[05 - UI-UX/Components|Components]]", "[[99 - Changelog/1.6.0+25|1.6.0+25]]", "[[99 - Changelog/1.7.0+26|1.7.0+26]]"]
 ---
 
 # Certificates
@@ -20,6 +20,13 @@ Status: implemented in 0.2.0+3.
 - **Variables**: the ones the provider needs open directly. Where lego lists alternatives, [NEEDED](../../tools/gen_dns_providers.py#L12-L19) names the usual sign-in, and all of them are required. For other providers one is enough, since the list may hold alternatives. A variable already set keeps its value when left empty. Add Variable covers anything else.
 - **Advanced**: Propagation Seconds, [`dnsChallenge.propagation.delayBeforeChecks`](../../server/internal/traefik/container.go#L90-L95), and the private ACME server.
 
+## After saving
+A window offers the next steps instead of sending you to the Traefik page ([ResolverChecks](../../web/src/pages/ResolverChecks.tsx#L47-L95)):
+- **Apply Now** recreates Traefik with the new resolver. Nothing restarts until it is clicked, because routes stop answering for a few seconds. A failure is shown there and can be retried.
+- For each domain, **DNS**: whether the name resolves and to what. eztraefik doesn't know the server's public address, so it shows the address and asks you to compare.
+- **Certificate**: issued with days left, or that it is requested on the first visit to a route. A wildcard only counts as issued when a certificate covers the wildcard itself. **Add Route** appears when the domain has no route.
+- **Check Again** repeats the checks; the certificate state also refreshes every 15 s.
+
 ## Deleting
 Deleting an uploaded certificate or a resolver takes it off whatever used it, never the routes ([detachCert](../../server/internal/api/resources.go#L588-L605), [detachResolver](../../server/internal/api/resources.go#L608-L623)). The confirmation lists the routes. They stay on HTTPS with another resolver if there is one, else Traefik's default certificate; turning HTTPS off would expose the app. Entrypoints and domains using a deleted resolver lose it too, and a wildcard domain stops being one, since another resolver might not be able to issue it. Issued certificates have no delete button: they stay in the resolver's storage file. The files of a deleted upload stay on the shared volume, because Settings > History can bring the certificate back.
 
@@ -27,7 +34,7 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/tls/ce
 
 ## Code
 - [uploadCert](../../server/internal/api/resources.go#L544-L579), [allCerts](../../server/internal/api/resources.go#L527-L537)
-- [Certificates](../../web/src/pages/Certificates.tsx#L27-L313)
+- [Certificates](../../web/src/pages/Certificates.tsx#L28-L317)
 
 ## Related
 - [[03 - Features/Domains|Domains]]
@@ -46,3 +53,4 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/tls/ce
 - [[99 - Changelog/1.4.0+21|1.4.0+21]]
 - [[05 - UI-UX/Components|Components]]
 - [[99 - Changelog/1.6.0+25|1.6.0+25]]
+- [[99 - Changelog/1.7.0+26|1.7.0+26]]

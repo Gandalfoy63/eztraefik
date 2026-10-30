@@ -1,6 +1,6 @@
 // Docs: docs/03 - Features/Traefik Container.md
 // Shared access to the Traefik install config, used by Traefik, Entrypoints and Certificates pages.
-// Saving stores the config; applying (recreating the container) happens only on the Traefik page.
+// Saving stores the config; applying (recreating the container) is a separate, confirmed step.
 import { RotateCw } from "lucide-react";
 import { api, type TraefikConfig, type TraefikStatus } from "../api";
 import { useLoad } from "../ui/hooks";
