@@ -1,8 +1,8 @@
 ---
 title: Docker Image
 tags: [deployment, docker]
-version: 1.2.9+18
-related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[05 - UI-UX/Logo|Logo]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[99 - Changelog/1.2.7+16|1.2.7+16]]", "[[99 - Changelog/1.2.8+17|1.2.8+17]]", "[[99 - Changelog/1.2.9+18|1.2.9+18]]"]
+version: 1.3.1+20
+related: ["[[08 - Deployment/Install|Install]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[04 - Architecture/Frontend|Frontend]]", "[[00 - Downloaded Docs/Docker/README|README]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[04 - Architecture/Code Map|Code Map]]", "[[Home]]", "[[99 - Changelog/1.0.0+4|1.0.0+4]]", "[[99 - Changelog/1.1.2+7|1.1.2+7]]", "[[05 - UI-UX/Logo|Logo]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[99 - Changelog/1.2.7+16|1.2.7+16]]", "[[99 - Changelog/1.2.8+17|1.2.8+17]]", "[[99 - Changelog/1.2.9+18|1.2.9+18]]", "[[99 - Changelog/1.3.1+20|1.3.1+20]]"]
 ---
 
 # Docker Image
@@ -17,13 +17,14 @@ Built from [Dockerfile](../../Dockerfile) in three stages ([[00 - Downloaded Doc
 
 | Tag | Image version | Pushed |
 |---|---|---|
-| `1.2.8`, `1.2`, `latest` | 1.2.8+17 (NPM import: Let's Encrypt email falls back to the NPM account) | 2026-10-29 |
+| `1.3.0`, `1.3`, `latest` | 1.3.0+19 (custom nginx config converted at NPM import, Route Settings) | 2026-10-30 |
+| `1.2.8`, `1.2` | 1.2.8+17 (NPM import: Let's Encrypt email falls back to the NPM account) | 2026-10-29 |
 | `1.2.7` | 1.2.7+16 (setup no longer offers to replace eztraefik itself) | 2026-10-29 |
 | `1.2.1` | 1.2.1+9 (new logo) | 2026-10-29 |
 | `1.1.1`, `1.1` | 1.1.1+6 | 2026-10-29, digest `sha256:9c1e90fcf799e2ed291649829215286dbf50e674e4c805bad4261f2e1cc72363` |
 
 ```bash
-docker pull gandasdevstudio/eztraefik:1.2.8
+docker pull gandasdevstudio/eztraefik:1.3.0
 ```
 
 Checked after the push: both platforms in the manifest list, repository public, a fresh pull starts and reports 1.1.1+6.
@@ -62,3 +63,4 @@ tools/publish.sh ghcr.io/<you>/eztraefik        # multi-arch (amd64, arm64) buil
 - [[99 - Changelog/1.2.7+16|1.2.7+16]]
 - [[99 - Changelog/1.2.8+17|1.2.8+17]]
 - [[99 - Changelog/1.2.9+18|1.2.9+18]]
+- [[99 - Changelog/1.3.1+20|1.3.1+20]]
