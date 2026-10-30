@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"eztraefik/internal/auth"
+	"eztraefik/internal/domains"
 	"eztraefik/internal/store"
 	"eztraefik/internal/traefik"
 )
@@ -409,16 +410,6 @@ type DomainInfo struct {
 	Routes   []string `json:"routes"`
 }
 
-// registrable returns the last two labels (example.com). Good enough without a public suffix list; documented.
-func registrable(host string) string {
-	host = strings.TrimPrefix(host, "*.")
-	parts := strings.Split(host, ".")
-	if len(parts) <= 2 {
-		return host
-	}
-	return strings.Join(parts[len(parts)-2:], ".")
-}
-
 func (a *App) listDomains(w http.ResponseWriter, r *http.Request) {
 	st := a.Store.Get()
 	byName := map[string]*DomainInfo{}
@@ -434,15 +425,17 @@ func (a *App) listDomains(w http.ResponseWriter, r *http.Request) {
 		x := get(d.Name)
 		x.Explicit, x.Resolver, x.Wildcard = true, d.Resolver, d.Wildcard
 	}
+	hosts, explicit := []string{}, []string{}
+	for _, d := range st.Domains {
+		explicit = append(explicit, d.Name)
+	}
+	for _, rt := range st.Routes {
+		hosts = append(hosts, rt.Hosts...)
+	}
+	groups := domains.Group(hosts, explicit)
 	for _, rt := range st.Routes {
 		for _, h := range rt.Hosts {
-			name := registrable(h)
-			for _, d := range st.Domains {
-				if h == d.Name || strings.HasSuffix(h, "."+d.Name) {
-					name = d.Name
-				}
-			}
-			x := get(name)
+			x := get(groups[h])
 			if !slices.Contains(x.Hosts, h) {
 				x.Hosts = append(x.Hosts, h)
 			}

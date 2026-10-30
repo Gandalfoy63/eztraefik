@@ -1,11 +1,18 @@
 // Docs: docs/03 - Features/Docker.md
 import { useState } from "react";
-import { Container, Link2, Plus, Search } from "lucide-react";
+import { ChevronRight, Container, Link2, Plus, Search } from "lucide-react";
 import { api, type ContainerInfo } from "../api";
 import { Badge, Button, Empty, ErrorBox, SkeletonRows, useToast } from "../ui/feedback";
 import { PageHeader } from "../ui/Page";
 import { useLoad } from "../ui/hooks";
+import { SortTh, useSort } from "../ui/sort";
 import { navigate } from "../app/router";
+
+const routedBy = (c: ContainerInfo) => {
+  const labels = Object.keys(c.traefikLabels).filter(k => /^traefik\.(http|tcp|udp)\.routers\.[^.]+\.rule$/.test(k)).map(k => `${k.split(".")[3]} (labels)`);
+  return [...c.routes, ...labels].join(", ");
+};
+const STANDALONE = "Standalone";
 
 export function Docker() {
   const toast = useToast();
@@ -24,7 +31,12 @@ export function Docker() {
       setBusy(null);
     }
   };
-  const rows = (data?.containers ?? []).filter(c => !q || (c.name + c.image).toLowerCase().includes(q.toLowerCase()));
+  const [closed, setClosed] = useState<Set<string>>(new Set());
+  const rows = (data?.containers ?? []).filter(c => !q || (c.name + c.image + (c.stack ?? "")).toLowerCase().includes(q.toLowerCase()));
+  const sort = useSort(rows, { name: c => c.name, state: c => c.state, ports: c => c.exposedPorts[0], routed: routedBy, network: c => (c.reachable ? 0 : 1) }, "name");
+  // Stacks A to Z, containers without one last. Inside a stack, rows keep the order of the column sort.
+  const stacks = [...new Set(rows.map(c => c.stack || STANDALONE))].sort((a, b) => (a === STANDALONE ? 1 : b === STANDALONE ? -1 : a.localeCompare(b, undefined, { numeric: true })));
+  const toggleStack = (s: string) => setClosed(c => { const n = new Set(c); if (n.has(s)) n.delete(s); else n.add(s); return n; });
   return (
     <>
       <PageHeader title="Docker" description={data ? `Containers on this host. Traefik reaches the ones on the ${data.network} network.` : "Containers on this host."} />
@@ -42,10 +54,21 @@ export function Docker() {
         ) : (
           <div className="table-wrap">
             <table>
-              <thead><tr><th scope="col">Container</th><th scope="col">State</th><th scope="col" className="col-optional">Ports</th><th scope="col" className="col-optional">Routed by</th><th scope="col">Traefik network</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
-              <tbody>
-                {rows.map(c => {
-                  const labelRouters = Object.keys(c.traefikLabels).filter(k => /^traefik\.(http|tcp|udp)\.routers\.[^.]+\.rule$/.test(k)).map(k => k.split(".")[3]);
+              <thead><tr><SortTh sort={sort} col="name">Container</SortTh><SortTh sort={sort} col="state">State</SortTh><SortTh sort={sort} col="ports" className="col-optional">Ports</SortTh><SortTh sort={sort} col="routed" className="col-optional">Routed by</SortTh><SortTh sort={sort} col="network">Traefik network</SortTh><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
+              {stacks.map(stack => {
+                const list = sort.rows.filter(c => (c.stack || STANDALONE) === stack);
+                const running = list.filter(c => c.state === "running").length;
+                const isOpen = !closed.has(stack);
+                return (
+              <tbody className="stack-group" key={stack}>
+                <tr className="stack-row">
+                  <th colSpan={6} scope="rowgroup">
+                    <button type="button" className="stack-toggle" aria-expanded={isOpen} onClick={() => toggleStack(stack)}>
+                      <ChevronRight aria-hidden="true" />{stack}<span className="muted">{running} of {list.length} running</span>
+                    </button>
+                  </th>
+                </tr>
+                {isOpen && list.map(c => {
                   return (
                     <tr key={c.id}>
                       <td>
@@ -55,7 +78,7 @@ export function Docker() {
                       <td><Badge tone={c.state === "running" ? "success" : c.state === "exited" ? "neutral" : "warning"}>{c.state}</Badge></td>
                       <td className="col-optional mono-sm muted">{c.exposedPorts.join(", ") || "None"}</td>
                       <td className="col-optional muted">
-                        {[...c.routes.map(r => r), ...labelRouters.map(r => `${r} (labels)`)].join(", ") || "Nothing"}
+                        {routedBy(c) || "Nothing"}
                       </td>
                       <td>{c.reachable ? <Badge tone="success">Connected</Badge> : c.role === "traefik" ? <Badge tone="success">Is Traefik</Badge> : (
                         <Button size="sm" icon={Link2} busy={busy === c.id} busyLabel="Connecting" onClick={() => connect(c)} aria-label={`Connect ${c.name} to the Traefik network`}>Connect</Button>
@@ -70,10 +93,12 @@ export function Docker() {
                   );
                 })}
               </tbody>
+                );
+              })}
             </table>
           </div>
         )}
-        {data && <div className="table-foot"><span>{rows.length} containers</span><span>Docker label routes appear on the Routes page, read-only.</span></div>}
+        {data && <div className="table-foot"><span>{rows.length} containers in {stacks.filter(s => s !== STANDALONE).length} stacks</span><span>Docker label routes appear on the Routes page, read-only.</span></div>}
       </section>
     </>
   );

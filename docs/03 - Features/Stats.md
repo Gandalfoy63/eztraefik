@@ -18,7 +18,7 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/observ
 
 ## Code
 - [ParseProm](../../server/internal/traefik/metrics.go#L24-L62), [stats](../../server/internal/api/observe.go#L21-L55)
-- [Stats](../../web/src/pages/Stats.tsx#L26-L92), chart [LineChart](../../web/src/ui/LineChart.tsx#L21-L23)
+- [Stats](../../web/src/pages/Stats.tsx#L27-L94), chart [LineChart](../../web/src/ui/LineChart.tsx#L21-L23)
 
 ## Related
 - [[03 - Features/Services|Services]]

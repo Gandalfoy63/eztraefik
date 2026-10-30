@@ -1,8 +1,8 @@
 ---
 title: Components
 tags: [ui-ux, components]
-version: 1.4.0+21
-related: ["[[05 - UI-UX/Style|Style]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[Home]]", "[[03 - Features/Route Settings|Route Settings]]", "[[99 - Changelog/1.3.0+19|1.3.0+19]]", "[[03 - Features/Certificates|Certificates]]", "[[99 - Changelog/1.4.0+21|1.4.0+21]]"]
+version: 1.5.0+22
+related: ["[[05 - UI-UX/Style|Style]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[04 - Architecture/Code Map|Code Map]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[Home]]", "[[03 - Features/Route Settings|Route Settings]]", "[[99 - Changelog/1.3.0+19|1.3.0+19]]", "[[03 - Features/Certificates|Certificates]]", "[[99 - Changelog/1.4.0+21|1.4.0+21]]", "[[99 - Changelog/1.5.0+22|1.5.0+22]]"]
 ---
 
 # Components
@@ -27,6 +27,9 @@ Shared building blocks. Every interactive one has hover, focus (2px ring), activ
 | [TooltipLayer](../../web/src/app/Tooltip.tsx#L6-L62) | `data-tooltip` | on hover after 250ms and on keyboard focus; nav items only when the sidebar is collapsed |
 | [LineChart](../../web/src/ui/LineChart.tsx#L21-L23) | Stats | see [[05 - UI-UX/Charts|Charts]] |
 
+## Sortable tables
+Every table sorts by clicking a column heading: A to Z, then Z to A, with numbers in natural order (`app9` before `app10`) and empty values last. Names sort A to Z by default; logs and stats newest first. The heading is a button and `th` carries `aria-sort`. Columns whose content arrives one row at a time (DNS on Domains) don't sort. Code: [useSort](../../web/src/ui/sort.tsx#L25-L34), [SortTh](../../web/src/ui/sort.tsx#L36-L47).
+
 ## Combobox
 Type freely or pick from a list that narrows as you type; the value doesn't have to be in the list. Arrow keys move, Enter picks, Escape closes only the list. Used in [[03 - Features/Certificates|Certificates]]. Code: [Combobox](../../web/src/ui/controls.tsx#L155-L157).
 
@@ -45,3 +48,4 @@ Native range input over useful steps, with a number box for any exact value and 
 - [[99 - Changelog/1.3.0+19|1.3.0+19]]
 - [[03 - Features/Certificates|Certificates]]
 - [[99 - Changelog/1.4.0+21|1.4.0+21]]
+- [[99 - Changelog/1.5.0+22|1.5.0+22]]

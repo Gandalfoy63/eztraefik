@@ -17,7 +17,7 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/observ
 
 ## Code
 - [accessLogs](../../server/internal/api/observe.go#L91-L151), [traefikLogs](../../server/internal/api/observe.go#L57-L88), [Logs](../../server/internal/docker/docker.go#L307-L348)
-- [Logs](../../web/src/pages/Logs.tsx#L13-L77)
+- [Logs](../../web/src/pages/Logs.tsx#L14-L79)
 
 ## Related
 - [[03 - Features/Stats|Stats]]

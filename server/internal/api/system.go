@@ -326,6 +326,15 @@ type ContainerInfo struct {
 	Role         string            `json:"role,omitempty"`
 	Routes       []string          `json:"routes"`
 	ExposedPorts []int             `json:"exposedPorts"`
+	Stack        string            `json:"stack,omitempty"` // the Compose project or Swarm stack it belongs to
+}
+
+// stackOf reads the stack from the labels Compose (also behind Portainer) and Swarm set.
+func stackOf(labels map[string]string) string {
+	if s := labels["com.docker.compose.project"]; s != "" {
+		return s
+	}
+	return labels["com.docker.stack.namespace"]
 }
 
 func (a *App) listContainers(w http.ResponseWriter, r *http.Request) {
@@ -338,7 +347,7 @@ func (a *App) listContainers(w http.ResponseWriter, r *http.Request) {
 	out := []ContainerInfo{}
 	for _, c := range list {
 		ci := ContainerInfo{ID: c.ID[:12], Name: c.Name(), Image: c.Image, State: c.State, Status: c.Status,
-			Networks: []string{}, Ports: c.Ports, Labels: map[string]string{}, Role: c.Labels["ezt.role"], Routes: []string{}, ExposedPorts: []int{}}
+			Networks: []string{}, Ports: c.Ports, Labels: map[string]string{}, Role: c.Labels["ezt.role"], Routes: []string{}, ExposedPorts: []int{}, Stack: stackOf(c.Labels)}
 		for n := range c.NetworkSettings.Networks {
 			ci.Networks = append(ci.Networks, n)
 			if n == st.Traefik.Network {

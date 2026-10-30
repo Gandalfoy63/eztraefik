@@ -18,8 +18,8 @@ Status: implemented in 0.2.0+3.
 Reference: [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/middlewares/overview|HTTP middlewares]], [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/middlewares/basicauth|BasicAuth]], [[00 - Downloaded Docs/Traefik/reference/routing-configuration/tcp/middlewares/overview|TCP middlewares]].
 
 ## Code
-- [saveMiddleware](../../server/internal/api/resources.go#L282-L358), [htpasswd](../../server/internal/api/resources.go#L384-L399), hashing [APR1](../../server/internal/auth/auth.go#L140-L149) (checked against `openssl passwd -apr1` in [TestAPR1MatchesOpenSSL](../../server/internal/auth/auth_test.go#L6-L16))
-- [Middlewares](../../web/src/pages/Middlewares.tsx#L266-L336)
+- [saveMiddleware](../../server/internal/api/resources.go#L283-L359), [htpasswd](../../server/internal/api/resources.go#L385-L400), hashing [APR1](../../server/internal/auth/auth.go#L140-L149) (checked against `openssl passwd -apr1` in [TestAPR1MatchesOpenSSL](../../server/internal/auth/auth_test.go#L6-L16))
+- [Middlewares](../../web/src/pages/Middlewares.tsx#L267-L341)
 
 ## Related
 - [[03 - Features/Routes|Routes]]

@@ -8,6 +8,7 @@ import { CheckChips, Field, Segmented, SettingRow, TagInput, invalid } from "../
 import { ConfirmDialog, Modal } from "../ui/Modal";
 import { PageHeader } from "../ui/Page";
 import { useLoad } from "../ui/hooks";
+import { SortTh, useSort } from "../ui/sort";
 
 type Kind = "text" | "number" | "bool" | "list" | "kv" | "users" | "middlewares";
 interface FieldDef {
@@ -287,6 +288,10 @@ export function Middlewares() {
     }
   };
   const external = data?.runtime.filter(r => r.provider !== "file") ?? [];
+  const usedBy = (m: Middleware) => rt(m.name)?.usedBy?.map(u => u.replace(/@.*/, "")).join(", ");
+  const statusText = (m: Middleware) => { const r = rt(m.name); return r ? (r.errors?.length ? "Error" : r.status) : "Unknown"; };
+  const sort = useSort(data?.middlewares ?? [], { name: m => m.name, type: label, used: usedBy, status: statusText }, "name");
+  const extSort = useSort(external, { name: r => r.name, type: r => r.type, status: r => r.status }, "name");
   return (
     <>
       <PageHeader title="Middlewares" description="Auth, redirects, headers and limits applied to routes." action={action} />
@@ -297,9 +302,9 @@ export function Middlewares() {
         ) : (
           <div className="table-wrap">
             <table>
-              <thead><tr><th scope="col">Name</th><th scope="col">Type</th><th scope="col" className="col-optional">Used by</th><th scope="col">Status</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
+              <thead><tr><SortTh sort={sort} col="name">Name</SortTh><SortTh sort={sort} col="type">Type</SortTh><SortTh sort={sort} col="used" className="col-optional">Used by</SortTh><SortTh sort={sort} col="status">Status</SortTh><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
               <tbody>
-                {data.middlewares.map(m => {
+                {sort.rows.map(m => {
                   const r = rt(m.name);
                   return (
                     <tr key={m.id}>
@@ -322,8 +327,8 @@ export function Middlewares() {
       {external.length > 0 && (
         <section className="card">
           <div className="card-head"><h2>From other providers</h2><span className="hint">Read-only, for example from Docker labels.</span></div>
-          <div className="table-wrap"><table><thead><tr><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Status</th></tr></thead><tbody>
-            {external.map(r => <tr key={r.name + r.provider}><td><span className="row-text">{r.name}</span> <Badge dot={false} mono>{r.provider}</Badge></td><td className="muted">{r.type}</td><td><Badge tone={statusTone(r.status, r.errors)}>{r.status}</Badge></td></tr>)}
+          <div className="table-wrap"><table><thead><tr><SortTh sort={extSort} col="name">Name</SortTh><SortTh sort={extSort} col="type">Type</SortTh><SortTh sort={extSort} col="status">Status</SortTh></tr></thead><tbody>
+            {extSort.rows.map(r => <tr key={r.name + r.provider}><td><span className="row-text">{r.name}</span> <Badge dot={false} mono>{r.provider}</Badge></td><td className="muted">{r.type}</td><td><Badge tone={statusTone(r.status, r.errors)}>{r.status}</Badge></td></tr>)}
           </tbody></table></div>
         </section>
       )}

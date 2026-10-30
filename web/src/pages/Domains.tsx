@@ -9,6 +9,7 @@ import { PageHeader } from "../ui/Page";
 import { daysUntil, useLoad } from "../ui/hooks";
 import { navigate } from "../app/router";
 import { covers } from "../ui/certs";
+import { SortTh, useSort } from "../ui/sort";
 
 
 function DNSCheck({ name }: { name: string }) {
@@ -18,6 +19,32 @@ function DNSCheck({ name }: { name: string }) {
     <span className="inline-status"><CircleCheck className="icon-sm ok" aria-hidden="true" /><span className="mono-sm">{data.addresses.slice(0, 2).join(", ")}</span></span>
   ) : (
     <span className="inline-status"><CircleAlert className="icon-sm bad" aria-hidden="true" />No DNS record</span>
+  );
+}
+
+// One domain's hosts. Its own component so each table sorts on its own.
+function HostTable({ dom, certFor }: { dom: DomainInfo; certFor: (host: string) => Cert | undefined }) {
+  const hosts = dom.hosts.length ? dom.hosts : [dom.name];
+  const sort = useSort(hosts, { host: h => h, cert: h => { const c = certFor(h); return c ? daysUntil(c.notAfter) : null; } }, "host");
+  return (
+    <div className="table-wrap">
+      <table>
+        <thead><tr><SortTh sort={sort} col="host">Host</SortTh><th scope="col">DNS</th><SortTh sort={sort} col="cert">Certificate</SortTh></tr></thead>
+        <tbody>
+          {sort.rows.map(h => {
+            const c = certFor(h);
+            const days = c ? daysUntil(c.notAfter) : 0;
+            return (
+              <tr key={h}>
+                <td className="mono-sm">{h}</td>
+                <td><DNSCheck name={h} /></td>
+                <td>{c ? <Badge tone={days <= 3 ? "danger" : days <= 14 ? "warning" : "success"}>{days < 0 ? "Expired" : `Valid, ${days} days left`}</Badge> : <Badge>None yet</Badge>}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
@@ -81,25 +108,7 @@ export function Domains() {
                 {dom.explicit && <button className="icon-btn" type="button" aria-label={`Remove ${dom.name}`} data-tooltip="Remove domain" data-tooltip-side="bottom" onClick={() => setToDelete(dom.name)}><Trash2 className="icon-sm" aria-hidden="true" /></button>}
               </div>
             </div>
-            <div className="table-wrap">
-              <table>
-                <thead><tr><th scope="col">Host</th><th scope="col">DNS</th><th scope="col">Certificate</th><th scope="col" className="col-optional">Routes</th></tr></thead>
-                <tbody>
-                  {(dom.hosts.length ? dom.hosts : [dom.name]).map(h => {
-                    const c = certFor(h);
-                    const days = c ? daysUntil(c.notAfter) : 0;
-                    return (
-                      <tr key={h}>
-                        <td className="mono-sm">{h}</td>
-                        <td><DNSCheck name={h} /></td>
-                        <td>{c ? <Badge tone={days <= 3 ? "danger" : days <= 14 ? "warning" : "success"}>{days < 0 ? "Expired" : `Valid, ${days} days left`}</Badge> : <Badge>None yet</Badge>}</td>
-                        <td className="col-optional muted">{dom.routes.length ? dom.routes.join(", ") : "None"}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <HostTable dom={dom} certFor={certFor} />
             {dom.resolver && <div className="table-foot"><span>New certificates from <span className="mono">{dom.resolver}</span>{dom.wildcard ? `, as a wildcard for *.${dom.name}` : ""}.</span></div>}
           </section>
         ))

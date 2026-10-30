@@ -9,6 +9,7 @@ import { Segmented } from "../ui/controls";
 import { Card, PageHeader } from "../ui/Page";
 import { LineChart } from "../ui/LineChart";
 import { timeAgo, useLoad } from "../ui/hooks";
+import { SortTh, useSort } from "../ui/sort";
 
 interface StatsData {
   key: string;
@@ -30,6 +31,7 @@ export function Stats() {
   const { data, error, loading, reload } = useLoad(() => api.get<StatsData>(`/stats?key=${encodeURIComponent(key)}&range=${range}`), [key, range], 30000);
   const pts = data?.points ?? [];
   const step = data?.stepSeconds ?? 60;
+  const sort = useSort(pts.filter(p => p.requests > 0), { time: p => p.t, requests: p => p.requests, c4xx: p => p.c4xx, c5xx: p => p.c5xx, mean: p => p.durSum / p.requests, p95: p => p.p95 }, "time", -1);
   const sum = (f: (p: Point) => number) => pts.reduce((s, p) => s + f(p), 0);
   const total = sum(p => p.requests);
   const pct = (n: number) => (total ? ((n / total) * 100).toFixed(1) + "%" : "0%");
@@ -68,8 +70,8 @@ export function Stats() {
           {table ? (
             <Card title={`${label(key)}, per ${step / 60} min`} flush>
               <div className="table-wrap"><table>
-                <thead><tr><th scope="col">Time</th><th scope="col">Requests</th><th scope="col">4xx</th><th scope="col">5xx</th><th scope="col">Mean latency</th><th scope="col">p95 latency</th></tr></thead>
-                <tbody>{[...pts].reverse().filter(p => p.requests > 0).map(p => (
+                <thead><tr><SortTh sort={sort} col="time">Time</SortTh><SortTh sort={sort} col="requests">Requests</SortTh><SortTh sort={sort} col="c4xx">4xx</SortTh><SortTh sort={sort} col="c5xx">5xx</SortTh><SortTh sort={sort} col="mean">Mean latency</SortTh><SortTh sort={sort} col="p95">p95 latency</SortTh></tr></thead>
+                <tbody>{sort.rows.map(p => (
                   <tr key={p.t}><td className="mono-sm">{new Date(p.t * 1000).toLocaleString()}</td><td>{num(p.requests)}</td><td>{num(p.c4xx)}</td><td>{num(p.c5xx)}</td><td>{p.requests ? ms(p.durSum / p.requests) : "-"}</td><td>{p.p95 ? ms(p.p95) : "-"}</td></tr>
                 ))}</tbody>
               </table></div>

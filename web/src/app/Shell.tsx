@@ -220,7 +220,7 @@ export function Shell({ page, version, user, onSignOut, children }: { page: stri
             <span className="theme-label">Sign out</span>
           </button>
         </header>
-        <main id="main" className="content" tabIndex={-1}>
+        <main id="main" className={`content${page === "routes" ? " is-wide" : ""}`} tabIndex={-1}>
           <PageTransition page={page}>{children}</PageTransition>
         </main>
       </div>

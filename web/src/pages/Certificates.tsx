@@ -9,12 +9,15 @@ import { DNS_PROVIDERS } from "../ui/dnsProviders";
 import { ConfirmDialog, Modal } from "../ui/Modal";
 import { Card, PageHeader } from "../ui/Page";
 import { daysUntil, useLoad } from "../ui/hooks";
+import { SortTh, useSort } from "../ui/sort";
 import { PendingBanner, saveTraefik, useTraefik } from "./traefikConfig";
 
 const blankResolver = (): Resolver => ({ name: "", email: "", challenge: "http", httpEntrypoint: "web", dnsProvider: "", caServer: "", caCertPEM: "" });
 
 const PROPAGATION_STEPS = [0, 10, 30, 60, 120, 180, 300, 600, 900, 1800];
 const PROVIDER_OPTIONS = DNS_PROVIDERS.map(p => ({ value: p.code, label: p.name }));
+const challengeText = (r: Resolver) => (r.challenge === "dns" ? `DNS (${r.dnsProvider})` : r.challenge === "tls" ? "TLS-ALPN" : `HTTP on ${r.httpEntrypoint || "web"}`);
+const certSource = (c: Cert) => (c.source === "acme" ? `${c.resolver}, ${c.issuer}` : `Uploaded${c.name ? ": " + c.name : ""}`);
 const slug = (s: string) => s.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const providerVars = (code?: string) => DNS_PROVIDERS.find(p => p.code === code)?.env ?? [];
 
@@ -140,6 +143,8 @@ export function Certificates() {
     const f = e.target.files?.[0];
     if (f) f.text().then(t => setUp(u => ({ ...u, [k]: t })));
   };
+  const resSort = useSort((cfg?.resolvers ?? []).map((r, i) => ({ r, i })), { name: x => x.r.name, challenge: x => challengeText(x.r), server: x => x.r.caServer || "Let's Encrypt" }, "name");
+  const certSort = useSort(certs.data?.certificates ?? [], { domains: c => c.main, source: certSource, expires: c => daysUntil(c.notAfter) }, "domains");
   const tcpEntrypoints = cfg?.entrypoints.filter(e => e.protocol === "tcp") ?? [];
 
   return (
@@ -154,11 +159,11 @@ export function Certificates() {
           <Empty icon={ShieldCheck} title="No resolver yet">Add Let's Encrypt to get free certificates for your domains.</Empty>
         ) : (
           <div className="table-wrap"><table>
-            <thead><tr><th scope="col">Name</th><th scope="col">Challenge</th><th scope="col" className="col-optional">Server</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
-            <tbody>{cfg.resolvers.map((r, i) => (
+            <thead><tr><SortTh sort={resSort} col="name">Name</SortTh><SortTh sort={resSort} col="challenge">Challenge</SortTh><SortTh sort={resSort} col="server" className="col-optional">Server</SortTh><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
+            <tbody>{resSort.rows.map(({ r, i }) => (
               <tr key={r.name}>
                 <td><button className="row-link" type="button" onClick={() => setResModal({ open: true, index: i })}>{r.name}</button></td>
-                <td className="muted">{r.challenge === "dns" ? `DNS (${r.dnsProvider})` : r.challenge === "tls" ? "TLS-ALPN" : `HTTP on ${r.httpEntrypoint || "web"}`}</td>
+                <td className="muted">{challengeText(r)}</td>
                 <td className="col-optional muted mono-sm">{r.caServer || "Let's Encrypt"}</td>
                 <td className="actions nowrap">
                   <button className="icon-btn" type="button" aria-label={`Edit ${r.name}`} data-tooltip="Edit" data-tooltip-side="bottom" onClick={() => setResModal({ open: true, index: i })}><Pencil className="icon-sm" aria-hidden="true" /></button>
@@ -174,13 +179,13 @@ export function Certificates() {
           <Empty icon={ShieldCheck} title="No certificates yet">They appear here once a route with HTTPS gets its first visit, or after an upload.</Empty>
         ) : (
           <div className="table-wrap"><table>
-            <thead><tr><th scope="col">Domains</th><th scope="col">Source</th><th scope="col">Expires</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
-            <tbody>{certs.data.certificates.map(c => {
+            <thead><tr><SortTh sort={certSort} col="domains">Domains</SortTh><SortTh sort={certSort} col="source">Source</SortTh><SortTh sort={certSort} col="expires">Expires</SortTh><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
+            <tbody>{certSort.rows.map(c => {
               const d = daysUntil(c.notAfter);
               return (
                 <tr key={c.id}>
                   <td className="mono-sm">{(c.domains.length ? c.domains : [c.main]).join(", ")}</td>
-                  <td className="muted">{c.source === "acme" ? `${c.resolver}, ${c.issuer}` : `Uploaded${c.name ? ": " + c.name : ""}`}</td>
+                  <td className="muted">{certSource(c)}</td>
                   <td><Badge tone={d < 0 || d <= 3 ? "danger" : d <= 14 ? "warning" : "success"}>{d < 0 ? "Expired" : `${new Date(c.notAfter).toLocaleDateString()}, ${d} days`}</Badge></td>
                   <td className="actions">{c.source === "uploaded" && <button className="icon-btn" type="button" aria-label={`Delete certificate ${c.main}`} data-tooltip="Delete" data-tooltip-side="bottom" onClick={() => setDel({ kind: "cert", id: c.id, label: `Certificate ${c.main}`, match: x => x.tls.mode === "existing" && x.tls.domain === c.main && !x.tls.resolver })}><Trash2 className="icon-sm" aria-hidden="true" /></button>}</td>
                 </tr>

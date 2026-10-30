@@ -1,12 +1,13 @@
 // Docs: docs/03 - Features/Routes.md
 import { useEffect, useState } from "react";
 import { Container, Pencil, Plus, Route as RouteIcon, Search, SearchX, Trash2 } from "lucide-react";
-import { api, type Route, type RouteItem, type RuntimeRouter, type SaveResult } from "../api";
+import { api, type Route, type RouteItem, type RuntimeRouter, type SaveResult, type TraefikConfig } from "../api";
 import { Badge, Button, Empty, ErrorBox, SkeletonRows, statusTone, useToast, type Tone } from "../ui/feedback";
 import { Segmented, Switch } from "../ui/controls";
 import { ConfirmDialog } from "../ui/Modal";
 import { PageHeader } from "../ui/Page";
 import { useLoad } from "../ui/hooks";
+import { SortTh, useSort } from "../ui/sort";
 import { clearParams } from "../app/router";
 import { RouteModal } from "./RouteModal";
 
@@ -26,6 +27,18 @@ function statusOf(r: RouteItem): { tone: Tone; text: string } {
 const targetText = (r: Route) =>
   r.target.kind === "service" ? `service ${r.target.service}` : `${r.target.kind === "docker" ? r.target.container : r.target.address}:${r.target.port}`;
 
+// The address a route answers on, for Ctrl+click. Keeps a non-standard published port. TCP, UDP and wildcard-only routes have none.
+export function routeURL(r: Route, entrypoints: TraefikConfig["entrypoints"]): string | null {
+  const host = r.hosts.find(h => !h.startsWith("*."));
+  if (r.protocol !== "http" || !host) return null;
+  const scheme = r.tls.enabled ? "https" : "http";
+  const ep = entrypoints.find(e => r.entrypoints.includes(e.name));
+  const port = ep?.hostPort ?? 0;
+  const shown = !port || port === (r.tls.enabled ? 443 : 80) ? "" : `:${port}`;
+  const path = r.pathPrefix && r.pathPrefix !== "/" ? r.pathPrefix : "";
+  return `${scheme}://${host}${shown}${path}`;
+}
+
 export function Routes({ params }: { params: URLSearchParams }) {
   const toast = useToast();
   const { data, error, loading, reload } = useLoad(() => api.get<RoutesData>("/routes"), [], 15000);
@@ -34,6 +47,8 @@ export function Routes({ params }: { params: URLSearchParams }) {
   const [modal, setModal] = useState<{ open: boolean; editing: Route | null; host?: string; container?: string; port?: number }>({ open: false, editing: null });
   const [toDelete, setToDelete] = useState<Route | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const traefik = useLoad(() => api.get<{ config: TraefikConfig }>("/traefik"), []);
+  const entrypoints = traefik.data?.config.entrypoints ?? [];
 
   // #routes?new=1&host=x opens the window prefilled (from Domains, Overview, Docker).
   useEffect(() => {
@@ -74,6 +89,8 @@ export function Routes({ params }: { params: URLSearchParams }) {
   const match = (s: string) => s.toLowerCase().includes(q.trim().toLowerCase());
   const rows = (data?.routes ?? []).filter(r => (proto === "all" || r.protocol === proto) && (!q || match(r.name) || match(r.rule) || match(targetText(r))));
   const ext = (data?.external ?? []).filter(r => (proto === "all" || r.protocol === proto) && (!q || match(r.name) || match(r.rule || "")));
+  const sort = useSort(rows, { name: r => r.name, rule: r => r.rule, target: targetText, https: r => (r.tls.enabled ? (r.tls.mode === "passthrough" ? "Passthrough" : "Yes") : "No"), status: r => statusOf(r).text, enabled: r => (r.enabled ? 0 : 1) }, "name");
+  const extSort = useSort(ext, { name: r => r.name, rule: r => r.rule, service: r => r.service, status: r => (r.errors?.length ? "Error" : r.status) }, "name");
   const action = (
     <button className="btn btn-primary" type="button" onClick={() => setModal({ open: true, editing: null })}>
       <Plus aria-hidden="true" />New route
@@ -102,25 +119,37 @@ export function Routes({ params }: { params: URLSearchParams }) {
           <Empty icon={SearchX} title="No routes match" action={<Button onClick={() => { setQ(""); setProto("all"); }}>Clear filters</Button>}>Try another name or domain, or clear the protocol filter.</Empty>
         ) : (
           <div className="table-wrap">
-            <table>
+            <table className="routes-table">
               <thead>
                 <tr>
-                  <th scope="col">Name</th>
-                  <th scope="col" className="col-rule">Rule</th>
-                  <th scope="col" className="col-optional">Forwarding to</th>
-                  <th scope="col" className="col-optional">HTTPS</th>
-                  <th scope="col">Status</th>
+                  <SortTh sort={sort} col="name">Name</SortTh>
+                  <SortTh sort={sort} col="rule" className="col-rule">Rule</SortTh>
+                  <SortTh sort={sort} col="target" className="col-optional">Forwarding to</SortTh>
+                  <SortTh sort={sort} col="https" className="col-optional">HTTPS</SortTh>
+                  <SortTh sort={sort} col="status">Status</SortTh>
                   <th scope="col"><span className="sr-only">Enabled</span></th>
                   <th scope="col"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
-                {rows.map(r => {
+                {sort.rows.map(r => {
                   const s = statusOf(r);
+                  const url = routeURL(r, entrypoints);
                   return (
-                    <tr key={r.id}>
+                    <tr key={r.id} onClick={e => {
+                      // Ctrl or Cmd + click anywhere on the row opens the site. The name is a real link, so the browser handles it there.
+                      if (url && (e.ctrlKey || e.metaKey) && !(e.target as HTMLElement).closest("a, button, input")) window.open(url, "_blank", "noopener,noreferrer");
+                    }}>
                       <td>
-                        <button className="row-link" type="button" onClick={() => setModal({ open: true, editing: r })}>{r.name}</button>{" "}
+                        {url ? (
+                          <a className="row-link" href={url} target="_blank" rel="noreferrer" title={`Ctrl+click opens ${url}`} onClick={e => {
+                            if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+                            e.preventDefault();
+                            setModal({ open: true, editing: r });
+                          }}>{r.name}</a>
+                        ) : (
+                          <button className="row-link" type="button" onClick={() => setModal({ open: true, editing: r })}>{r.name}</button>
+                        )}{" "}
                         <Badge tone="accent" dot={false} mono>{r.protocol.toUpperCase()}</Badge>
                         <span className="rule rule-inline">{r.rule || "all traffic"}</span>
                       </td>
@@ -144,7 +173,7 @@ export function Routes({ params }: { params: URLSearchParams }) {
             </table>
           </div>
         )}
-        {data && data.routes.length > 0 && <div className="table-foot"><span>{rows.length} of {data.routes.length} routes</span><span>Refreshes every 15 s</span></div>}
+        {data && data.routes.length > 0 && <div className="table-foot"><span>{rows.length} of {data.routes.length} routes</span><span>Ctrl+click a route to open its site. Refreshes every 15 s.</span></div>}
       </section>
 
       {ext.length > 0 && (
@@ -155,9 +184,9 @@ export function Routes({ params }: { params: URLSearchParams }) {
           </div>
           <div className="table-wrap">
             <table>
-              <thead><tr><th scope="col">Name</th><th scope="col" className="col-rule">Rule</th><th scope="col" className="col-optional">Service</th><th scope="col">Status</th></tr></thead>
+              <thead><tr><SortTh sort={extSort} col="name">Name</SortTh><SortTh sort={extSort} col="rule" className="col-rule">Rule</SortTh><SortTh sort={extSort} col="service" className="col-optional">Service</SortTh><SortTh sort={extSort} col="status">Status</SortTh></tr></thead>
               <tbody>
-                {ext.map(r => (
+                {extSort.rows.map(r => (
                   <tr key={r.name + r.provider}>
                     <td><span className="row-text">{r.name}</span> <Badge dot={false} mono>{r.provider}</Badge><span className="rule rule-inline">{r.rule}</span></td>
                     <td className="col-rule"><span className="rule">{r.rule}</span></td>

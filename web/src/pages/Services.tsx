@@ -7,6 +7,7 @@ import { Field, Segmented, SettingRow, TagInput, invalid } from "../ui/controls"
 import { ConfirmDialog, Modal } from "../ui/Modal";
 import { PageHeader } from "../ui/Page";
 import { useLoad } from "../ui/hooks";
+import { SortTh, useSort } from "../ui/sort";
 
 interface Data {
   services: Service[];
@@ -139,6 +140,8 @@ function ServiceModal({ open, onClose, editing, names, onSaved }: { open: boolea
   );
 }
 
+const serversText = (s: Service) => (s.kind === "loadbalancer" ? s.servers.join(", ") : s.kind === "weighted" ? s.weighted?.map(w => `${w.service} (${w.weight})`).join(", ") : s.kind === "failover" ? `${s.failover?.service}, then ${s.failover?.fallback}` : `${s.mirroring?.service} + ${s.mirroring?.mirrors.length} mirror(s)`);
+
 export function Services() {
   const toast = useToast();
   const { data, error, loading, reload } = useLoad(() => api.get<Data>("/services"), [], 15000);
@@ -146,6 +149,8 @@ export function Services() {
   const [toDelete, setToDelete] = useState<Service | null>(null);
   const [busy, setBusy] = useState(false);
   const names = Array.from(new Set([...(data?.services.map(s => s.name) ?? []), ...(data?.runtime.filter(r => r.provider === "file").map(r => r.name) ?? [])]));
+  const sort = useSort(data?.services ?? [], { name: s => s.name, kind: s => KINDS.find(k => k.value === s.kind)?.label, servers: serversText }, "name");
+  const runtimeSort = useSort(data?.runtime ?? [], { name: r => r.name, servers: r => r.servers[0] ?? r.type, used: r => r.usedBy?.map(u => u.replace(/@.*/, "")).join(", "), status: r => (r.errors?.length ? "Error" : r.status) }, "name");
   const action = <button className="btn btn-primary" type="button" onClick={() => setModal({ open: true, editing: null })}><Plus aria-hidden="true" />New service</button>;
   const remove = async () => {
     if (!toDelete) return;
@@ -172,14 +177,14 @@ export function Services() {
         ) : (
           <div className="table-wrap">
             <table>
-              <thead><tr><th scope="col">Name</th><th scope="col">Type</th><th scope="col" className="col-optional">Servers or services</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
+              <thead><tr><SortTh sort={sort} col="name">Name</SortTh><SortTh sort={sort} col="kind">Type</SortTh><SortTh sort={sort} col="servers" className="col-optional">Servers or services</SortTh><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
               <tbody>
-                {data.services.map(s => (
+                {sort.rows.map(s => (
                   <tr key={s.id}>
                     <td><button className="row-link" type="button" onClick={() => setModal({ open: true, editing: s })}>{s.name}</button> <Badge tone="accent" dot={false} mono>{s.protocol.toUpperCase()}</Badge></td>
                     <td className="muted">{KINDS.find(k => k.value === s.kind)?.label}</td>
                     <td className="col-optional muted mono-sm">
-                      {s.kind === "loadbalancer" ? s.servers.join(", ") : s.kind === "weighted" ? s.weighted?.map(w => `${w.service} (${w.weight})`).join(", ") : s.kind === "failover" ? `${s.failover?.service}, then ${s.failover?.fallback}` : `${s.mirroring?.service} + ${s.mirroring?.mirrors.length} mirror(s)`}
+                      {serversText(s)}
                     </td>
                     <td className="actions nowrap">
                       <button className="icon-btn" type="button" aria-label={`Edit ${s.name}`} data-tooltip="Edit" data-tooltip-side="bottom" onClick={() => setModal({ open: true, editing: s })}><Pencil className="icon-sm" aria-hidden="true" /></button>
@@ -202,9 +207,9 @@ export function Services() {
         ) : (
           <div className="table-wrap">
             <table>
-              <thead><tr><th scope="col">Service</th><th scope="col">Servers</th><th scope="col" className="col-optional">Used by</th><th scope="col">Status</th></tr></thead>
+              <thead><tr><SortTh sort={runtimeSort} col="name">Service</SortTh><SortTh sort={runtimeSort} col="servers">Servers</SortTh><SortTh sort={runtimeSort} col="used" className="col-optional">Used by</SortTh><SortTh sort={runtimeSort} col="status">Status</SortTh></tr></thead>
               <tbody>
-                {data.runtime.map(r => {
+                {runtimeSort.rows.map(r => {
                   const st = Object.entries(r.serverStatus ?? {});
                   const down = st.filter(([, v]) => v !== "UP").length;
                   return (

@@ -239,6 +239,7 @@ export interface ContainerInfo {
   role?: string;
   routes: string[];
   exposedPorts: number[];
+  stack?: string;
 }
 
 export interface HistoryEntry {

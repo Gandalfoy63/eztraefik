@@ -1,8 +1,8 @@
 ---
 title: Routes
 tags: [feature, routing]
-version: 1.3.0+19
-related: ["[[03 - Features/Services|Services]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[05 - UI-UX/Preview|Preview]]", "[[03 - Features/Import from NPM|Import from NPM]]", "[[08 - Deployment/Compose Example|Compose Example]]", "[[03 - Features/Route Settings|Route Settings]]", "[[99 - Changelog/1.3.0+19|1.3.0+19]]"]
+version: 1.5.0+22
+related: ["[[03 - Features/Services|Services]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[03 - Features/Overview|Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[05 - UI-UX/Preview|Preview]]", "[[03 - Features/Import from NPM|Import from NPM]]", "[[08 - Deployment/Compose Example|Compose Example]]", "[[03 - Features/Route Settings|Route Settings]]", "[[99 - Changelog/1.3.0+19|1.3.0+19]]", "[[99 - Changelog/1.5.0+22|1.5.0+22]]"]
 ---
 
 # Routes
@@ -14,6 +14,9 @@ Status: implemented in 0.2.0+3.
 - Search and protocol filter, empty state and "no match" state.
 - A second, read-only table lists routers from other providers (Docker labels).
 - `#routes?new=1&host=...` or `&container=...&port=...` opens the window prefilled: used by Domains ("Add route on this domain") and Docker. Creating a route still happens only in this window.
+
+## Wide table and opening a site
+The page uses the full width, with smaller side margins, and names don't wrap. A click on a route edits it. Ctrl+click (Cmd on a Mac) opens its site in a new tab, on the name or anywhere on the row outside the controls ([routeURL](../../web/src/pages/Routes.tsx#L31-L40)). The name is a real link, so middle click works too. The address keeps a non-standard published port and the path prefix. TCP, UDP and wildcard-only routes have no address to open.
 
 ## New / edit route window
 Centered window with two tabs, as approved in the preview review:
@@ -35,7 +38,7 @@ See [[04 - Architecture/Dynamic Config|Dynamic Config]]. Rule syntax: [[00 - Dow
 
 ## Code
 - API: [listRoutes](../../server/internal/api/routes.go#L69-L95), [saveRoute](../../server/internal/api/routes.go#L319-L372), [deleteRoute](../../server/internal/api/routes.go#L374-L389)
-- Page: [Routes](../../web/src/pages/Routes.tsx#L29-L181), window [RouteModal](../../web/src/pages/RouteModal.tsx#L28-L355)
+- Page: [Routes](../../web/src/pages/Routes.tsx#L42-L210), window [RouteModal](../../web/src/pages/RouteModal.tsx#L28-L355)
 
 ## Related
 - [[03 - Features/Services|Services]]
@@ -56,3 +59,4 @@ See [[04 - Architecture/Dynamic Config|Dynamic Config]]. Rule syntax: [[00 - Dow
 - [[08 - Deployment/Compose Example|Compose Example]]
 - [[03 - Features/Route Settings|Route Settings]]
 - [[99 - Changelog/1.3.0+19|1.3.0+19]]
+- [[99 - Changelog/1.5.0+22|1.5.0+22]]

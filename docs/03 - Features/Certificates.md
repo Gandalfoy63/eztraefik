@@ -20,13 +20,13 @@ Status: implemented in 0.2.0+3.
 - **Advanced**: Propagation Seconds, [`dnsChallenge.propagation.delayBeforeChecks`](../../server/internal/traefik/container.go#L90-L95), and the private ACME server.
 
 ## Deleting
-Deleting an uploaded certificate or a resolver takes it off whatever used it, never the routes ([detachCert](../../server/internal/api/resources.go#L595-L612), [detachResolver](../../server/internal/api/resources.go#L615-L629)). The confirmation lists the routes. They stay on HTTPS with another resolver if there is one, else Traefik's default certificate; turning HTTPS off would expose the app. Entrypoints and domains using a deleted resolver lose it too. Issued certificates have no delete button: they stay in the resolver's storage file. The files of a deleted upload stay on the shared volume, because Settings > History can bring the certificate back.
+Deleting an uploaded certificate or a resolver takes it off whatever used it, never the routes ([detachCert](../../server/internal/api/resources.go#L588-L605), [detachResolver](../../server/internal/api/resources.go#L608-L622)). The confirmation lists the routes. They stay on HTTPS with another resolver if there is one, else Traefik's default certificate; turning HTTPS off would expose the app. Entrypoints and domains using a deleted resolver lose it too. Issued certificates have no delete button: they stay in the resolver's storage file. The files of a deleted upload stay on the shared volume, because Settings > History can bring the certificate back.
 
 Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/tls/certificate-resolvers/acme|ACME]], [[00 - Downloaded Docs/Traefik/reference/routing-configuration/http/tls/tls-certificates|TLS certificates]].
 
 ## Code
-- [uploadCert](../../server/internal/api/resources.go#L551-L586), [allCerts](../../server/internal/api/resources.go#L534-L544)
-- [Certificates](../../web/src/pages/Certificates.tsx#L21-L280)
+- [uploadCert](../../server/internal/api/resources.go#L544-L579), [allCerts](../../server/internal/api/resources.go#L527-L537)
+- [Certificates](../../web/src/pages/Certificates.tsx#L24-L285)
 
 ## Related
 - [[03 - Features/Domains|Domains]]

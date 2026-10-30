@@ -1,8 +1,8 @@
 ---
 title: Docker
 tags: [feature, docker, sources]
-version: 0.2.0+3
-related: ["[[03 - Features/Services|Services]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[08 - Deployment/Compose Example|Compose Example]]"]
+version: 1.5.0+22
+related: ["[[03 - Features/Services|Services]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[08 - Deployment/Compose Example|Compose Example]]", "[[99 - Changelog/1.5.0+22|1.5.0+22]]"]
 ---
 
 # Docker
@@ -10,6 +10,7 @@ related: ["[[03 - Features/Services|Services]]", "[[03 - Features/Relations|Rela
 Status: implemented in 0.2.0+3.
 
 - Every container on the host: image, state, exposed ports, which routes target it (eztraefik routes and label routers), and whether it is on the Traefik network.
+- Containers are grouped by stack, from the labels Compose (also behind Portainer) and Swarm set ([stackOf](../../server/internal/api/system.go#L333-L338)). Stacks run A to Z and collapse, with how many containers run; containers without a stack are last, under Standalone. Column sorting applies inside each stack.
 - **Connect** puts a container on the Traefik network (saving a route to a container does it automatically).
 - "New route to this container" opens the route window prefilled with the container and its first port.
 - Label routes are shown read-only on the Routes page; Docker provider options are on the Traefik page.
@@ -17,8 +18,8 @@ Status: implemented in 0.2.0+3.
 Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/providers/docker|Docker provider]], [[00 - Downloaded Docs/Docker Engine API/Container|Engine API containers]].
 
 ## Code
-- [listContainers](../../server/internal/api/system.go#L331-L371), client [[04 - Architecture/Docker Client|Docker Client]]
-- [Docker](../../web/src/pages/Docker.tsx#L10-L80)
+- [listContainers](../../server/internal/api/system.go#L340-L380), client [[04 - Architecture/Docker Client|Docker Client]]
+- [Docker](../../web/src/pages/Docker.tsx#L17-L105)
 
 ## Related
 - [[03 - Features/Services|Services]]
@@ -31,3 +32,4 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/provid
 - [[06 - API/API Overview|API Overview]]
 - [[04 - Architecture/Code Map|Code Map]]
 - [[08 - Deployment/Compose Example|Compose Example]]
+- [[99 - Changelog/1.5.0+22|1.5.0+22]]

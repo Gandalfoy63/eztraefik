@@ -8,6 +8,7 @@ import { Field, invalid } from "../ui/controls";
 import { ConfirmDialog } from "../ui/Modal";
 import { Card, PageHeader } from "../ui/Page";
 import { shortTime, useLoad } from "../ui/hooks";
+import { SortTh, useSort } from "../ui/sort";
 
 interface Item {
   id: string;
@@ -160,6 +161,7 @@ export function ImportNPM() {
   // The email field shows when a host waits for one, or when a new resolver will be created (to check or change its email).
   const needEmail = !!plan?.items.some(i => i.reason?.includes("no email is known")) || !!plan?.resolver;
   const importable = plan?.items.filter(i => i.action === "import") ?? [];
+  const sort = useSort(plan?.items ?? [], { source: i => i.source, becomes: i => (i.action === "import" ? i.name : i.reason), tls: i => i.tls }, "source");
   const counts = plan ? { import: importable.length, skip: plan.items.length - importable.length } : null;
   const m = s?.migration;
 
@@ -228,13 +230,13 @@ export function ImportNPM() {
                       <input type="checkbox" aria-label="Select all importable items" checked={importable.length > 0 && importable.every(i => selected.has(i.id))}
                         onChange={e => setSelected(e.target.checked ? new Set(importable.map(i => i.id)) : new Set())} />
                     </th>
-                    <th scope="col">In NPM</th>
-                    <th scope="col">Becomes in eztraefik</th>
-                    <th scope="col" className="col-optional">HTTPS</th>
+                    <SortTh sort={sort} col="source">In NPM</SortTh>
+                    <SortTh sort={sort} col="becomes">Becomes in eztraefik</SortTh>
+                    <SortTh sort={sort} col="tls" className="col-optional">HTTPS</SortTh>
                   </tr>
                 </thead>
                 <tbody>
-                  {plan.items.map(it => (
+                  {sort.rows.map(it => (
                     <tr key={it.id} className={it.action === "skip" ? "is-skipped" : ""}>
                       <td className="check-col">
                         <input type="checkbox" aria-label={`Import ${it.source}`} disabled={it.action !== "import"} checked={selected.has(it.id)}

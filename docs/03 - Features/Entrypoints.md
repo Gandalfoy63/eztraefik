@@ -19,7 +19,7 @@ Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/entryp
 
 ## Code
 - Flags [Flags](../../server/internal/traefik/container.go#L24-L105), ports [Spec](../../server/internal/traefik/container.go#L153-L195)
-- [Entrypoints](../../web/src/pages/Entrypoints.tsx#L13-L141)
+- [Entrypoints](../../web/src/pages/Entrypoints.tsx#L16-L145)
 
 ## Related
 - [[03 - Features/Routes|Routes]]

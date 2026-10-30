@@ -6,6 +6,7 @@ import { Badge, Button, Empty, ErrorBox, SkeletonRows } from "../ui/feedback";
 import { Segmented } from "../ui/controls";
 import { useLoad } from "../ui/hooks";
 import { PageHeader } from "../ui/Page";
+import { SortTh, useSort } from "../ui/sort";
 
 interface Line { time: string; level: string; message: string }
 interface Access { time: string; client: string; method: string; host: string; path: string; status: number; router: string; service: string; durationMs: number; size: number }
@@ -17,6 +18,7 @@ export function Logs({ params }: { params: URLSearchParams }) {
   const [status, setStatus] = useState("");
   const [level, setLevel] = useState("");
   const access = useLoad(() => api.get<{ entries: Access[]; enabled: boolean }>(`/logs/access?limit=300&q=${encodeURIComponent(q)}&status=${status}`), [q, status, tab], tab === "access" && !paused ? 5000 : 0);
+  const sort = useSort(access.data?.entries ?? [], { time: e => Date.parse(e.time), status: e => e.status, request: e => e.host + e.path, route: e => e.router.replace(/@.*/, ""), client: e => e.client, took: e => e.durationMs }, "time", -1);
   const tlog = useLoad(() => api.get<{ lines: Line[] }>("/logs/traefik?tail=400"), [tab], tab === "traefik" && !paused ? 5000 : 0);
   const lines = (tlog.data?.lines ?? []).filter(l => (!level || l.level === level) && (!q || l.message.toLowerCase().includes(q.toLowerCase()))).reverse();
 
@@ -49,8 +51,8 @@ export function Logs({ params }: { params: URLSearchParams }) {
             <Empty icon={ScrollText} title="No requests yet">{q || status ? "Nothing matches the filter." : "Requests show up here as they arrive."}</Empty>
           ) : (
             <div className="table-wrap"><table className="log-table">
-              <thead><tr><th scope="col">Time</th><th scope="col">Status</th><th scope="col">Request</th><th scope="col" className="col-optional">Route</th><th scope="col" className="col-optional">Client</th><th scope="col">Time taken</th></tr></thead>
-              <tbody>{access.data.entries.map((e, i) => (
+              <thead><tr><SortTh sort={sort} col="time">Time</SortTh><SortTh sort={sort} col="status">Status</SortTh><SortTh sort={sort} col="request">Request</SortTh><SortTh sort={sort} col="route" className="col-optional">Route</SortTh><SortTh sort={sort} col="client" className="col-optional">Client</SortTh><SortTh sort={sort} col="took">Time taken</SortTh></tr></thead>
+              <tbody>{sort.rows.map((e, i) => (
                 <tr key={i}>
                   <td className="mono-sm nowrap">{new Date(e.time).toLocaleTimeString()}</td>
                   <td><Badge tone={e.status >= 500 ? "danger" : e.status >= 400 ? "warning" : "success"} mono>{e.status}</Badge></td>

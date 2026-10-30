@@ -110,6 +110,28 @@ button.row-link:hover { text-decoration: underline; text-underline-offset: 3px; 
 .dns-foot { display: grid; gap: var(--space-3); justify-items: start; margin-top: var(--space-2); }
 .dns-foot p { margin: 0; }
 
+/* Sortable column heading: looks like the heading it replaces. */
+.sort-btn { display: inline-flex; align-items: center; gap: var(--space-1); background: none; border: 0; padding: 0; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; cursor: pointer; white-space: nowrap; }
+.sort-btn:hover, .sort-btn.is-on { color: var(--text); }
+.sort-btn svg.lucide { width: 14px; height: 14px; opacity: 0.55; }
+.sort-btn.is-on svg.lucide { opacity: 1; }
+
+/* Docker: containers grouped by stack */
+.stack-row th { padding: 0; background: var(--surface-2); text-transform: none; letter-spacing: 0; font-size: var(--text-sm); color: var(--text); }
+.stack-toggle { display: flex; align-items: center; gap: var(--space-2); width: 100%; background: none; border: 0; padding: var(--space-2) var(--space-4); font: inherit; font-weight: 500; color: inherit; text-align: left; cursor: pointer; }
+.stack-toggle:hover { background: var(--surface-hover); }
+.stack-toggle svg.lucide { width: 16px; height: 16px; transition: transform var(--dur-base) var(--ease-out); }
+.stack-toggle[aria-expanded="true"] svg.lucide { transform: rotate(90deg); }
+.stack-toggle .muted { font-weight: 400; }
+tbody.stack-group tr:last-child td { border-bottom: 1px solid var(--border); }
+tbody.stack-group:last-child tr:last-child td { border-bottom: 0; }
+
+/* Routes: the table takes the width it can get. */
+.content.is-wide { max-width: none; padding-left: var(--space-4); padding-right: var(--space-4); }
+.routes-table td, .routes-table th { padding-left: var(--space-3); padding-right: var(--space-3); }
+.routes-table td:first-child { white-space: nowrap; }
+.routes-table td .rule { white-space: normal; overflow-wrap: anywhere; }
+
 /* Combobox */
 .combobox { position: relative; }
 .combobox > .input { padding-right: 36px; }

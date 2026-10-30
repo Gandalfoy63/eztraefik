@@ -6,9 +6,12 @@ import { Badge, Button, Empty, ErrorBox, SkeletonRows, useToast } from "../ui/fe
 import { Field, Segmented, SettingRow, TagInput, invalid } from "../ui/controls";
 import { ConfirmDialog, Modal } from "../ui/Modal";
 import { PageHeader } from "../ui/Page";
+import { SortTh, useSort } from "../ui/sort";
 import { PendingBanner, saveTraefik, useTraefik } from "./traefikConfig";
 
 const blank = (): Entrypoint => ({ name: "", port: 0, protocol: "tcp", hostPort: 0, redirectTo: "", http3: false, trustedIPs: [], defaultResolver: "" });
+
+const optionsText = (x: Entrypoint) => [x.redirectTo && `Redirects to ${x.redirectTo}`, x.defaultResolver && `Certificates from ${x.defaultResolver}`, x.http3 && "HTTP/3", x.trustedIPs?.length && "Trusted proxies"].filter(Boolean).join(", ");
 
 export function Entrypoints() {
   const toast = useToast();
@@ -55,6 +58,7 @@ export function Entrypoints() {
     persist(list, `Entrypoint ${next.name} saved. Apply it on the Traefik page.`);
   };
 
+  const sort = useSort((cfg?.entrypoints ?? []).map((x, i) => ({ x, i })), { name: e => e.x.name, port: e => e.x.port, host: e => e.x.hostPort, options: e => optionsText(e.x) }, "name");
   const action = <button className="btn btn-primary" type="button" onClick={() => setEdit({ open: true, index: -1 })} disabled={!cfg}><Plus aria-hidden="true" />New entrypoint</button>;
   const others = cfg?.entrypoints.filter((_, i) => i !== edit.index) ?? [];
 
@@ -69,14 +73,14 @@ export function Entrypoints() {
         ) : (
           <div className="table-wrap">
             <table>
-              <thead><tr><th scope="col">Name</th><th scope="col">Port in Traefik</th><th scope="col">Published on host</th><th scope="col" className="col-optional">Options</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
+              <thead><tr><SortTh sort={sort} col="name">Name</SortTh><SortTh sort={sort} col="port">Port in Traefik</SortTh><SortTh sort={sort} col="host">Published on host</SortTh><SortTh sort={sort} col="options" className="col-optional">Options</SortTh><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
               <tbody>
-                {cfg.entrypoints.map((x, i) => (
+                {sort.rows.map(({ x, i }) => (
                   <tr key={x.name}>
                     <td><button className="row-link" type="button" onClick={() => setEdit({ open: true, index: i })}>{x.name}</button> <Badge tone="accent" dot={false} mono>{x.protocol.toUpperCase()}</Badge></td>
                     <td className="mono-sm">:{x.port}</td>
                     <td className="mono-sm">{x.hostPort ? `:${x.hostPort}` : <span className="muted">Not published</span>}</td>
-                    <td className="col-optional muted">{[x.redirectTo && `Redirects to ${x.redirectTo}`, x.defaultResolver && `Certificates from ${x.defaultResolver}`, x.http3 && "HTTP/3", x.trustedIPs?.length && "Trusted proxies"].filter(Boolean).join(", ") || "None"}</td>
+                    <td className="col-optional muted">{optionsText(x) || "None"}</td>
                     <td className="actions nowrap">
                       <button className="icon-btn" type="button" aria-label={`Edit ${x.name}`} data-tooltip="Edit" data-tooltip-side="bottom" onClick={() => setEdit({ open: true, index: i })}><Pencil className="icon-sm" aria-hidden="true" /></button>
                       <button className="icon-btn" type="button" aria-label={`Delete ${x.name}`} data-tooltip="Delete" data-tooltip-side="bottom" onClick={() => setToDelete(i)}><Trash2 className="icon-sm" aria-hidden="true" /></button>
