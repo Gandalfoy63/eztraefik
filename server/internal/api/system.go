@@ -16,6 +16,7 @@ import (
 )
 
 var envKeyRe = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`)
+var dnsProviderRe = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]*$`)
 
 // validateTraefik checks the install config before it is saved.
 func validateTraefik(cfg *store.TraefikConfig) error {
@@ -86,6 +87,12 @@ func validateTraefik(cfg *store.TraefikConfig) error {
 		case "dns":
 			if r.DNSProvider == "" {
 				return FieldError{"resolvers", fmt.Sprintf("Resolver %s: choose the DNS provider (its credentials go in environment variables).", r.Name)}
+			}
+			if !dnsProviderRe.MatchString(r.DNSProvider) {
+				return FieldError{"resolvers", fmt.Sprintf("Resolver %s: %q is not a DNS provider code.", r.Name, r.DNSProvider)}
+			}
+			if r.PropagationSeconds < 0 || r.PropagationSeconds > 86400 {
+				return FieldError{"resolvers", fmt.Sprintf("Resolver %s: Propagation Seconds must be between 0 and 86400.", r.Name)}
 			}
 		case "tls":
 		default:
@@ -220,8 +227,23 @@ func (a *App) putTraefik(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
+		// A deleted resolver leaves the entrypoints, routes and domains that used it, not the other way round.
+		removed := []string{}
+		for _, old := range st.Traefik.Resolvers {
+			if !slices.ContainsFunc(in.Resolvers, func(x store.Resolver) bool { return x.Name == old.Name }) {
+				removed = append(removed, old.Name)
+			}
+		}
+		for i := range in.Entrypoints {
+			if slices.Contains(removed, in.Entrypoints[i].DefaultResolver) {
+				in.Entrypoints[i].DefaultResolver = ""
+			}
+		}
 		if err := validateTraefik(&in); err != nil {
 			return err
+		}
+		for _, name := range removed {
+			detachResolver(st, name)
 		}
 		// Routes may point at entrypoints that were renamed or removed.
 		for _, rt := range st.Routes {
@@ -236,9 +258,6 @@ func (a *App) putTraefik(w http.ResponseWriter, r *http.Request) {
 						return FieldError{"entrypoints", fmt.Sprintf("Route %s answers over plain HTTP on %s. A redirect there would break it: turn on HTTPS for the route first.", rt.Name, e.Name)}
 					}
 				}
-			}
-			if rt.TLS.Resolver != "" && !slices.ContainsFunc(in.Resolvers, func(x store.Resolver) bool { return x.Name == rt.TLS.Resolver }) {
-				return FieldError{"resolvers", fmt.Sprintf("Route %s uses resolver %s. Change the route first.", rt.Name, rt.TLS.Resolver)}
 			}
 		}
 		st.Traefik = in

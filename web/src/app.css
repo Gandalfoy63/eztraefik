@@ -107,6 +107,23 @@ button.row-link:hover { text-decoration: underline; text-underline-offset: 3px; 
 .more-body .field-row + .field-row { margin-top: var(--space-4); }
 
 /* Step slider: a native range input, so keyboard and screen readers work as usual. */
+.dns-foot { display: grid; gap: var(--space-3); justify-items: start; margin-top: var(--space-2); }
+.dns-foot p { margin: 0; }
+
+/* Combobox */
+.combobox { position: relative; }
+.combobox > .input { padding-right: 36px; }
+.combobox-toggle { position: absolute; top: 0; right: 0; height: 36px; width: 36px; display: flex; align-items: center; justify-content: center; background: none; border: 0; color: var(--text-muted); cursor: pointer; }
+.combobox-toggle:hover { color: var(--text); }
+.combobox-list {
+  list-style: none; margin: var(--space-1) 0 0; padding: var(--space-1); max-height: 240px; overflow-y: auto;
+  position: absolute; left: 0; right: 0; z-index: 20; background: var(--surface); border-radius: var(--radius-md); box-shadow: var(--shadow-overlay);
+}
+.combobox-list li { display: flex; justify-content: space-between; gap: var(--space-3); padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); cursor: pointer; }
+.combobox-list li:hover, .combobox-list li.is-active { background: var(--surface-hover); }
+.combobox-list li[aria-selected="true"] { background: var(--accent-soft); }
+.combobox-list li.combobox-empty { color: var(--text-muted); font-size: var(--text-sm); cursor: default; background: none; }
+
 .step-slider { display: flex; align-items: center; gap: var(--space-3); }
 .step-slider input[type="range"] { flex: 1; min-width: 0; height: 24px; margin: 0; accent-color: var(--accent); cursor: pointer; }
 .step-slider input[type="range"]:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }

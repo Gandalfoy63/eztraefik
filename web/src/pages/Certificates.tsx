@@ -2,15 +2,21 @@
 // Resolvers (how certificates are issued), issued ACME certificates, and uploaded ones.
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Pencil, Plus, ShieldCheck, Trash2, Upload } from "lucide-react";
-import { api, ApiError, type Cert, type EnvVar, type Resolver } from "../api";
+import { api, ApiError, type Cert, type EnvVar, type Resolver, type Route } from "../api";
 import { Badge, Button, Empty, ErrorBox, SkeletonRows, useToast } from "../ui/feedback";
-import { Field, Segmented, invalid } from "../ui/controls";
+import { Combobox, Field, Segmented, StepSlider, invalid } from "../ui/controls";
+import { DNS_PROVIDERS } from "../ui/dnsProviders";
 import { ConfirmDialog, Modal } from "../ui/Modal";
 import { Card, PageHeader } from "../ui/Page";
 import { daysUntil, useLoad } from "../ui/hooks";
 import { PendingBanner, saveTraefik, useTraefik } from "./traefikConfig";
 
 const blankResolver = (): Resolver => ({ name: "", email: "", challenge: "http", httpEntrypoint: "web", dnsProvider: "", caServer: "", caCertPEM: "" });
+
+const PROPAGATION_STEPS = [0, 10, 30, 60, 120, 180, 300, 600, 900, 1800];
+const PROVIDER_OPTIONS = DNS_PROVIDERS.map(p => ({ value: p.code, label: p.name }));
+const slug = (s: string) => s.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const providerVars = (code?: string) => DNS_PROVIDERS.find(p => p.code === code)?.env ?? [];
 
 export function Certificates() {
   const toast = useToast();
@@ -24,31 +30,73 @@ export function Certificates() {
   const [up, setUp] = useState({ name: "", cert: "", key: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
-  const [del, setDel] = useState<{ kind: "resolver" | "cert"; id: string; label: string } | null>(null);
+  const [del, setDel] = useState<{ kind: "resolver" | "cert"; id: string; label: string; match: (r: Route) => boolean } | null>(null);
+  const [affected, setAffected] = useState<string[] | null>(null);
 
   useEffect(() => {
     if (!resModal.open || !cfg) return;
     setRes(resModal.index >= 0 ? structuredClone(cfg.resolvers[resModal.index]) : blankResolver());
-    setDnsEnv([]);
+    const editing = resModal.index >= 0 ? cfg.resolvers[resModal.index] : null;
+    setDnsEnv(providerVars(editing?.dnsProvider).map(key => ({ key, value: "", secret: true })));
     setErrors({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resModal]);
 
+  // Which routes a delete takes the certificate from, shown before confirming.
+  useEffect(() => {
+    setAffected(null);
+    if (!del) return;
+    api.get<{ routes: Route[] }>("/routes").then(x => setAffected(x.routes.filter(del.match).map(r => r.name))).catch(() => setAffected([]));
+  }, [del]);
+
+  // Choosing a provider opens the variables it needs, keeping what was typed for the same name.
+  const setProvider = (dnsProvider: string) => {
+    setRes(r => ({ ...r, dnsProvider }));
+    const known = DNS_PROVIDERS.flatMap(p => p.env);
+    const extras = dnsEnv.filter(v => !known.includes(v.key));
+    setDnsEnv([...providerVars(dnsProvider).map(key => dnsEnv.find(v => v.key === key) ?? { key, value: "", secret: true }), ...extras]);
+  };
+  const setChallenge = (challenge: Resolver["challenge"]) => {
+    setRes(r => ({ ...r, challenge }));
+    if (challenge === "dns" && !res.dnsProvider) setProvider("cloudflare");
+  };
+  const isSet = (key: string) => !!cfg?.env.some(e => e.key === key);
+
   const saveResolver = async () => {
+    const name = slug(res.name);
+    const saved: Resolver = { ...res, name };
+    if (res.challenge !== "dns") {
+      saved.dnsProvider = "";
+      saved.propagationSeconds = undefined;
+    }
+    if (res.challenge === "dns") {
+      const provider = DNS_PROVIDERS.find(p => p.code === res.dnsProvider);
+      const filled = (k: string) => isSet(k) || dnsEnv.some(v => v.key === k && v.value);
+      const extra = dnsEnv.some(v => !provider?.env.includes(v.key) && v.key && v.value);
+      // Where the list is exact every variable is needed; elsewhere lego may list alternatives, so one is enough.
+      const missing = extra ? [] : provider?.sure ? provider.env.filter(k => !filled(k)) : provider?.env.length && !provider.env.some(filled) ? provider.env : [];
+      if (missing.length) {
+        setErrors(Object.fromEntries(missing.map(k => ["env-" + k, provider?.sure ? "Needed for the DNS challenge." : "Fill in at least one of these."])));
+        return;
+      }
+    }
     setBusy(true);
     setErrors({});
     const list = [...cfg!.resolvers];
-    if (resModal.index >= 0) list[resModal.index] = res;
-    else list.push(res);
-    const env = [...cfg!.env.filter(e => !dnsEnv.some(d => d.key === e.key)), ...dnsEnv.filter(d => d.key)];
+    if (resModal.index >= 0) list[resModal.index] = saved;
+    else list.push(saved);
+    // An empty value keeps what is stored, so only typed values replace a variable.
+    const typed = res.challenge === "dns" ? dnsEnv.filter(d => d.key && d.value) : [];
+    const env = [...cfg!.env.filter(e => !typed.some(d => d.key === e.key)), ...typed];
     try {
       await saveTraefik({ ...cfg!, resolvers: list, env });
-      toast(`Resolver ${res.name} saved. Apply it on the Traefik page.`);
+      toast(`Resolver ${name} saved. Apply it on the Traefik page.`);
       setResModal({ open: false, index: -1 });
       traefik.reload();
     } catch (e) {
       const ae = e as ApiError;
       setErrors({ _: ae.message });
+      if (resModal.index < 0 && !name) setErrors({ name: "Enter a name." });
     } finally {
       setBusy(false);
     }
@@ -75,6 +123,7 @@ export function Certificates() {
       if (del.kind === "cert") {
         await api.del(`/certificates/${del.id}`);
         certs.reload();
+        traefik.reload();
       } else {
         await saveTraefik({ ...cfg!, resolvers: cfg!.resolvers.filter(r => r.name !== del.id) });
         traefik.reload();
@@ -113,7 +162,7 @@ export function Certificates() {
                 <td className="col-optional muted mono-sm">{r.caServer || "Let's Encrypt"}</td>
                 <td className="actions nowrap">
                   <button className="icon-btn" type="button" aria-label={`Edit ${r.name}`} data-tooltip="Edit" data-tooltip-side="bottom" onClick={() => setResModal({ open: true, index: i })}><Pencil className="icon-sm" aria-hidden="true" /></button>
-                  <button className="icon-btn" type="button" aria-label={`Delete ${r.name}`} data-tooltip="Delete" data-tooltip-side="bottom" onClick={() => setDel({ kind: "resolver", id: r.name, label: `Resolver ${r.name}` })}><Trash2 className="icon-sm" aria-hidden="true" /></button>
+                  <button className="icon-btn" type="button" aria-label={`Delete ${r.name}`} data-tooltip="Delete" data-tooltip-side="bottom" onClick={() => setDel({ kind: "resolver", id: r.name, label: `Resolver ${r.name}`, match: x => x.tls.resolver === r.name })}><Trash2 className="icon-sm" aria-hidden="true" /></button>
                 </td>
               </tr>))}
             </tbody></table></div>
@@ -133,7 +182,7 @@ export function Certificates() {
                   <td className="mono-sm">{(c.domains.length ? c.domains : [c.main]).join(", ")}</td>
                   <td className="muted">{c.source === "acme" ? `${c.resolver}, ${c.issuer}` : `Uploaded${c.name ? ": " + c.name : ""}`}</td>
                   <td><Badge tone={d < 0 || d <= 3 ? "danger" : d <= 14 ? "warning" : "success"}>{d < 0 ? "Expired" : `${new Date(c.notAfter).toLocaleDateString()}, ${d} days`}</Badge></td>
-                  <td className="actions">{c.source === "uploaded" && <button className="icon-btn" type="button" aria-label={`Delete certificate ${c.main}`} data-tooltip="Delete" data-tooltip-side="bottom" onClick={() => setDel({ kind: "cert", id: c.id, label: `Certificate ${c.main}` })}><Trash2 className="icon-sm" aria-hidden="true" /></button>}</td>
+                  <td className="actions">{c.source === "uploaded" && <button className="icon-btn" type="button" aria-label={`Delete certificate ${c.main}`} data-tooltip="Delete" data-tooltip-side="bottom" onClick={() => setDel({ kind: "cert", id: c.id, label: `Certificate ${c.main}`, match: x => x.tls.mode === "existing" && x.tls.domain === c.main && !x.tls.resolver })}><Trash2 className="icon-sm" aria-hidden="true" /></button>}</td>
                 </tr>
               );
             })}</tbody></table></div>
@@ -145,15 +194,15 @@ export function Certificates() {
         footer={<>{errors._ && <span className="error foot-error">{errors._}</span>}<Button onClick={() => setResModal({ open: false, index: -1 })}>Cancel</Button><Button variant="primary" busy={busy} busyLabel="Saving" onClick={saveResolver}>Save resolver</Button></>}>
         <form className="modal-body" onSubmit={e => { e.preventDefault(); saveResolver(); }} noValidate>
           <div className="field-row">
-            <Field label="Name" htmlFor="rs-name" hint="Routes refer to it, like letsencrypt.">
-              <input className="input mono" {...invalid("rs-name")} placeholder="letsencrypt" value={res.name} onChange={e => setRes({ ...res, name: e.target.value.toLowerCase() })} disabled={resModal.index >= 0} />
+            <Field label="Name" htmlFor="rs-name" error={errors.name} hint={resModal.index < 0 && slug(res.name) && slug(res.name) !== res.name ? <>Saved as <span className="mono">{slug(res.name)}</span>.</> : "Routes refer to it by this name."}>
+              <input className="input" {...invalid("rs-name", errors.name)} placeholder="My Website" value={res.name} onChange={e => setRes({ ...res, name: e.target.value })} disabled={resModal.index >= 0} />
             </Field>
             <Field label="Email" htmlFor="rs-email" hint="For expiry notices.">
               <input className="input" type="email" {...invalid("rs-email")} value={res.email} onChange={e => setRes({ ...res, email: e.target.value })} />
             </Field>
           </div>
           <Field label="Challenge" hint={res.challenge === "http" ? "The CA visits http://your-domain/.well-known/... Port 80 must be reachable." : res.challenge === "tls" ? "The CA connects on port 443." : "eztraefik's Traefik creates a DNS record. Works behind firewalls and for wildcards."}>
-            <Segmented label="Challenge" value={res.challenge} onChange={challenge => setRes({ ...res, challenge })} options={[{ value: "http", label: "HTTP" }, { value: "tls", label: "TLS-ALPN" }, { value: "dns", label: "DNS" }]} />
+            <Segmented label="Challenge" value={res.challenge} onChange={setChallenge} options={[{ value: "http", label: "HTTP" }, { value: "tls", label: "TLS-ALPN" }, { value: "dns", label: "DNS" }]} />
           </Field>
           {res.challenge === "http" && (
             <Field label="Entrypoint for the challenge" htmlFor="rs-ep">
@@ -164,25 +213,33 @@ export function Certificates() {
           )}
           {res.challenge === "dns" && (
             <>
-              <Field label="DNS provider code" htmlFor="rs-dns" hint={<>Traefik's provider code, like cloudflare, ovh, route53. See the <a href="https://doc.traefik.io/traefik/reference/install-configuration/tls/certificate-resolvers/acme/#providers" target="_blank" rel="noreferrer">provider list</a>.</>}>
-                <input className="input mono" {...invalid("rs-dns")} placeholder="cloudflare" value={res.dnsProvider || ""} onChange={e => setRes({ ...res, dnsProvider: e.target.value.trim() })} />
+              <Field label="DNS Provider" htmlFor="rs-dns" hint="Pick from the list, or type any code Traefik supports.">
+                <Combobox id="rs-dns" label="DNS Provider" value={res.dnsProvider || ""} onChange={v => setProvider(v.trim())} options={PROVIDER_OPTIONS} placeholder="Type to search" />
               </Field>
-              <Field label="Provider credentials" hint="Stored as secret environment variables of the Traefik container. Existing ones are on the Traefik page.">
-                <div className="ref-rows">
-                  {dnsEnv.map((v, i) => (
-                    <div className="ref-row" key={i}>
-                      <input className="input mono" aria-label={`Variable ${i + 1} name`} placeholder="CF_DNS_API_TOKEN" value={v.key} onChange={e => setDnsEnv(dnsEnv.map((x, j) => (j === i ? { ...x, key: e.target.value.trim() } : x)))} />
-                      <input className="input mono" aria-label={`Variable ${i + 1} value`} type="password" autoComplete="off" value={v.value} onChange={e => setDnsEnv(dnsEnv.map((x, j) => (j === i ? { ...x, value: e.target.value } : x)))} />
-                    </div>
-                  ))}
-                  <Button size="sm" icon={Plus} onClick={() => setDnsEnv([...dnsEnv, { key: "", value: "", secret: true }])}>Add variable</Button>
+              {dnsEnv.map((v, i) => providerVars(res.dnsProvider).includes(v.key) ? (
+                <Field key={v.key} label={<span className="mono">{v.key}</span>} htmlFor={`rs-env-${v.key}`} error={errors["env-" + v.key]}>
+                  <input className="input mono" {...invalid(`rs-env-${v.key}`, errors["env-" + v.key])} type="password" autoComplete="off" placeholder={isSet(v.key) ? "Already set. Leave empty to keep it." : undefined} value={v.value} onChange={e => setDnsEnv(dnsEnv.map((x, j) => (j === i ? { ...x, value: e.target.value } : x)))} />
+                </Field>
+              ) : (
+                <div className="ref-row field" key={i}>
+                  <input className="input mono" aria-label={`Variable ${i + 1} name`} placeholder="VARIABLE_NAME" value={v.key} onChange={e => setDnsEnv(dnsEnv.map((x, j) => (j === i ? { ...x, key: e.target.value.trim() } : x)))} />
+                  <input className="input mono" aria-label={`Variable ${i + 1} value`} type="password" autoComplete="off" value={v.value} onChange={e => setDnsEnv(dnsEnv.map((x, j) => (j === i ? { ...x, value: e.target.value } : x)))} />
                 </div>
-              </Field>
+              ))}
+              <div className="dns-foot">
+              <p className="hint">{DNS_PROVIDERS.find(p => p.code === res.dnsProvider && !p.sure && p.env.length > 1) ? "This provider may accept one sign-in or another: fill in the ones your account uses. " : ""}Stored as secret variables of the Traefik container.</p>
+              <Button size="sm" icon={Plus} onClick={() => setDnsEnv([...dnsEnv, { key: "", value: "", secret: true }])}>Add Variable</Button>
+              </div>
             </>
           )}
-          <details className="advanced spaced" open={!!res.caServer}>
-            <summary>Private ACME server</summary>
+          <details className="advanced spaced" open={!!res.caServer || !!res.propagationSeconds}>
+            <summary>Advanced</summary>
             <div className="spaced">
+              {res.challenge === "dns" && (
+                <StepSlider id="rs-propagation" label="Propagation Seconds" unit="s" steps={PROPAGATION_STEPS} format={v => (v ? `${v} seconds` : "Check Right Away")}
+                  hint="How long to wait after creating the DNS record before checking it. Raise it if certificates fail because your provider is slow to publish records."
+                  value={res.propagationSeconds ?? 0} onChange={v => setRes({ ...res, propagationSeconds: Math.round(v) || undefined })} />
+              )}
               <Field label="ACME directory URL" htmlFor="rs-ca" optional hint="Empty means Let's Encrypt production. Staging: https://acme-staging-v02.api.letsencrypt.org/directory">
                 <input className="input mono" {...invalid("rs-ca")} value={res.caServer || ""} onChange={e => setRes({ ...res, caServer: e.target.value.trim() })} />
               </Field>
@@ -210,7 +267,13 @@ export function Certificates() {
       </Modal>
 
       <ConfirmDialog open={!!del} title={`Delete ${del?.label}?`} confirmLabel="Delete" danger busy={busy} onConfirm={confirmDelete} onClose={() => setDel(null)}>
-        <p>{del?.kind === "resolver" ? "Routes using it must be changed first. Issued certificates stay until they expire." : "Routes using this certificate fall back to another matching one, or Traefik's default."}</p>
+        {affected === null ? <p className="muted">Checking which routes use it...</p> : affected.length > 0 ? (
+          <>
+            <p>It is removed from {affected.length === 1 ? "this route" : `these ${affected.length} routes`}. The {affected.length === 1 ? "route stays" : "routes stay"} on HTTPS, with another resolver if there is one, otherwise Traefik's default certificate, which browsers warn about.</p>
+            <ul className="mono-sm">{affected.map(n => <li key={n}>{n}</li>)}</ul>
+          </>
+        ) : <p>No route uses it.</p>}
+        {del?.kind === "resolver" && <p>Issued certificates stay until they expire. Entrypoints and domains using this resolver lose it too.</p>}
       </ConfirmDialog>
     </>
   );

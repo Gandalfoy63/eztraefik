@@ -21,7 +21,7 @@ const DNS_PROVIDERS = [
   { id: "route53", label: "AWS Route 53", env: ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_REGION"] },
   { id: "digitalocean", label: "DigitalOcean", env: ["DO_AUTH_TOKEN"] },
   { id: "gandiv5", label: "Gandi", env: ["GANDIV5_PERSONAL_ACCESS_TOKEN"] },
-  { id: "hetzner", label: "Hetzner", env: ["HETZNER_API_KEY"] },
+  { id: "hetzner", label: "Hetzner", env: ["HETZNER_API_TOKEN"] },
   { id: "duckdns", label: "Duck DNS", env: ["DUCKDNS_TOKEN"] },
 ];
 

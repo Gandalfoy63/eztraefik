@@ -90,6 +90,9 @@ func Flags(cfg store.TraefikConfig) []string {
 			f = append(f, p+".tlschallenge=true")
 		case "dns":
 			f = append(f, p+".dnschallenge=true", p+".dnschallenge.provider="+r.DNSProvider)
+			if r.PropagationSeconds > 0 {
+				f = append(f, fmt.Sprintf("%s.dnschallenge.propagation.delaybeforechecks=%ds", p, r.PropagationSeconds))
+			}
 		default:
 			ep := r.HTTPEntry
 			if ep == "" {

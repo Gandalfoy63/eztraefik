@@ -1,7 +1,7 @@
 // Docs: docs/05 - UI-UX/Components.md
 // Form controls: labeled field with hint or error, switch, segmented radio group, tag input.
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
-import { CircleAlert, X, type LucideIcon } from "lucide-react";
+import { ChevronDown, CircleAlert, X, type LucideIcon } from "lucide-react";
 
 export function Field({
   label, hint, error, optional, children, htmlFor, className = "",
@@ -147,6 +147,69 @@ export function TagInput({
           }
         }}
       />
+    </div>
+  );
+}
+
+// Combobox: type freely or pick from the list, which narrows as you type. The value doesn't have to be in the list.
+export function Combobox({
+  id, value, onChange, options, label, placeholder, error,
+}: { id: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[]; label: string; placeholder?: string; error?: string | null }) {
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+  const q = value.trim().toLowerCase();
+  // A value already picked shows the whole list again, so another choice is one click away.
+  const exact = options.some(o => o.value === value);
+  const shown = exact || !q ? options : options.filter(o => o.value.includes(q) || o.label.toLowerCase().includes(q));
+  const listId = id + "-list";
+  const pick = (v: string) => {
+    onChange(v);
+    setOpen(false);
+    setActive(-1);
+  };
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!open) setOpen(true);
+      const d = e.key === "ArrowDown" ? 1 : -1;
+      setActive(a => (shown.length ? (a + d + shown.length) % shown.length : -1));
+    } else if (e.key === "Enter" && open) {
+      e.preventDefault();
+      if (active >= 0 && shown[active]) pick(shown[active].value);
+      else setOpen(false);
+    } else if (e.key === "Escape" && open) {
+      // Closes the list, not the window around it.
+      e.preventDefault();
+      setOpen(false);
+    }
+  };
+  return (
+    <div className="combobox">
+      <input
+        className="input mono" id={id} role="combobox" autoComplete="off" spellCheck={false} placeholder={placeholder}
+        aria-label={label} aria-expanded={open} aria-controls={listId} aria-autocomplete="list" aria-invalid={error ? true : undefined} aria-describedby={id + "-msg"}
+        aria-activedescendant={open && active >= 0 ? `${id}-opt-${active}` : undefined}
+        value={value}
+        onChange={e => { onChange(e.target.value); setOpen(true); setActive(-1); }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        onKeyDown={onKey}
+      />
+      <button type="button" className="combobox-toggle" tabIndex={-1} aria-label={`Show ${label} list`} onMouseDown={e => { e.preventDefault(); setOpen(o => !o); }}>
+        <ChevronDown className="icon-sm" aria-hidden="true" />
+      </button>
+      {open && (
+        <ul className="combobox-list" id={listId} role="listbox" aria-label={label}>
+          {shown.map((o, i) => (
+            <li key={o.value} id={`${id}-opt-${i}`} role="option" aria-selected={o.value === value} className={i === active ? "is-active" : ""}
+              ref={el => { if (el && i === active) el.scrollIntoView({ block: "nearest" }); }}
+              onMouseDown={e => { e.preventDefault(); pick(o.value); }}>
+              <span>{o.label}</span><span className="mono-sm muted">{o.value}</span>
+            </li>
+          ))}
+          {!shown.length && <li className="combobox-empty" aria-disabled="true">Not in the list. This code is used as typed.</li>}
+        </ul>
+      )}
     </div>
   );
 }

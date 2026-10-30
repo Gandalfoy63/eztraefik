@@ -64,6 +64,7 @@ export interface Resolver {
   challenge: "http" | "tls" | "dns";
   httpEntrypoint?: string;
   dnsProvider?: string;
+  propagationSeconds?: number;
   caServer?: string;
   caCertPEM?: string;
 }

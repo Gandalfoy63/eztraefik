@@ -76,7 +76,9 @@ type Resolver struct {
 	Challenge   string `json:"challenge"` // http, tls or dns
 	HTTPEntry   string `json:"httpEntrypoint,omitempty"`
 	DNSProvider string `json:"dnsProvider,omitempty"`
-	CAServer    string `json:"caServer,omitempty"`
+	// PropagationSeconds waits this long after creating the DNS record, before checking it. 0 checks right away.
+	PropagationSeconds int    `json:"propagationSeconds,omitempty"`
+	CAServer           string `json:"caServer,omitempty"`
 	// CACertPEM is trusted when talking to CAServer, for private CAs like Pebble or step-ca.
 	CACertPEM string `json:"caCertPEM,omitempty"`
 }

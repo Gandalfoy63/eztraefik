@@ -122,7 +122,7 @@ var dnsEnv = map[string]map[string]string{
 	"cloudflare":   {"dns_cloudflare_api_token": "CF_DNS_API_TOKEN", "dns_cloudflare_email": "CF_API_EMAIL", "dns_cloudflare_api_key": "CF_API_KEY"},
 	"digitalocean": {"dns_digitalocean_token": "DO_AUTH_TOKEN"},
 	"duckdns":      {"dns_duckdns_token": "DUCKDNS_TOKEN"},
-	"hetzner":      {"dns_hetzner_api_token": "HETZNER_API_KEY"},
+	"hetzner":      {"dns_hetzner_api_token": "HETZNER_API_TOKEN"},
 	"ovh": {"dns_ovh_endpoint": "OVH_ENDPOINT", "dns_ovh_application_key": "OVH_APPLICATION_KEY",
 		"dns_ovh_application_secret": "OVH_APPLICATION_SECRET", "dns_ovh_consumer_key": "OVH_CONSUMER_KEY"},
 }

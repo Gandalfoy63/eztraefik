@@ -39,6 +39,8 @@ export function Modal({
   useEffect(() => {
     if (!mounted) return;
     const onKey = (e: KeyboardEvent) => {
+      // An open dropdown inside the window takes Escape first.
+      if (e.key === "Escape" && (e.target as HTMLElement).getAttribute?.("aria-expanded") === "true") return;
       if (e.key === "Escape") {
         e.stopPropagation();
         onClose();

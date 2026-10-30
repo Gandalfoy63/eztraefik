@@ -58,7 +58,7 @@ Reference: [[00 - Downloaded Docs/nginx/README|nginx docs]].
 - Not run: `dev/test.py` and `dev/test_npm.py`, the dev environment is stopped on request.
 
 ## Code
-- Parser: [nginx.go](../../server/internal/npm/nginx.go). Model: [RouteSettings](../../server/internal/store/model.go#L110-L127).
+- Parser: [nginx.go](../../server/internal/npm/nginx.go). Model: [RouteSettings](../../server/internal/store/model.go#L112-L129).
 - Window: [RouteSettingsPanel](../../web/src/pages/RouteSettings.tsx#L24-L83), [StepSlider](../../web/src/ui/controls.tsx#L56-L58).
 
 ## Related

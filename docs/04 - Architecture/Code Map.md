@@ -1,7 +1,7 @@
 ---
 title: Code Map
 tags: [architecture, code-map]
-version: 1.3.0+19
+version: 1.4.0+21
 related: ["[[04 - Architecture/Overview|Overview]]", "[[Home]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[02 - Tech/Stack|Stack]]", "[[03 - Features/Auth|Auth]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Config History|Config History]]", "[[03 - Features/Docker|Docker]]", "[[03 - Features/Domains|Domains]]", "[[03 - Features/Entrypoints|Entrypoints]]", "[[03 - Features/Logs|Logs]]", "[[03 - Features/Middlewares|Middlewares]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Overview|Overview]]", "[[03 - Features/Relations|Relations]]", "[[03 - Features/Routes|Routes]]", "[[03 - Features/Services|Services]]", "[[03 - Features/Stats|Stats]]", "[[03 - Features/Traefik Container|Traefik Container]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Docker Client|Docker Client]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[04 - Architecture/Frontend|Frontend]]", "[[05 - UI-UX/Charts|Charts]]", "[[05 - UI-UX/Components|Components]]", "[[05 - UI-UX/Navigation|Navigation]]", "[[05 - UI-UX/Preview|Preview]]", "[[05 - UI-UX/Style|Style]]", "[[06 - API/API Overview|API Overview]]", "[[08 - Deployment/Configuration|Configuration]]", "[[08 - Deployment/Dev Environment|Dev Environment]]", "[[08 - Deployment/Docker Image|Docker Image]]", "[[08 - Deployment/Install|Install]]", "[[09 - Data/Data Model|Data Model]]", "[[99 - Changelog/Changelog|Changelog]]", "[[00 - Downloaded Docs/Lucide/README|Lucide docs]]", "[[05 - UI-UX/Design Principles|Design Principles]]", "[[99 - Changelog/1.1.0+5|1.1.0+5]]", "[[99 - Changelog/1.1.1+6|1.1.1+6]]", "[[99 - Changelog/1.2.0+8|1.2.0+8]]", "[[99 - Changelog/1.2.1+9|1.2.1+9]]", "[[99 - Changelog/1.2.2+10|1.2.2+10]]", "[[03 - Features/Route Settings|Route Settings]]"]
 ---
 
@@ -36,6 +36,7 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [web/src/pages/ImportNPM.tsx](../../web/src/pages/ImportNPM.tsx) | Import from NPM page | [[03 - Features/Import from NPM|Import from NPM]] |
 | [dev/test_npm.py](../../dev/test_npm.py) | End-to-end NPM import and switch test (26 checks) | [[08 - Deployment/Dev Environment|Dev Environment]] |
 | [server/internal/api/setup_test.go](../../server/internal/api/setup_test.go) | Setup never offers eztraefik itself as a Traefik | [[03 - Features/Onboarding|Onboarding]] |
+| [server/internal/api/certs_test.go](../../server/internal/api/certs_test.go) | Deleting a certificate or resolver keeps the routes | [[03 - Features/Certificates|Certificates]] |
 | [server/internal/auth/auth.go](../../server/internal/auth/auth.go) | Password hashing, sessions, login limit, apr1 | [[03 - Features/Auth|Auth]] |
 | [server/internal/auth/auth_test.go](../../server/internal/auth/auth_test.go) | apr1 against OpenSSL, password round trip | [[03 - Features/Auth|Auth]] |
 | [server/internal/docker/docker.go](../../server/internal/docker/docker.go) | Docker Engine API client | [[04 - Architecture/Docker Client|Docker Client]] |
@@ -63,7 +64,8 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [web/src/app/Shell.tsx](../../web/src/app/Shell.tsx) | Sidebar, top bar, page transition | [[05 - UI-UX/Navigation|Navigation]] |
 | [web/src/app/router.ts](../../web/src/app/router.ts) | Hash router | [[04 - Architecture/Frontend|Frontend]] |
 | [web/src/app/Tooltip.tsx](../../web/src/app/Tooltip.tsx) | Global tooltip | [[05 - UI-UX/Components|Components]] |
-| [web/src/ui/controls.tsx](../../web/src/ui/controls.tsx) | Field, Switch, StepSlider, Segmented, TagInput, CheckChips | [[05 - UI-UX/Components|Components]] |
+| [web/src/ui/controls.tsx](../../web/src/ui/controls.tsx) | Field, Switch, StepSlider, Segmented, TagInput, Combobox, CheckChips | [[05 - UI-UX/Components|Components]] |
+| [web/src/ui/dnsProviders.ts](../../web/src/ui/dnsProviders.ts) | Generated DNS provider list | [[03 - Features/Certificates|Certificates]] |
 | [web/src/ui/feedback.tsx](../../web/src/ui/feedback.tsx) | Button, toasts, badges, empty / error / loading | [[05 - UI-UX/Components|Components]] |
 | [web/src/ui/Modal.tsx](../../web/src/ui/Modal.tsx) | Window, tabs, confirm dialog | [[05 - UI-UX/Components|Components]] |
 | [web/src/ui/Page.tsx](../../web/src/ui/Page.tsx) | Page header, card, code block | [[05 - UI-UX/Components|Components]] |
@@ -105,6 +107,7 @@ Every source file, what it does, and its note. Third-party files not listed: `pr
 | [tools/check_docs.py](../../tools/check_docs.py) | Vault check: links, backlinks, orphans, emoji, code Docs comments | [[04 - Architecture/Code Map|Code Map]] |
 | [tools/relink.py](../../tools/relink.py) | Re-points code line links to where symbols are now | [[04 - Architecture/Code Map|Code Map]] |
 | [tools/publish.sh](../../tools/publish.sh) | Multi-arch build and push | [[08 - Deployment/Docker Image|Docker Image]] |
+| [tools/gen_dns_providers.py](../../tools/gen_dns_providers.py) | Builds the DNS provider list from lego | [[03 - Features/Certificates|Certificates]] |
 
 Keep line links right with `python3 tools/relink.py`; check the vault with `python3 tools/check_docs.py`.
 

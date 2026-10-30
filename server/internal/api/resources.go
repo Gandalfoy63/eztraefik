@@ -585,19 +585,65 @@ func (a *App) uploadCert(w http.ResponseWriter, r *http.Request) {
 	ok(w, map[string]any{"certificate": c, "warnings": warnings})
 }
 
+// clearCertChoice removes a route's certificate choice and keeps the route on HTTPS: Traefik then uses
+// another resolver if there is one, else its default certificate. Turning HTTPS off would expose the app.
+func clearCertChoice(rt *store.Route) {
+	rt.TLS.Mode, rt.TLS.Resolver, rt.TLS.Domain = "resolver", "", ""
+}
+
+// detachCert takes a deleted uploaded certificate off the routes using it, unless another upload has the same main domain.
+func detachCert(st *store.State, cert store.UploadedCert) []string {
+	if len(cert.Domains) == 0 {
+		return nil
+	}
+	main := cert.Domains[0]
+	if slices.ContainsFunc(st.Certificates, func(c store.UploadedCert) bool { return len(c.Domains) > 0 && c.Domains[0] == main }) {
+		return nil
+	}
+	names := []string{}
+	for i := range st.Routes {
+		t := st.Routes[i].TLS
+		if t.Mode == "existing" && t.Domain == main && t.Resolver == "" {
+			clearCertChoice(&st.Routes[i])
+			names = append(names, st.Routes[i].Name)
+		}
+	}
+	return names
+}
+
+// detachResolver takes a deleted resolver off the routes and domains using it.
+func detachResolver(st *store.State, name string) []string {
+	names := []string{}
+	for i := range st.Routes {
+		if st.Routes[i].TLS.Resolver == name {
+			clearCertChoice(&st.Routes[i])
+			names = append(names, st.Routes[i].Name)
+		}
+	}
+	for i := range st.Domains {
+		if st.Domains[i].Resolver == name {
+			st.Domains[i].Resolver = ""
+		}
+	}
+	return names
+}
+
 func (a *App) deleteCert(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
-	_, _, err := a.Commit(r, "Certificate deleted", func(st *store.State) error {
+	routes := []string{}
+	_, warnings, err := a.Commit(r, "Certificate deleted", func(st *store.State) error {
 		idx := slices.IndexFunc(st.Certificates, func(c store.UploadedCert) bool { return c.ID == id })
 		if idx < 0 {
 			return notFound("Only uploaded certificates can be deleted here.")
 		}
+		cert := st.Certificates[idx]
 		st.Certificates = slices.Delete(st.Certificates, idx, idx+1)
+		routes = detachCert(st, cert)
 		return nil
 	})
 	if err != nil {
 		failErr(w, err)
 		return
 	}
-	ok(w, map[string]any{})
+	ok(w, map[string]any{"routes": routes, "warnings": warnings})
 }

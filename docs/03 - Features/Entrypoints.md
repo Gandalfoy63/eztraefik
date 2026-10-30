@@ -18,7 +18,7 @@ Status: implemented in 0.2.0+3.
 Reference: [[00 - Downloaded Docs/Traefik/reference/install-configuration/entrypoints|Entrypoints]].
 
 ## Code
-- Flags [Flags](../../server/internal/traefik/container.go#L24-L102), ports [Spec](../../server/internal/traefik/container.go#L150-L192)
+- Flags [Flags](../../server/internal/traefik/container.go#L24-L105), ports [Spec](../../server/internal/traefik/container.go#L153-L195)
 - [Entrypoints](../../web/src/pages/Entrypoints.tsx#L13-L141)
 
 ## Related
