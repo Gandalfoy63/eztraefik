@@ -346,6 +346,9 @@ func toAny(ss []string) []any {
 	return out
 }
 
+// DomainFor returns the configured domain the route's hosts belong to.
+func DomainFor(r store.Route, st store.State) (store.Domain, bool) { return domainFor(r, st) }
+
 // domainFor returns the configured domain the route's hosts belong to.
 func domainFor(r store.Route, st store.State) (store.Domain, bool) {
 	for _, d := range st.Domains {

@@ -15,7 +15,7 @@ func certRoutes() *store.State {
 			{Name: "uses-resolver", TLS: store.RouteTLS{Enabled: true, Mode: "resolver", Resolver: "le", Redirect: true}},
 			{Name: "other", TLS: store.RouteTLS{Enabled: true, Mode: "resolver", Resolver: "other"}},
 		},
-		Domains: []store.Domain{{Name: "a.test", Resolver: "le"}},
+		Domains: []store.Domain{{Name: "a.test", Resolver: "le", Wildcard: true}},
 	}
 }
 
@@ -49,7 +49,25 @@ func TestDeletedResolverLeavesRoutesAndDomains(t *testing.T) {
 	if !slices.Equal(got, []string{"uses-issued", "uses-resolver"}) || len(st.Routes) != 4 {
 		t.Fatalf("detached %v", got)
 	}
-	if !st.Routes[2].TLS.Enabled || st.Routes[2].TLS.Resolver != "" || st.Routes[3].TLS.Resolver != "other" || st.Domains[0].Resolver != "" {
+	if !st.Routes[2].TLS.Enabled || st.Routes[2].TLS.Resolver != "" || st.Routes[3].TLS.Resolver != "other" || st.Domains[0].Resolver != "" || st.Domains[0].Wildcard {
 		t.Errorf("%+v %+v", st.Routes, st.Domains)
+	}
+}
+
+// A domain added with a resolver decides which resolver its new routes use, not the order of the resolvers.
+func TestRouteUsesItsDomainResolver(t *testing.T) {
+	st := &store.State{
+		Traefik: store.TraefikConfig{Entrypoints: []store.Entrypoint{{Name: "websecure", Port: 443, Protocol: "tcp"}},
+			Resolvers: []store.Resolver{{Name: "first"}, {Name: "site"}}},
+		Domains: []store.Domain{{Name: "example.org", Resolver: "site"}},
+	}
+	for host, want := range map[string]string{"shop.example.org": "site", "other.example.com": "first"} {
+		rt := store.Route{Name: "r", Protocol: "http", Hosts: []string{host}, Target: store.Target{Kind: "ip", Address: "10.0.0.1", Port: 80}, TLS: store.RouteTLS{Enabled: true}}
+		if err := (&App{}).validateRoute(st, &rt); err != nil {
+			t.Fatal(err)
+		}
+		if rt.TLS.Resolver != want {
+			t.Errorf("%s uses %q, want %q", host, rt.TLS.Resolver, want)
+		}
 	}
 }

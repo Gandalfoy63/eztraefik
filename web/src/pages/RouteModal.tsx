@@ -2,7 +2,7 @@
 // New / edit route window. Tabs: Common (name, domain, forwarding to, more options) and Certificates.
 import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, Container, Network, Server } from "lucide-react";
-import { api, ApiError, type Cert, type ContainerInfo, type Middleware, type Protocol, type Route, type Service, type TraefikConfig, type SaveResult } from "../api";
+import { api, ApiError, type Cert, type ContainerInfo, type DomainInfo, type Middleware, type Protocol, type Route, type Service, type TraefikConfig, type SaveResult } from "../api";
 import { Button, useToast } from "../ui/feedback";
 import { CheckChips, Field, Segmented, SettingRow, TagInput, invalid } from "../ui/controls";
 import { Modal, TabPanel, Tabs } from "../ui/Modal";
@@ -21,7 +21,11 @@ interface Ctx {
   traefik: TraefikConfig;
   services: Service[];
   middlewares: Middleware[];
+  domains: DomainInfo[];
 }
+
+// Same rule as the server: the domain itself or one label below it.
+const onDomain = (host: string, domain: string) => host === domain || (host.endsWith("." + domain) && !host.slice(0, -domain.length - 1).includes("."));
 
 const FIELD_TAB: Record<string, string> = { ...Object.fromEntries(SETTING_FIELDS.map(f => [f, "common"])), name: "common", hosts: "common", target: "common", port: "common", pathPrefix: "common", entrypoints: "common", middlewares: "common", tls: "certs" };
 
@@ -57,8 +61,9 @@ export function RouteModal({ open, onClose, editing, prefillHost, prefillContain
       api.get<{ config: TraefikConfig }>("/traefik"),
       api.get<{ services: Service[] }>("/services"),
       api.get<{ middlewares: Middleware[] }>("/middlewares"),
+      api.get<{ domains: DomainInfo[] }>("/domains").catch(() => ({ domains: [] })),
     ])
-      .then(([c, ce, t, s, m]) => setCtx({ containers: c.containers.filter(x => x.role !== "traefik"), certs: ce.certificates, traefik: t.config, services: s.services, middlewares: m.middlewares }))
+      .then(([c, ce, t, s, m, d]) => setCtx({ domains: d.domains, containers: c.containers.filter(x => x.role !== "traefik"), certs: ce.certificates, traefik: t.config, services: s.services, middlewares: m.middlewares }))
       .catch(e => setCtxError(e.message));
   }, [open, editing, prefillHost, prefillContainer, prefillPort]);
 
@@ -86,7 +91,29 @@ export function RouteModal({ open, onClose, editing, prefillHost, prefillContain
   const otherCount = (ctx?.certs.length ?? 0) - matching.length;
   const container = ctx?.containers.find(c => c.name === r.target.container);
 
-  const certChoice = r.tls.mode === "existing" ? "existing:" + r.tls.domain : r.tls.mode === "passthrough" ? "passthrough" : "resolver:" + (r.tls.resolver || resolvers[0]?.name || "");
+  const domainResolver = ctx?.domains.find(d => d.explicit && d.resolver && r.hosts.some(h => onDomain(h, d.name)))?.resolver;
+  const certChoice = r.tls.mode === "existing" ? "existing:" + r.tls.domain : r.tls.mode === "passthrough" ? "passthrough" : "resolver:" + (r.tls.resolver || domainResolver || resolvers[0]?.name || "");
+  const until = (c: Cert) => Math.floor((Date.parse(c.notAfter) - Date.now()) / 86400000);
+  const certOptions = [
+    ...matching.map(c => ({ value: "existing:" + c.main, label: `${c.domains.join(", ") || c.main} (${c.source === "acme" ? c.resolver : c.name || "uploaded"}, ${until(c)} days left)` })),
+    ...resolvers.map(res => ({ value: "resolver:" + res.name, label: issued(res.name) ? `Keep the issued certificate from ${res.name}` : `New certificate from ${res.name}` })),
+    ...(r.protocol === "tcp" ? [{ value: "passthrough", label: "Pass TLS through to the app" }] : []),
+    ...(!resolvers.length ? [{ value: "resolver:", label: "Traefik's default certificate" }] : []),
+  ];
+  // A saved choice that no longer fits stays visible instead of the list silently showing another one.
+  if (!certOptions.some(o => o.value === certChoice)) certOptions.unshift({ value: certChoice, label: `${certChoice.replace(/^\w+:/, "")} (doesn't cover these domains)` });
+  const chooseCert = (v: string) => {
+    if (v === "passthrough") return setTLS({ mode: "passthrough" });
+    const [kind, name] = [v.slice(0, v.indexOf(":")), v.slice(v.indexOf(":") + 1)];
+    if (kind === "resolver") return setTLS({ mode: "resolver", resolver: name, domain: "" });
+    setTLS({ mode: "existing", domain: name, resolver: ctx?.certs.find(c => c.main === name)?.resolver || "" });
+  };
+  const chosenCert = ctx?.certs.find(c => c.main === certChoice.slice(9));
+  const chosenResolver = resolvers.find(x => "resolver:" + x.name === certChoice);
+  const certDetail = certChoice === "passthrough" ? "The app terminates TLS itself. Traefik only reads the SNI name."
+    : certChoice.startsWith("existing:") ? (chosenCert ? `${chosenCert.source === "acme" ? `Issued by ${chosenCert.issuer}` : "Uploaded"}, expires ${new Date(chosenCert.notAfter).toLocaleDateString()}.` : "")
+    : chosenResolver ? (issued(chosenResolver.name) ? `Renewed automatically, expires ${new Date(issued(chosenResolver.name)!.notAfter).toLocaleDateString()}.` : `${chosenResolver.caServer ? chosenResolver.caServer : "Let's Encrypt"} issues one${r.hosts[0] ? ` for ${r.hosts.join(", ")}` : ""} on the first visit, usually in under a minute.`)
+    : "Browsers warn about this certificate.";
 
   const save = async () => {
     setBusy(true);
@@ -284,56 +311,14 @@ export function RouteModal({ open, onClose, editing, prefillHost, prefillContain
             <>
               <SettingRow title="Serve over HTTPS" description={r.protocol === "tcp" ? "Traefik terminates TLS, or passes it through to the app." : "Recommended for anything reachable from the internet."} checked={r.tls.enabled} onChange={enabled => setTLS({ enabled })} />
               <fieldset className="cert-fieldset" disabled={!r.tls.enabled}>
-                <legend className="label">Certificate</legend>
-                <div className="cert-list">
-                  {matching.map(c => {
-                    const value = "existing:" + c.main;
-                    const days = Math.floor((Date.parse(c.notAfter) - Date.now()) / 86400000);
-                    return (
-                      <label className="choice" key={c.id}>
-                        <input type="radio" name="cert" checked={certChoice === value} onChange={() => setTLS({ mode: "existing", domain: c.main, resolver: c.resolver || "" })} />
-                        <span className="grow">
-                          <span className="title mono">{c.domains.join(", ") || c.main}</span>
-                          {days <= 14 ? <span className="badge is-warning">Expires in {days} days</span> : <span className="badge is-success">Covers this domain</span>}
-                          <br />
-                          <span className="sub">{c.source === "acme" ? `Issued by ${c.issuer} (${c.resolver})` : `Uploaded${c.name ? ": " + c.name : ""}`}, expires {new Date(c.notAfter).toLocaleDateString()}</span>
-                        </span>
-                      </label>
-                    );
-                  })}
-                  {resolvers.map(res => (
-                    <label className="choice" key={res.name}>
-                      <input type="radio" name="cert" checked={certChoice === "resolver:" + res.name} onChange={() => setTLS({ mode: "resolver", resolver: res.name, domain: "" })} />
-                      <span className="grow">
-                        {issued(res.name) ? (
-                          <>
-                            <span className="title">Keep using the issued certificate{resolvers.length > 1 ? ` from ${res.name}` : ""}</span> <span className="badge is-success">Issued</span>
-                            <br />
-                            <span className="sub">Renewed automatically, expires {new Date(issued(res.name)!.notAfter).toLocaleDateString()}.</span>
-                          </>
-                        ) : (
-                          <>
-                            <span className="title">Generate a new certificate{resolvers.length > 1 ? ` with ${res.name}` : ""}</span>
-                            <br />
-                            <span className="sub">
-                              {res.caServer ? `ACME server ${res.caServer}` : "Let's Encrypt"} issues one{r.hosts[0] ? <> for <span className="mono">{r.hosts.join(", ")}</span></> : ""} on the first visit, usually in under a minute.
-                            </span>
-                          </>
-                        )}
-                      </span>
-                    </label>
-                  ))}
-                  {r.protocol === "tcp" && (
-                    <label className="choice">
-                      <input type="radio" name="cert" checked={certChoice === "passthrough"} onChange={() => setTLS({ mode: "passthrough" })} />
-                      <span className="grow"><span className="title">Pass TLS through</span><br /><span className="sub">The app terminates TLS itself. Traefik only reads the SNI name.</span></span>
-                    </label>
-                  )}
-                  {!resolvers.length && !matching.length && r.protocol === "http" && (
-                    <p className="hint">No certificate resolver yet. <a href="#certificates">Add Let's Encrypt on the Certificates page</a>, or Traefik serves its default self-signed certificate.</p>
-                  )}
-                </div>
-                {errors.tls && <span className="error">{errors.tls}</span>}
+                <Field label="Certificate" htmlFor="rt-cert" error={errors.tls} hint={certDetail}>
+                  <select className="select" {...invalid("rt-cert", errors.tls)} value={certChoice} onChange={e => chooseCert(e.target.value)}>
+                    {certOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  </select>
+                </Field>
+                {!resolvers.length && r.protocol === "http" && (
+                  <p className="hint">No certificate resolver yet. <a href="#certificates">Add Let's Encrypt on the Certificates page</a>.</p>
+                )}
                 <p className="hint cert-other">
                   {!r.hosts.length ? "Enter a domain in Common to see the certificates that cover it." : otherCount > 0 ? `${otherCount} other certificate${otherCount > 1 ? "s" : ""} on this host ${otherCount > 1 ? "don't" : "doesn't"} cover this domain.` : ""}
                 </p>

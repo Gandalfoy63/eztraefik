@@ -1,8 +1,8 @@
 ---
 title: Domains
 tags: [feature, network]
-version: 1.5.0+22
-related: ["[[03 - Features/Routes|Routes]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[00 - Downloaded Docs/Public Suffix List/README|Public Suffix List]]", "[[99 - Changelog/1.5.0+22|1.5.0+22]]"]
+version: 1.6.0+25
+related: ["[[03 - Features/Routes|Routes]]", "[[03 - Features/Certificates|Certificates]]", "[[03 - Features/Onboarding|Onboarding]]", "[[03 - Features/Features Index|Features Index]]", "[[01 - Vision/Plan|Plan]]", "[[99 - Changelog/0.2.0+3|0.2.0+3]]", "[[06 - API/API Overview|API Overview]]", "[[04 - Architecture/Code Map|Code Map]]", "[[04 - Architecture/Dynamic Config|Dynamic Config]]", "[[00 - Downloaded Docs/Public Suffix List/README|Public Suffix List]]", "[[99 - Changelog/1.5.0+22|1.5.0+22]]", "[[99 - Changelog/1.6.0+25|1.6.0+25]]"]
 ---
 
 # Domains
@@ -19,7 +19,7 @@ Status: implemented in 0.2.0+3.
 - "Add route on this domain" opens the route window with the domain filled in.
 
 ## Code
-- [listDomains](../../server/internal/api/resources.go#L413-L454), [checkDNS](../../server/internal/api/resources.go#L513-L523), wildcard rendering [domainFor](../../server/internal/traefik/dynamic.go#L350-L359)
+- [listDomains](../../server/internal/api/resources.go#L413-L454), [checkDNS](../../server/internal/api/resources.go#L513-L523), wildcard rendering [domainFor](../../server/internal/traefik/dynamic.go#L353-L362)
 - [Domains](../../web/src/pages/Domains.tsx#L51-L138)
 
 ## Related
@@ -34,3 +34,4 @@ Status: implemented in 0.2.0+3.
 - [[04 - Architecture/Dynamic Config|Dynamic Config]]
 - [[00 - Downloaded Docs/Public Suffix List/README|Public Suffix List]]
 - [[99 - Changelog/1.5.0+22|1.5.0+22]]
+- [[99 - Changelog/1.6.0+25|1.6.0+25]]

@@ -2,9 +2,9 @@
 // Resolvers (how certificates are issued), issued ACME certificates, and uploaded ones.
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Pencil, Plus, ShieldCheck, Trash2, Upload } from "lucide-react";
-import { api, ApiError, type Cert, type EnvVar, type Resolver, type Route } from "../api";
+import { api, ApiError, type Cert, type DomainInfo, type EnvVar, type Resolver, type Route } from "../api";
 import { Badge, Button, Empty, ErrorBox, SkeletonRows, useToast } from "../ui/feedback";
-import { Combobox, Field, Segmented, StepSlider, invalid } from "../ui/controls";
+import { Combobox, Field, Segmented, StepSlider, TagInput, invalid } from "../ui/controls";
 import { DNS_PROVIDERS } from "../ui/dnsProviders";
 import { ConfirmDialog, Modal } from "../ui/Modal";
 import { Card, PageHeader } from "../ui/Page";
@@ -18,6 +18,9 @@ const PROPAGATION_STEPS = [0, 10, 30, 60, 120, 180, 300, 600, 900, 1800];
 const PROVIDER_OPTIONS = DNS_PROVIDERS.map(p => ({ value: p.code, label: p.name }));
 const challengeText = (r: Resolver) => (r.challenge === "dns" ? `DNS (${r.dnsProvider})` : r.challenge === "tls" ? "TLS-ALPN" : `HTTP on ${r.httpEntrypoint || "web"}`);
 const certSource = (c: Cert) => (c.source === "acme" ? `${c.resolver}, ${c.issuer}` : `Uploaded${c.name ? ": " + c.name : ""}`);
+const DOMAIN_RE = /^(\*\.)?([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
+// A wildcard entry also covers the domain itself, so example.com and *.example.com together are one domain.
+const domainTags = (list: DomainInfo[], resolver: string) => list.filter(d => d.explicit && d.resolver === resolver).map(d => (d.wildcard ? "*." : "") + d.name);
 const slug = (s: string) => s.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const providerVars = (code?: string) => DNS_PROVIDERS.find(p => p.code === code)?.env ?? [];
 
@@ -25,6 +28,8 @@ export function Certificates() {
   const toast = useToast();
   const certs = useLoad(() => api.get<{ certificates: Cert[] }>("/certificates"), [], 30000);
   const traefik = useTraefik();
+  const domainList = useLoad(() => api.get<{ domains: DomainInfo[] }>("/domains"), []);
+  const [resDomains, setResDomains] = useState<string[]>([]);
   const cfg = traefik.data?.config;
   const [resModal, setResModal] = useState<{ open: boolean; index: number }>({ open: false, index: -1 });
   const [res, setRes] = useState<Resolver>(blankResolver);
@@ -41,6 +46,7 @@ export function Certificates() {
     setRes(resModal.index >= 0 ? structuredClone(cfg.resolvers[resModal.index]) : blankResolver());
     const editing = resModal.index >= 0 ? cfg.resolvers[resModal.index] : null;
     setDnsEnv(providerVars(editing?.dnsProvider).map(key => ({ key, value: "", secret: true })));
+    setResDomains(editing ? domainTags(domainList.data?.domains ?? [], editing.name) : []);
     setErrors({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resModal]);
@@ -72,6 +78,15 @@ export function Certificates() {
       saved.dnsProvider = "";
       saved.propagationSeconds = undefined;
     }
+    const badDomain = resDomains.find(d => !DOMAIN_RE.test(d));
+    if (badDomain) {
+      setErrors({ domains: `${badDomain} doesn't look like a domain, for example example.com.` });
+      return;
+    }
+    if (res.challenge !== "dns" && resDomains.some(d => d.startsWith("*."))) {
+      setErrors({ domains: "A wildcard like *.example.com needs the DNS challenge." });
+      return;
+    }
     if (res.challenge === "dns") {
       const provider = DNS_PROVIDERS.find(p => p.code === res.dnsProvider);
       const filled = (k: string) => isSet(k) || dnsEnv.some(v => v.key === k && v.value);
@@ -93,6 +108,15 @@ export function Certificates() {
     const env = [...cfg!.env.filter(e => !typed.some(d => d.key === e.key)), ...typed];
     try {
       await saveTraefik({ ...cfg!, resolvers: list, env });
+      // Domains are saved after the resolver they point to exists. One taken off this resolver stays as a domain, without a resolver.
+      const wanted = new Map<string, boolean>();
+      for (const d of resDomains) wanted.set(d.replace(/^\*\./, ""), d.startsWith("*.") || !!wanted.get(d.replace(/^\*\./, "")));
+      for (const [domain, wildcard] of wanted) await api.post("/domains", { name: domain, resolver: name, wildcard });
+      for (const old of domainTags(domainList.data?.domains ?? [], name)) {
+        const domain = old.replace(/^\*\./, "");
+        if (!wanted.has(domain)) await api.post("/domains", { name: domain, resolver: "", wildcard: false });
+      }
+      domainList.reload();
       toast(`Resolver ${name} saved. Apply it on the Traefik page.`);
       setResModal({ open: false, index: -1 });
       traefik.reload();
@@ -143,7 +167,7 @@ export function Certificates() {
     const f = e.target.files?.[0];
     if (f) f.text().then(t => setUp(u => ({ ...u, [k]: t })));
   };
-  const resSort = useSort((cfg?.resolvers ?? []).map((r, i) => ({ r, i })), { name: x => x.r.name, challenge: x => challengeText(x.r), server: x => x.r.caServer || "Let's Encrypt" }, "name");
+  const resSort = useSort((cfg?.resolvers ?? []).map((r, i) => ({ r, i })), { name: x => x.r.name, domains: x => domainTags(domainList.data?.domains ?? [], x.r.name).join(", "), challenge: x => challengeText(x.r), server: x => x.r.caServer || "Let's Encrypt" }, "name");
   const certSort = useSort(certs.data?.certificates ?? [], { domains: c => c.main, source: certSource, expires: c => daysUntil(c.notAfter) }, "domains");
   const tcpEntrypoints = cfg?.entrypoints.filter(e => e.protocol === "tcp") ?? [];
 
@@ -159,10 +183,11 @@ export function Certificates() {
           <Empty icon={ShieldCheck} title="No resolver yet">Add Let's Encrypt to get free certificates for your domains.</Empty>
         ) : (
           <div className="table-wrap"><table>
-            <thead><tr><SortTh sort={resSort} col="name">Name</SortTh><SortTh sort={resSort} col="challenge">Challenge</SortTh><SortTh sort={resSort} col="server" className="col-optional">Server</SortTh><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
+            <thead><tr><SortTh sort={resSort} col="name">Name</SortTh><SortTh sort={resSort} col="domains">Domains</SortTh><SortTh sort={resSort} col="challenge">Challenge</SortTh><SortTh sort={resSort} col="server" className="col-optional">Server</SortTh><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
             <tbody>{resSort.rows.map(({ r, i }) => (
               <tr key={r.name}>
                 <td><button className="row-link" type="button" onClick={() => setResModal({ open: true, index: i })}>{r.name}</button></td>
+                <td className="muted mono-sm">{domainTags(domainList.data?.domains ?? [], r.name).join(", ") || "Any"}</td>
                 <td className="muted">{challengeText(r)}</td>
                 <td className="col-optional muted mono-sm">{r.caServer || "Let's Encrypt"}</td>
                 <td className="actions nowrap">
@@ -206,6 +231,9 @@ export function Certificates() {
               <input className="input" type="email" {...invalid("rs-email")} value={res.email} onChange={e => setRes({ ...res, email: e.target.value })} />
             </Field>
           </div>
+          <Field label="Domains" htmlFor="rs-domains" optional error={errors.domains} hint={<>Like <span className="mono">example.com</span>, or <span className="mono">*.example.com</span> for it and every subdomain (needs the DNS challenge). The certificate is requested when a route on the domain gets its first visit.</>}>
+            <TagInput id="rs-domains" values={resDomains} onChange={setResDomains} placeholder="e.g. example.com" invalidMsg={errors.domains} normalize={s => s.trim().toLowerCase()} />
+          </Field>
           <Field label="Challenge" hint={res.challenge === "http" ? "The CA visits http://your-domain/.well-known/... Port 80 must be reachable." : res.challenge === "tls" ? "The CA connects on port 443." : "eztraefik's Traefik creates a DNS record. Works behind firewalls and for wildcards."}>
             <Segmented label="Challenge" value={res.challenge} onChange={setChallenge} options={[{ value: "http", label: "HTTP" }, { value: "tls", label: "TLS-ALPN" }, { value: "dns", label: "DNS" }]} />
           </Field>

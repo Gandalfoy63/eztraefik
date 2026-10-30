@@ -235,8 +235,13 @@ func (a *App) validateRoute(st *store.State, rt *store.Route) error {
 			}
 		default:
 			rt.TLS.Mode = "resolver"
-			if rt.TLS.Resolver == "" && len(st.Traefik.Resolvers) > 0 {
-				rt.TLS.Resolver = st.Traefik.Resolvers[0].Name
+			if rt.TLS.Resolver == "" {
+				// The resolver chosen for the route's domain comes first, so a domain added with a resolver gets that one.
+				if d, found := traefik.DomainFor(*rt, *st); found && d.Resolver != "" {
+					rt.TLS.Resolver = d.Resolver
+				} else if len(st.Traefik.Resolvers) > 0 {
+					rt.TLS.Resolver = st.Traefik.Resolvers[0].Name
+				}
 			}
 			if rt.TLS.Resolver != "" && !hasResolver(st, rt.TLS.Resolver) {
 				return FieldError{"tls", "This certificate resolver does not exist."}

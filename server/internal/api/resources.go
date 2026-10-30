@@ -615,7 +615,8 @@ func detachResolver(st *store.State, name string) []string {
 	}
 	for i := range st.Domains {
 		if st.Domains[i].Resolver == name {
-			st.Domains[i].Resolver = ""
+			// A wildcard needs its DNS challenge resolver: another resolver might not be able to issue it.
+			st.Domains[i].Resolver, st.Domains[i].Wildcard = "", false
 		}
 	}
 	return names
